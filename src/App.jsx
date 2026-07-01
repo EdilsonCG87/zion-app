@@ -13,6 +13,7 @@ import jsPDF from "jspdf";
 import "./App.css";
 import logo from "./assets/logo.png";
 import CalendarAgenda from "./components/CalendarAgenda";
+const API_URL = "https://zion-backend-byyq.onrender.com";
 
 // =========================
 // COMPONENTE APP
@@ -94,7 +95,7 @@ const getSongs = async () => {
   try {
 
     const response = await axios.get(
-      "http://localhost:8080/songs"
+      "${API_URL}/songs"
     );
 
     setSongs(response.data);
@@ -117,12 +118,12 @@ const loadDashboard =
 
       const songsResponse =
         await axios.get(
-          "http://localhost:8080/songs"
+          "${API_URL}/songs"
         );
 
       const playlistsResponse =
         await axios.get(
-          "http://localhost:8080/playlists"
+          "${API_URL}/playlists"
         );
 
       const songs =
@@ -174,7 +175,7 @@ const getSongHistory =
       const response =
         await axios.get(
 
-`http://localhost:8080/song-usage/${songId}`
+`${API_URL}/song-usage/${songId}`
 
         );
 
@@ -203,7 +204,7 @@ const getSongHistory =
       const response =
         await axios.get(
 
-`http://localhost:8080/song-usage/by-year/${year}`
+`${API_URL}/song-usage/by-year/${year}`
 
         );
 
@@ -380,7 +381,7 @@ const getTopSongs = async () => {
 
     const response =
       await axios.get(
-        "http://localhost:8080/songs"
+        "${API_URL}/songs"
       );
 
     const sortedSongs =
@@ -415,7 +416,7 @@ const getUnusedSongs =
 
       const response =
         await axios.get(
-          "http://localhost:8080/songs"
+          "${API_URL}/songs"
         );
 
       const sortedSongs =
@@ -461,7 +462,7 @@ const getUnusedSongs =
       if (editingId) {
 
         await axios.put(
-          `http://localhost:8080/songs/${editingId}`,
+          `${API_URL}/songs/${editingId}`,
           songData
         );
 
@@ -476,7 +477,7 @@ const getUnusedSongs =
 
         // CREAR
         await axios.post(
-          "http://localhost:8080/songs",
+          "${API_URL}/songs",
           songData
         );
 
@@ -533,7 +534,7 @@ const getUnusedSongs =
     try {
 
       await axios.put(
-        `http://localhost:8080/songs/${song.id}`,
+        `${API_URL}/songs/${song.id}`,
         {
           ...song,
           favorite: !song.favorite
@@ -567,7 +568,7 @@ const getUnusedSongs =
       setDeletedSong(songToDelete);
 
       await axios.delete(
-        `http://localhost:8080/songs/${id}`
+        `${API_URL}/songs/${id}`
       );
 
       getSongs();
@@ -610,7 +611,7 @@ const getUnusedSongs =
     try {
 
       await axios.post(
-        "http://localhost:8080/songs",
+        "${API_URL}/songs",
         deletedSong
       );
 
@@ -663,8 +664,12 @@ const getPlaylists = async () => {
   try {
 
     const response = await axios.get(
-      "http://localhost:8080/playlists"
+      "${API_URL}/playlists"
     );
+
+console.log("PLAYLISTS:");
+console.log(response.data);
+console.log(typeof response.data);
 
     setPlaylists(response.data);
 
@@ -697,7 +702,7 @@ const createPlaylist = async () => {
   try {
 
     await axios.post(
-  "http://localhost:8080/playlists",
+  "${API_URL}/playlists",
   {
     name:
       playlistName,
@@ -769,7 +774,7 @@ const deletePlaylist =
     try {
 
       await axios.delete(
-        `http://localhost:8080/playlists/${selectedPlaylist}`
+        `${API_URL}/playlists/${selectedPlaylist}`
       );
 
       Swal.fire({
@@ -809,7 +814,7 @@ const getPlaylistSongs = async (
   try {
 
     const response = await axios.get(
-      `http://localhost:8080/playlist-songs/${playlistId}`
+      `${API_URL}/playlist-songs/${playlistId}`
     );
 
     setPlaylistSongs(response.data);
@@ -837,7 +842,7 @@ const addSongToPlaylist = async () => {
   try {
 
     await axios.post(
-      "http://localhost:8080/playlist-songs",
+      "${API_URL}/playlist-songs",
       {
         playlistId: Number(selectedPlaylist),
         songId: Number(selectedSong),
@@ -849,7 +854,7 @@ const addSongToPlaylist = async () => {
       // AUMENTAR ESTADÍSTICA
 
     await axios.put(
-      `http://localhost:8080/songs/${selectedSong}/play`
+      `${API_URL}/songs/${selectedSong}/play`
     );
     
     Swal.fire({
@@ -885,7 +890,7 @@ const removeSongFromPlaylist = async (
   try {
 
     await axios.delete(
-      `http://localhost:8080/playlist-songs/${playlistSongId}`
+      `${API_URL}/playlist-songs/${playlistSongId}`
     );
 
     Swal.fire({
@@ -964,7 +969,7 @@ const moveSong = async (
     ) {
 
       await axios.put(
-        `http://localhost:8080/playlist-songs/${item.id}`,
+        `${API_URL}/playlist-songs/${item.id}`,
         item
       );
     }
@@ -1080,7 +1085,7 @@ const updatePlaylist =
 
       await axios.put(
 
-        `http://localhost:8080/playlists/${selectedPlaylist}`,
+        `${API_URL}/playlists/${selectedPlaylist}`,
 
         data
 
@@ -1330,6 +1335,10 @@ useEffect(() => {
 // =========================
 // VARIABLES AUXILIARES
 // =========================
+console.log(
+  "PLAYLISTS:",
+  playlists
+);
 
 const selectedPlaylistData =
   playlists.find(
@@ -1350,10 +1359,6 @@ const daysRemaining = nextService
     )
   : null;
 
-
-
-
-
 // =========================
 // CANCIONES SOBREUTILIZADAS
 // =========================
@@ -1365,7 +1370,7 @@ const getOverusedSongs =
 
       const response =
         await axios.get(
-          "http://localhost:8080/songs"
+          "${API_URL}/songs"
         );
 
       const songs =
