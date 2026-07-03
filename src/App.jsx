@@ -32,7 +32,8 @@ const [nextService, setNextService] = useState(null);
 const {
     playlists,
     setPlaylists,
-    getPlaylists
+    getPlaylists,
+    createPlaylist
 } = usePlaylists();
 
 const {
@@ -310,73 +311,6 @@ const {
 // =========================
 // FUNCIONES PLAYLISTS
 // =========================
-
-// Eliminar culto
-const deletePlaylist =
-  async () => {
-
-    if (!selectedPlaylist) {
-
-      Swal.fire({
-        icon: "warning",
-        title:
-          "Selecciona un culto"
-      });
-
-      return;
-    }
-
-    const result =
-      await Swal.fire({
-        title:
-          "¿Eliminar culto?",
-        text:
-          "Esta acción no se puede deshacer",
-        icon:
-          "warning",
-        showCancelButton:
-          true,
-        confirmButtonText:
-          "Sí, eliminar",
-        cancelButtonText:
-          "Cancelar"
-      });
-
-    if (!result.isConfirmed)
-      return;
-
-    try {
-
-      await API.delete(
-        `/playlists/${selectedPlaylist}`
-      );
-
-      Swal.fire({
-        icon: "success",
-        title:
-          "Culto eliminado",
-        timer: 1200,
-        showConfirmButton:
-          false
-      });
-
-      setSelectedPlaylist("");
-      setPlaylistSongs([]);
-
-      getPlaylists();
-
-    }     catch (error) {
-
-  console.error(error);
-
-  Swal.fire({
-    icon: "error",
-    title: "Error",
-    text: error.response?.data?.message || error.message
-  });
-
-}
-};
 
 // Obtener canciones del culto
 const getPlaylistSongs = async (
