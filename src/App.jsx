@@ -1,19 +1,21 @@
 // =========================
 // IMPORTS
 // =========================
-import Dashboard from "./components/Dashboard";
-import SearchBar from "./components/SearchBar";
-import SongForm from "./components/SongForm";
-import TopSongs from "./components/TopSongs";
-import PlaylistManager from "./components/PlaylistManager";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import jsPDF from "jspdf";
 import "./App.css";
 import logo from "./assets/logo.png";
-import CalendarAgenda from "./components/CalendarAgenda";
-const API_URL = "https://zion-backend-byyq.onrender.com";
+import API from "./services/api";
+import { useSongs } from "./hooks/useSongs";
+import { usePlaylists } from "./hooks/usePlaylists";
+import { useDashboard } from "./hooks/useDashboard";
+import { useReports } from "./hooks/useReports";
+import { useStatistics } from "./hooks/useStatistics";
+import DashboardPage from "./pages/DashboardPage";
+import PlaylistPage from "./pages/PlaylistPage";
+import SongsPage from "./pages/SongsPage";
+import AgendaPage from "./pages/AgendaPage";
 
 // =========================
 // COMPONENTE APP
@@ -23,426 +25,74 @@ function App() {
   // =========================
   // STATES
   // =========================
-
-const [songs, setSongs] = useState([]);
-const [search, setSearch] = useState("");
-const [name, setName] = useState("");
-const [author, setAuthor] = useState("");
-const [keyTone, setKeyTone] = useState("");
-const [bpm, setBpm] = useState("");
-const [editingId, setEditingId] = useState(null);
-const [deletedSong, setDeletedSong] = useState(null);
 const [showOrder, setShowOrder] = useState(true);
-const [editingPlaylist, setEditingPlaylist] = useState(false);
-const [editingPlaylistName, setEditingPlaylistName] = useState("");
-const [editingServiceDate, setEditingServiceDate] = useState("");
 const [showSongsList, setShowSongsList] = useState(false);
-const [showAgenda, setShowAgenda] = useState(false);
-const [nextService, setNextService] = useState(null);
 const [activeTab, setActiveTab] = useState("dashboard");
-const [monthlyStats, setMonthlyStats] = useState([]);
+const [nextService, setNextService] = useState(null);
+const {
+    playlists,
+    setPlaylists,
+    getPlaylists
+} = usePlaylists();
+
+const {
+    songs,
+    setSongs,
+    search,
+    setSearch,
+    name,
+    setName,
+    author,
+    setAuthor,
+    keyTone,
+    setKeyTone,
+    bpm,
+    setBpm,
+    editingId,
+    setEditingId,
+    deletedSong,
+    setDeletedSong,
+    getSongs
+} = useSongs();
   
-  // Canciones 
-const [playlists, setPlaylists] = useState([]);
+// Canciones 
 const [playlistName, setPlaylistName] = useState("");
 const [serviceDate, setServiceDate] = useState("");
 const [selectedPlaylist, setSelectedPlaylist] = useState("");
 const sortedPlaylists = [...playlists].sort( (a, b) => new Date(a.serviceDate) - new Date(b.serviceDate)  );
   
-
 // Dashboard
 const [playlistSongs, setPlaylistSongs] = useState([]);
-const [topSongs, setTopSongs] = useState([]);
 const [selectedSong, setSelectedSong] = useState("");
 
 // Reportes
+const {
+    totalSongs,
+    totalServices,
+    mostUsedSong,
+    loadDashboard
+} = useDashboard();
 
-const [totalSongs, setTotalSongs] = useState(0);
-const [totalServices, setTotalServices] = useState(0);
-const [mostUsedSong, setMostUsedSong] = useState(null);
-
+const {
+    songHistory,
+    yearUsage,
+    yearStats,
+    monthlyStats,
+    getSongHistory,
+    getYearUsage
+} = useReports();
 
 // Plalist
-const [selectedHistorySong, setSelectedHistorySong] = useState("");
-const [songHistory, setSongHistory] = useState([]);
-
-  // Orden del Culto
-
-const [selectedYear, setSelectedYear] = useState("2026");
-const [yearUsage, setYearUsage] = useState([]);
-const [yearStats, setYearStats] = useState({
-    totalServices: 0,
-    totalSongs: 0,
-    uniqueSongs: 0,
-    mostUsedSong: null,
-    mostUsedCount: 0
-  });
-
-  const [unusedSongs, setUnusedSongs] = useState([]);
-  const [overusedSongs, setOverusedSongs] = useState([]);
-
-  const [showTopSongs, setShowTopSongs] = useState(false);
   const [showYearReport, setShowYearReport] = useState(false);
-  const [showUnusedSongs, setShowUnusedSongs] = useState(false);
-  const [showOverusedSongs, setShowOverusedSongs] = useState(false); 
   
-// =========================
-// FUNCIONES CANCIONES
-// =========================
-
-const getSongs = async () => {
-
-  try {
-
-    const response = await axios.get(
-      "${API_URL}/songs"
-    );
-
-    setSongs(response.data);
-
-  } catch (error) {
-
-    console.error(error);
-
-  }
-};
-
-// =========================
-// FUNCIONES DASHBOARD
-// =========================
-
-const loadDashboard =
-  async () => {
-
-    try {
-
-      const songsResponse =
-        await axios.get(
-          "${API_URL}/songs"
-        );
-
-      const playlistsResponse =
-        await axios.get(
-          "${API_URL}/playlists"
-        );
-
-      const songs =
-        songsResponse.data;
-
-      setTotalSongs(
-        songs.length
-      );
-
-      setTotalServices(
-        playlistsResponse.data.length
-      );
-
-      const sortedSongs =
-        [...songs].sort(
-          (a, b) =>
-            (b.timesPlayed || 0)
-            -
-            (a.timesPlayed || 0)
-        );
-
-      setMostUsedSong(
-        sortedSongs[0]
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
-};
-
-// =========================
-// FUNCIONES REPORTES
-// =========================
-
-const getSongHistory =
-  async (songId) => {
-
-    try {
-
-      if (!songId) {
-
-        setSongHistory([]);
-
-        return;
-      }
-
-      const response =
-        await axios.get(
-
-`${API_URL}/song-usage/${songId}`
-
-        );
-
-      setSongHistory(
-        response.data
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text:
-          "No fue posible cargar el historial"
-      });
-    }
-  };
-
-  const getYearUsage =
-  async (year) => {
-
-    try {
-
-      const response =
-        await axios.get(
-
-`${API_URL}/song-usage/by-year/${year}`
-
-        );
-
-      const usageData =
-  response.data;
-
-setYearUsage(
-  usageData
-);
-
-const months = [
-
-  "Ene",
-  "Feb",
-  "Mar",
-  "Abr",
-  "May",
-  "Jun",
-  "Jul",
-  "Ago",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dic"
-
-];
-
-const monthlyData =
-  Array(12)
-    .fill(0);
-
-usageData.forEach(
-  item => {
-
-    const date =
-      new Date(
-        item.serviceDate
-      );
-
-    const month =
-      date.getMonth();
-
-    monthlyData[
-      month
-    ]++;
-
-  }
-);
-
-setMonthlyStats(
-
-  months.map(
-    (
-      month,
-      index
-    ) => ({
-
-      month,
-
-      count:
-        monthlyData[
-          index
-        ]
-
-    })
-  )
-
-);
-
-const uniqueSongs =
-  [
-    ...new Set(
-      usageData.map(
-        item =>
-          item.song?.id
-      )
-    )
-  ];
-
-const songCount =
-  {};
-
-usageData.forEach(
-  item => {
-
-    const songName =
-      item.song?.name;
-
-    if (!songName)
-      return;
-
-    songCount[
-      songName
-    ] =
-      (
-        songCount[
-          songName
-        ] || 0
-      ) + 1;
-  }
-);
-
-let topSong =
-  null;
-
-let topCount =
-  0;
-
-Object.entries(
-  songCount
-).forEach(
-  ([name, count]) => {
-
-    if (
-      count >
-      topCount
-    ) {
-
-      topSong =
-        name;
-
-      topCount =
-        count;
-    }
-  }
-);
-
-const uniqueServices =
-  [
-    ...new Set(
-      usageData.map(
-        item =>
-          item.playlist?.id
-      )
-    )
-  ];
-
-setYearStats({
-
-  totalServices:
-    uniqueServices
-      .length,
-
-  totalSongs:
-    usageData.length,
-
-  uniqueSongs:
-    uniqueSongs
-      .length,
-
-  mostUsedSong:
-    topSong,
-
-  mostUsedCount:
-    topCount
-
-});
-
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
-};
-
-// =========================
-// FUNCIONES ESTADÍSTICAS
-// =========================
-
-const getTopSongs = async () => {
-
-  try {
-
-    const response =
-      await axios.get(
-        "${API_URL}/songs"
-      );
-
-    const sortedSongs =
-      response.data
-
-        .filter(song =>
-          song.timesPlayed !== null
-        )
-
-        .sort(
-          (a, b) =>
-            b.timesPlayed -
-            a.timesPlayed
-        )
-
-        .slice(0, 5);
-
-    setTopSongs(
-      sortedSongs
-    );
-
-  } catch (error) {
-
-    console.error(error);
-  }
-};
-
-const getUnusedSongs =
-  async () => {
-
-    try {
-
-      const response =
-        await axios.get(
-          "${API_URL}/songs"
-        );
-
-      const sortedSongs =
-        [...response.data]
-
-          .sort(
-            (a, b) =>
-
-              (a.timesPlayed || 0)
-              -
-              (b.timesPlayed || 0)
-
-          )
-
-          .slice(0, 10);
-
-      setUnusedSongs(
-        sortedSongs
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
-};
+  const {
+    topSongs,
+    unusedSongs,
+    overusedSongs,
+    getTopSongs,
+    getUnusedSongs,
+    getOverusedSongs
+} = useStatistics();
 
 // =========================
 // CRUD CANCIONES
@@ -461,8 +111,8 @@ const getUnusedSongs =
       // EDITAR
       if (editingId) {
 
-        await axios.put(
-          `${API_URL}/songs/${editingId}`,
+        await API.put(
+          `/songs/${editingId}`,
           songData
         );
 
@@ -476,8 +126,8 @@ const getUnusedSongs =
       } else {
 
         // CREAR
-        await axios.post(
-          "${API_URL}/songs",
+        await API.post(
+          `/songs`,
           songData
         );
 
@@ -533,8 +183,8 @@ const getUnusedSongs =
 
     try {
 
-      await axios.put(
-        `${API_URL}/songs/${song.id}`,
+      await API.put(
+        `/songs/${song.id}`,
         {
           ...song,
           favorite: !song.favorite
@@ -567,8 +217,8 @@ const getUnusedSongs =
 
       setDeletedSong(songToDelete);
 
-      await axios.delete(
-        `${API_URL}/songs/${id}`
+      await API.delete(
+        `/songs/${id}`
       );
 
       getSongs();
@@ -610,8 +260,8 @@ const getUnusedSongs =
 
     try {
 
-      await axios.post(
-        "${API_URL}/songs",
+      await API.post(
+        `/songs`,
         deletedSong
       );
 
@@ -658,85 +308,6 @@ const getUnusedSongs =
 // FUNCIONES PLAYLISTS
 // =========================
 
-// Obtener cultos
-const getPlaylists = async () => {
-
-  try {
-
-    const response = await axios.get(
-      "${API_URL}/playlists"
-    );
-
-console.log("PLAYLISTS:");
-console.log(response.data);
-console.log(typeof response.data);
-
-    setPlaylists(response.data);
-
-  } catch (error) {
-
-    console.error(error);
-
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "No fue posible cargar playlists"
-    });
-  }
-};
-
-// Crear culto
-const createPlaylist = async () => {
-
-  if (!playlistName.trim()) {
-
-    Swal.fire({
-      icon: "warning",
-      title: "Nombre requerido",
-      text: "Escribe un nombre para el culto"
-    });
-
-    return;
-  }
-
-  try {
-
-    await axios.post(
-  "${API_URL}/playlists",
-  {
-    name:
-      playlistName,
-
-    serviceDate:
-      serviceDate
-  }
-);
-
-    Swal.fire({
-      icon: "success",
-      title: "Culto creado",
-      timer: 1500,
-      showConfirmButton: false
-    });
-
-    setPlaylistName("");
-
-    setServiceDate("");
-
-    getPlaylists();
-
-  } catch (error) {
-
-    console.error(error);
-
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "No se pudo crear el culto"
-    });
-  }
-};
-
 // Eliminar culto
 const deletePlaylist =
   async () => {
@@ -773,8 +344,8 @@ const deletePlaylist =
 
     try {
 
-      await axios.delete(
-        `${API_URL}/playlists/${selectedPlaylist}`
+      await API.delete(
+        `/playlists/${selectedPlaylist}`
       );
 
       Swal.fire({
@@ -791,17 +362,17 @@ const deletePlaylist =
 
       getPlaylists();
 
-    } catch (error) {
+    }     catch (error) {
 
-      console.error(error);
+  console.error(error);
 
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text:
-          "No se pudo eliminar"
-      });
-    }
+  Swal.fire({
+    icon: "error",
+    title: "Error",
+    text: error.response?.data?.message || error.message
+  });
+
+}
 };
 
 // Obtener canciones del culto
@@ -813,8 +384,8 @@ const getPlaylistSongs = async (
 
   try {
 
-    const response = await axios.get(
-      `${API_URL}/playlist-songs/${playlistId}`
+    const response = await API.get(
+      `/playlist-songs/${playlistId}`
     );
 
     setPlaylistSongs(response.data);
@@ -841,8 +412,8 @@ const addSongToPlaylist = async () => {
 
   try {
 
-    await axios.post(
-      "${API_URL}/playlist-songs",
+    await API.post(
+      `/playlist-songs`,
       {
         playlistId: Number(selectedPlaylist),
         songId: Number(selectedSong),
@@ -853,8 +424,8 @@ const addSongToPlaylist = async () => {
 
       // AUMENTAR ESTADÍSTICA
 
-    await axios.put(
-      `${API_URL}/songs/${selectedSong}/play`
+    await API.put(
+      `/songs/${selectedSong}/play`
     );
     
     Swal.fire({
@@ -889,8 +460,8 @@ const removeSongFromPlaylist = async (
 
   try {
 
-    await axios.delete(
-      `${API_URL}/playlist-songs/${playlistSongId}`
+    await API.delete(
+      `/playlist-songs/${playlistSongId}`
     );
 
     Swal.fire({
@@ -968,8 +539,8 @@ const moveSong = async (
       const item of reorderedSongs
     ) {
 
-      await axios.put(
-        `${API_URL}/playlist-songs/${item.id}`,
+      await API.put(
+        `/playlist-songs/${item.id}`,
         item
       );
     }
@@ -1083,9 +654,9 @@ const updatePlaylist =
 
     try {
 
-      await axios.put(
+      await API.put(
 
-        `${API_URL}/playlists/${selectedPlaylist}`,
+        `/playlists/${selectedPlaylist}`,
 
         data
 
@@ -1304,22 +875,23 @@ useEffect(() => {
 
   today.setHours(0,0,0,0);
 
-  const upcomingServices = playlists
-    .filter((playlist) => {
+  const upcomingServices =
+  Array.isArray(playlists)
+    ? playlists
+        .filter((playlist) => {
+          const serviceDate =
+            new Date(playlist.serviceDate);
 
-      const serviceDate =
-        new Date(playlist.serviceDate);
+          serviceDate.setHours(0,0,0,0);
 
-      serviceDate.setHours(0,0,0,0);
-
-      return serviceDate >= today;
-
-    })
-    .sort(
-      (a,b) =>
-        new Date(a.serviceDate) -
-        new Date(b.serviceDate)
-    );
+          return serviceDate >= today;
+        })
+        .sort(
+          (a,b) =>
+            new Date(a.serviceDate) -
+            new Date(b.serviceDate)
+        )
+    : [];
 
   if (upcomingServices.length > 0) {
 
@@ -1335,17 +907,14 @@ useEffect(() => {
 // =========================
 // VARIABLES AUXILIARES
 // =========================
-console.log(
-  "PLAYLISTS:",
-  playlists
-);
-
 const selectedPlaylistData =
-  playlists.find(
-    playlist =>
-      playlist.id ===
-      Number(selectedPlaylist)
-  );
+  Array.isArray(playlists)
+    ? playlists.find(
+        playlist =>
+          playlist.id ===
+          Number(selectedPlaylist)
+      )
+    : null;
 
 // Próximo culto
 
@@ -1360,48 +929,6 @@ const daysRemaining = nextService
   : null;
 
 // =========================
-// CANCIONES SOBREUTILIZADAS
-// =========================
-
-const getOverusedSongs =
-  async () => {
-
-    try {
-
-      const response =
-        await axios.get(
-          "${API_URL}/songs"
-        );
-
-      const songs =
-        response.data
-
-          .filter(
-            song =>
-              (song.timesPlayed || 0) >= 5
-          )
-
-          .sort(
-            (a, b) =>
-              b.timesPlayed -
-              a.timesPlayed
-          )
-
-          .slice(0, 10);
-
-      setOverusedSongs(
-        songs
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-    }
-};
-
-
-  // =========================
   // HTML
   // =========================
 
@@ -1456,665 +983,52 @@ const getOverusedSongs =
 
 {/* DASHBOARD */}
 {activeTab === "dashboard" && (
-<div className="tab-content">
 
-  <Dashboard
-    totalSongs={songs.length}
-    totalServices={playlists.length}
-    mostUsedSong={topSongs[0]}
-  />
+<DashboardPage
+    songs={songs}
+    playlists={playlists}
+    topSongs={topSongs}
+    showTopSongs={showTopSongs}
+    setShowTopSongs={setShowTopSongs}
+/>
 
-</div>
 )}
 
 {/* AGENDA */}
 {activeTab === "agenda" && (
 
-<div className="tab-content">
-
-  <CalendarAgenda
-  playlists={playlists}
-  playlistSongs={playlistSongs}
-  songs={songs}
-  getPlaylistSongs={getPlaylistSongs}
-/>
-
-</div>
+    <AgendaPage
+        playlists={playlists}
+        playlistSongs={playlistSongs}
+        songs={songs}
+        getPlaylistSongs={getPlaylistSongs}
+    />
 
 )}
-
-{/* BUSCADOR */}
-
-<SearchBar
-  search={search}
-  setSearch={setSearch}
-/>
-
-<TopSongs
-  topSongs={topSongs}
-  showTopSongs={showTopSongs}
-  setShowTopSongs={setShowTopSongs}
-/>
-
-<SongForm
-  name={name}
-  setName={setName}
-  author={author}
-  setAuthor={setAuthor}
-  keyTone={keyTone}
-  setKeyTone={setKeyTone}
-  bpm={bpm}
-  setBpm={setBpm}
-  saveSong={saveSong}
-  editingId={editingId}
-/>
 
 {activeTab === "playlist" && (
 
-<>
-
-{/* CULTOS */}
-{activeTab === "playlist" && (
-<div className="tab-content">
-  <PlaylistManager
-  playlists={playlists}
-  selectedPlaylist={selectedPlaylist}
-  setSelectedPlaylist={setSelectedPlaylist}
-  getPlaylistSongs={getPlaylistSongs}
-  deletePlaylist={deletePlaylist}
-  playlistName={playlistName}
-  setPlaylistName={setPlaylistName}
-  serviceDate={serviceDate}
-  setServiceDate={setServiceDate}
-  createPlaylist={createPlaylist}
-  selectedSong={selectedSong}
-  setSelectedSong={setSelectedSong}
-  songs={songs}
-  addSongToPlaylist={addSongToPlaylist}
-  startEditPlaylist={startEditPlaylist}
-  exportPlaylistPDF={exportPlaylistPDF}
-  shareWhatsApp={shareWhatsApp}
-/>
-
-{/* =========================
-    HISTORIAL DE CANCIONES
-========================= */}
-
-{/* HISTORIAL */}
-<div className="playlist-card">
-
-  <h2 className="playlist-title">
-    📊 Historial de Canciones
-  </h2>
-
-  <div className="playlist-row">
-
-    <select
-      value={
-        selectedHistorySong
-      }
-
-      onChange={(e) => {
-
-        const songId =
-          e.target.value;
-
-        setSelectedHistorySong(
-          songId
-        );
-
-        getSongHistory(
-          songId
-        );
-      }}
-    >
-      
-
-<option value="">
-Seleccionar canción
-</option>
-
-      {songs.map((song) => (
-
-        <option
-          key={song.id}
-          value={song.id}
-        >
-          {song.name}
-        </option>
-
-      ))}
-
-    </select>
-
-  </div>
-
-  <div
-    style={{
-      marginTop: "20px"
-    }}
-  >
-
-    <h3>
-      Veces usada:
-      {" "}
-      {songHistory.length}
-    </h3>
-
-    {songHistory.length >
-      0 ? (
-
-      songHistory.map(
-        (usage, index) => (
-
-        <div
-          key={index}
-          className="song-card"
-          style={{
-            marginBottom:
-              "10px"
-          }}
-        >
-
-          ⛪
-          {" "}
-          {
-            usage.playlist
-              ?.name
-          }
-
-          {" — "}
-
-          {
-            usage
-              .serviceDate
-          }
-
-        </div>
-
-      ))
-
-    ) : (
-
-      <p>
-        No hay historial
-      </p>
-
-    )}
-
-  </div>
-
-</div>
-
-
-{/* CANCIONES MUY UTILIZADAS */}
-
-<div className="playlist-card">
-
-  <h2
-    className="playlist-title"
-    style={{ cursor: "pointer" }}
-    onClick={() =>
-      setShowOverusedSongs(
-        !showOverusedSongs
-      )
-    }
-  >
-
-    ⚠️ Canciones Muy Utilizadas
-
-    {" "}
-
-    {
-      showOverusedSongs
-        ? "▼"
-        : "►"
-    }
-
-  </h2>
-
-  {showOverusedSongs && (
-
-    <>
-
-      {overusedSongs.length === 0 ? (
-
-        <p>
-          No hay canciones repetidas
-        </p>
-
-      ) : (
-
-        overusedSongs.map(
-          (song) => (
-
-            <div
-              key={song.id}
-              className="song-card"
-            >
-
-              🔥 {song.name}
-
-              {" — "}
-
-              {song.timesPlayed}
-
-              usos
-
-            </div>
-
-          )
-        )
-
-      )}
-
-    </>
-
-  )}
-
-</div>
-
-</div>
-)}
-
-{/* CULTO ACTIVO */}
-
-<div className="playlist-card">
-
-  <h2 className="playlist-title">
-    🎯 Culto Activo
-  </h2>
-
-  <div className="playlist-row">
-
-    <select
-      value={selectedPlaylist}
-      onChange={(e) => {
-
-        const playlistId = e.target.value;
-
-        setSelectedPlaylist(playlistId);
-
-        if (!playlistId) {
-
-          setPlaylistSongs([]);
-          return;
-
-        }
-
-        getPlaylistSongs(playlistId);
-
-      }}
-    >
-
-      <option value="">
-        Seleccionar culto
-      </option>
-
-      {playlists.map((playlist) => (
-
-        <option
-          key={playlist.id}
-          value={playlist.id}
-        >
-          {playlist.name}
-        </option>
-
-      ))}
-
-    </select>
-
-  </div>
-
-  <div
-    style={{
-      display: "flex",
-      gap: "10px",
-      marginTop: "15px",
-      flexWrap: "wrap"
-    }}
-  >
-
-    <button
-      className="action-btn btn-edit"
-      onClick={startEditPlaylist}
-    >
-      ✏️ Editar
-    </button>
-
-    <button
-      className="action-btn btn-delete"
-      onClick={deletePlaylist}
-    >
-      🗑 Eliminar
-    </button>
-
-    <button
-      className="action-btn btn-pdf"
-      onClick={exportPlaylistPDF}
-    >
-      📄 PDF
-    </button>
-
-    <button
-      className="action-btn btn-whatsapp"
-      onClick={shareWhatsApp}
-    >
-      📲 WhatsApp
-    </button>
-
-  </div>
-
-</div>
-
-{/* ORDEN DEL SERVICIO */}
-<div className="playlist-card">
-
-  <h2
-    className="playlist-title"
-    style={{ cursor: "pointer" }}
-    onClick={() =>
-      setShowOrder(!showOrder)
-    }
-  >
-
-  🎵 Orden del servicio
-
-  {" "}
-
-  {
-    showOrder
-      ? "▼"
-      : "►"
-  }
-
-</h2>
-
-{showOrder && (
-
-  <>
-
-
-{!selectedPlaylist && (
-
-  <p
-    style={{
-      textAlign: "center",
-      color: "#ccc",
-      marginTop: "20px"
-    }}
-  >
-    Selecciona un culto para visualizar el orden del servicio
-  </p>
-
-)}
-
-{selectedPlaylistData && (
-
-  <div
-    style={{
-      textAlign:
-        "center",
-      marginBottom:
-        "20px",
-      color:
-        "white"
-    }}
-  >
-
-    <h3>
-      {
-        selectedPlaylistData.name
-      }
-    </h3>
-
-    <p>
-      📅 {" "}
-      {
-        selectedPlaylistData
-          .serviceDate
-      }
-    </p>
-
-  </div>
-)}
-
-  {!selectedPlaylist ? null :
-
-playlistSongs.length === 0 ? (
-  
-
-    <p>
-      No hay canciones en este culto
-    </p>
-
-  ) : (
-
-    <div>
-
-      {playlistSongs.map(
-        (item, index) => {
-
-          const song =
-            songs.find(
-              s =>
-                s.id ===
-                item.songId
-            );
-
-          return (
-
-            <div
-              key={item.id}
-              className="playlist-row"
-            >
-
-              <span
-                style={{
-                  color:
-                    "white",
-                  flex: 1
-                }}
-              >
-                {index + 1}.{" "}
-                {
-                  song?.name
-                }
-              </span>
-
-              <button
-                onClick={() =>
-                moveSong(
-                index,
-                "up"
-                        )
-            }
-      >
-          ⬆️
-            </button>
-
-          <button
-            onClick={() =>
-            moveSong(
-            index,
-              "down"
-          )
-        }
-          >
-          ⬇️
-</button>
-
-<button
-  className="delete-btn"
-    onClick={() =>
-      removeSongFromPlaylist(
-        item.id
-    )
-  }
->
-  ❌
-</button>
-
-            </div>
-          );
-        }
-      )}
-
-    </div>
-
-  )}
-
-  </>
-)}
-
-</div>
-
-{editingPlaylist && (
-
-  <div
-    className="playlist-row"
-    style={{
-      marginTop: "15px"
-    }}
-  >
-
-    <input
-      type="text"
-      value={
-        editingPlaylistName
-      }
-      onChange={(e) =>
-        setEditingPlaylistName(
-          e.target.value
-        )
-      }
+    <PlaylistPage
+        playlists={playlists}
+        selectedPlaylist={selectedPlaylist}
+        setSelectedPlaylist={setSelectedPlaylist}
+        getPlaylistSongs={getPlaylistSongs}
+        deletePlaylist={deletePlaylist}
+        playlistName={playlistName}
+        setPlaylistName={setPlaylistName}
+        serviceDate={serviceDate}
+        setServiceDate={setServiceDate}
+        createPlaylist={createPlaylist}
+        selectedSong={selectedSong}
+        setSelectedSong={setSelectedSong}
+        songs={songs}
+        addSongToPlaylist={addSongToPlaylist}
+        startEditPlaylist={startEditPlaylist}
+        exportPlaylistPDF={exportPlaylistPDF}
+        shareWhatsApp={shareWhatsApp}
     />
 
-    <input
-      type="date"
-      value={
-        editingServiceDate
-      }
-      onChange={(e) =>
-        setEditingServiceDate(
-          e.target.value
-        )
-      }
-    />
-
-    <button
-      className="save-btn"
-      onClick={
-        updatePlaylist
-      }
-    >
-      Guardar cambios
-    </button>
-
-  </div>
-
 )}
-
-</>
-
-)}
-
-{activeTab === "songs" && (
-<div className="tab-content">
-
-<div className="playlist-card">
-
-  <h2
-    className="playlist-title"
-    style={{ cursor: "pointer" }}
-    onClick={() =>
-      setShowSongsList(!showSongsList)
-    }
-  >
-
-🎵 Biblioteca de Canciones ({songs.length})
-{showSongsList ? "▼" : "►" }
-</h2>
-
-</div>
-
-{/* TABLA */}
-
-{showSongsList && (
-      <table>
-        
-        <thead>
-
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Autor</th>
-            <th>Tono</th>
-            <th>BPM</th>
-            <th>Acciones</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {songs
-            .filter((song) =>
-              song.name.toLowerCase().includes(search.toLowerCase()) ||
-              song.author.toLowerCase().includes(search.toLowerCase()) ||
-              song.keyTone.toLowerCase().includes(search.toLowerCase())
-            )
-            .map((song, index) => (
-
-              <tr key={song.id}>
-
-                <td>{index + 1}</td>
-                <td>{song.name}</td>
-                <td>{song.author}</td>
-                <td>{song.keyTone}</td>
-                <td>{song.bpm}</td>
-
-                <td>
-
-                  <button
-                    className={
-                      song.favorite
-                        ? "favorite-btn active"
-                        : "favorite-btn"
-                    }
-                    onClick={() => toggleFavorite(song)}
-                  >
-                    ★
-                  </button>
-
-                  <button
-                    className="edit-btn"
-                    onClick={() => editSong(song)}
-                  >
-                    Editar
-                  </button>
-
-                  <button
-                    className="delete-btn"
-                    onClick={() => confirmDelete(song.id)}
-                  >
-                    Eliminar
-                  </button>
-                  
-                </td>
-
-              </tr>
-
-            ))}
-
-        </tbody>
-
-      </table>
-)}
-
-</div>
-)}
-
 
 <div className="bottom-nav">
 
@@ -2124,9 +1038,7 @@ playlistSongs.length === 0 ? (
         ? "nav-btn active"
         : "nav-btn"
     }
-    onClick={() =>
-      setActiveTab("dashboard")
-    }
+    onClick={() => setActiveTab("dashboard")}
   >
     🏠
     <span>Inicio</span>
@@ -2138,9 +1050,7 @@ playlistSongs.length === 0 ? (
         ? "nav-btn active"
         : "nav-btn"
     }
-    onClick={() =>
-      setActiveTab("playlist")
-    }
+    onClick={() => setActiveTab("playlist")}
   >
     🎵
     <span>Cultos</span>
@@ -2152,9 +1062,7 @@ playlistSongs.length === 0 ? (
         ? "nav-btn active"
         : "nav-btn"
     }
-    onClick={() =>
-      setActiveTab("agenda")
-    }
+    onClick={() => setActiveTab("agenda")}
   >
     📅
     <span>Agenda</span>
@@ -2166,9 +1074,7 @@ playlistSongs.length === 0 ? (
         ? "nav-btn active"
         : "nav-btn"
     }
-    onClick={() =>
-      setActiveTab("songs")
-    }
+    onClick={() => setActiveTab("songs")}
   >
     🎼
     <span>Canciones</span>
@@ -2177,6 +1083,7 @@ playlistSongs.length === 0 ? (
 </div>
 
 </div>
+
 );
 
 }
