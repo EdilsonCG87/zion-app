@@ -83,6 +83,9 @@ const {
 } = useReports();
 
 // Plalist
+  const [showTopSongs, setShowTopSongs] = useState(false);
+  const [showUnusedSongs, setShowUnusedSongs] = useState(false);
+  const [showOverusedSongs, setShowOverusedSongs] = useState(false);
   const [showYearReport, setShowYearReport] = useState(false);
   
   const {
