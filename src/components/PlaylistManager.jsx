@@ -17,129 +17,123 @@ function PlaylistManager({
   exportPlaylistPDF,
   shareWhatsApp
 }) {
-  
-return (
+
+  return (
+
     <div className="playlist-card">
 
-{/* ORDEN DEL CULTO */}
+      <h2 className="playlist-title">
+        🎼 Orden del Culto
+      </h2>
 
-<div className="playlist-card">
+      {/* CREAR CULTO */}
 
-  <h2 className="playlist-title">
-    🎼 Orden del Culto
-  </h2>
+      <div className="playlist-row">
 
-{/* CREAR CULTO */}
+        <input
+          type="text"
+          placeholder="Nombre del culto"
+          value={playlistName}
+          onChange={(e) =>
+            setPlaylistName(e.target.value)
+          }
+        />
 
-  <div className="playlist-row">
+        <input
+          type="date"
+          value={serviceDate}
+          onChange={(e) =>
+            setServiceDate(e.target.value)
+          }
+        />
 
-    <input
-      type="text"
-      placeholder="Nombre del culto"
-      value={playlistName}
-      onChange={(e) =>
-        setPlaylistName(
-          e.target.value
-        )
-      }
-    />
-
-    <input
-  type="date"
-  value={serviceDate}
-  onChange={(e) =>
-    setServiceDate(
-      e.target.value
-    )
-  }
-/>
-
-<button
-  className="action-btn btn-create"
-  onClick={createPlaylist}
->
-  ➕ Crear Culto
-</button>
-
-  </div>
-
-  {/* AGREGAR CANCIÓN */}
-
-  <div className="playlist-row">
-
-    <select
-      value={selectedSong}
-      onChange={(e) =>
-        setSelectedSong(
-          e.target.value
-        )
-      }
-    >
-      <option value="">
-        Selecciona canción
-      </option>
-
-      {songs.map((song) => (
-
-        <option
-          key={song.id}
-          value={song.id}
+        <button
+          className="action-btn btn-create"
+          onClick={createPlaylist}
         >
-          {song.name}
-        </option>
+          ➕ Crear Culto
+        </button>
 
-      ))}
-    </select>
+      </div>
 
-    <button
-      className="save-btn"
-      onClick={addSongToPlaylist}
-    >
-      Agregar canción
-    </button>
+      {/* SELECCIONAR CULTO */}
 
-  </div>
+      <div className="playlist-row">
 
-</div>
-
-    </div>
-);
-
-{/* SELECCIONAR CULTO */}
-
-<div className="playlist-row">
-
-    <select
-        value={selectedPlaylist}
-        onChange={(e) => {
+        <select
+          value={selectedPlaylist}
+          onChange={(e) => {
 
             setSelectedPlaylist(e.target.value);
 
             getPlaylistSongs(e.target.value);
 
-        }}
-    >
+          }}
+        >
 
-        <option value="">
+          <option value="">
             Selecciona un culto
-        </option>
+          </option>
 
-        {playlists.map((playlist) => (
+          {playlists.map((playlist) => (
 
             <option
-                key={playlist.id}
-                value={playlist.id}
+              key={playlist.id}
+              value={playlist.id}
             >
 
-                {playlist.name} - {playlist.serviceDate}
+              {playlist.name} - {playlist.serviceDate}
 
             </option>
 
-        ))}
+          ))}
 
-    </select>
+        </select>
 
-</div>
+      </div>
+
+      {/* AGREGAR CANCIÓN */}
+
+      <div className="playlist-row">
+
+        <select
+          value={selectedSong}
+          onChange={(e) =>
+            setSelectedSong(e.target.value)
+          }
+        >
+
+          <option value="">
+            Selecciona canción
+          </option>
+
+          {songs.map((song) => (
+
+            <option
+              key={song.id}
+              value={song.id}
+            >
+
+              {song.name}
+
+            </option>
+
+          ))}
+
+        </select>
+
+        <button
+          className="save-btn"
+          onClick={addSongToPlaylist}
+        >
+          Agregar canción
+        </button>
+
+      </div>
+
+    </div>
+
+  );
 
 }
 
