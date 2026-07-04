@@ -33,7 +33,8 @@ const {
     playlists,
     setPlaylists,
     getPlaylists,
-    createPlaylist
+    createPlaylist,
+    deletePlaylist
 } = usePlaylists();
 
 const {
@@ -946,24 +947,29 @@ const daysRemaining = nextService
 {activeTab === "playlist" && (
 
     <PlaylistPage
-        playlists={playlists}
-        selectedPlaylist={selectedPlaylist}
-        setSelectedPlaylist={setSelectedPlaylist}
-        getPlaylistSongs={getPlaylistSongs}
-        deletePlaylist={deletePlaylist}
-        playlistName={playlistName}
-        setPlaylistName={setPlaylistName}
-        serviceDate={serviceDate}
-        setServiceDate={setServiceDate}
-        createPlaylist={createPlaylist}
-        selectedSong={selectedSong}
-        setSelectedSong={setSelectedSong}
-        songs={songs}
-        addSongToPlaylist={addSongToPlaylist}
-        startEditPlaylist={startEditPlaylist}
-        exportPlaylistPDF={exportPlaylistPDF}
-        shareWhatsApp={shareWhatsApp}
-    />
+    playlists={playlists}
+    selectedPlaylist={selectedPlaylist}
+    setSelectedPlaylist={setSelectedPlaylist}
+    getPlaylistSongs={getPlaylistSongs}
+    deletePlaylist={deletePlaylist}
+    playlistName={playlistName}
+    setPlaylistName={setPlaylistName}
+    serviceDate={serviceDate}
+    setServiceDate={setServiceDate}
+    createPlaylist={createPlaylist}
+    selectedSong={selectedSong}
+    setSelectedSong={setSelectedSong}
+    songs={songs}
+    addSongToPlaylist={addSongToPlaylist}
+    startEditPlaylist={startEditPlaylist}
+    exportPlaylistPDF={exportPlaylistPDF}
+    shareWhatsApp={shareWhatsApp}
+
+    selectedHistorySong={selectedHistorySong}
+    setSelectedHistorySong={setSelectedHistorySong}
+    songHistory={songHistory}
+    getSongHistory={getSongHistory}
+/>
 
 )}
 

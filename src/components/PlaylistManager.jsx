@@ -104,6 +104,43 @@ return (
 
     </div>
 );
+
+{/* SELECCIONAR CULTO */}
+
+<div className="playlist-row">
+
+    <select
+        value={selectedPlaylist}
+        onChange={(e) => {
+
+            setSelectedPlaylist(e.target.value);
+
+            getPlaylistSongs(e.target.value);
+
+        }}
+    >
+
+        <option value="">
+            Selecciona un culto
+        </option>
+
+        {playlists.map((playlist) => (
+
+            <option
+                key={playlist.id}
+                value={playlist.id}
+            >
+
+                {playlist.name} - {playlist.serviceDate}
+
+            </option>
+
+        ))}
+
+    </select>
+
+</div>
+
 }
 
 export default PlaylistManager;
