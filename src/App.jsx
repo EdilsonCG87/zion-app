@@ -76,12 +76,18 @@ const {
 } = useDashboard();
 
 const {
+
+    selectedHistorySong,
+    setSelectedHistorySong,
+
     songHistory,
     yearUsage,
     yearStats,
     monthlyStats,
+
     getSongHistory,
     getYearUsage
+
 } = useReports();
 
 // Plalist

@@ -9,6 +9,7 @@ export function useReports() {
     // =========================
 
     const [songHistory, setSongHistory] = useState([]);
+    const [selectedHistorySong, setSelectedHistorySong] = useState("");
     const [yearUsage, setYearUsage] = useState([]);
 
     const [yearStats, setYearStats] = useState({
@@ -199,14 +200,17 @@ export function useReports() {
 
     return {
 
-        songHistory,
-        yearUsage,
-        yearStats,
-        monthlyStats,
+    selectedHistorySong,
+    setSelectedHistorySong,
 
-        getSongHistory,
-        getYearUsage
+    songHistory,
+    yearUsage,
+    yearStats,
+    monthlyStats,
 
-    };
+    getSongHistory,
+    getYearUsage
+
+};
 
 }
