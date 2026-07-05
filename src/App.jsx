@@ -38,7 +38,8 @@ const {
 
     getPlaylists,
     createPlaylist,
-    getPlaylistSongs
+    getPlaylistSongs,
+    deletePlaylist
 
 } = usePlaylists();
 
@@ -69,7 +70,6 @@ const [selectedPlaylist, setSelectedPlaylist] = useState("");
 const sortedPlaylists = [...playlists].sort( (a, b) => new Date(a.serviceDate) - new Date(b.serviceDate)  );
   
 // Dashboard
-const [playlistSongs, setPlaylistSongs] = useState([]);
 const [selectedSong, setSelectedSong] = useState("");
 
 // Reportes
