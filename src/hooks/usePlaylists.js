@@ -4,11 +4,12 @@ import Swal from "sweetalert2";
 
 export function usePlaylists() {
 
-    const [playlists, setPlaylists] = useState([]);
+const [playlists, setPlaylists] = useState([]);
+const [playlistSongs, setPlaylistSongs] = useState([]);
 
-    // =========================
-    // OBTENER CULTOS
-    // =========================
+// =========================
+// OBTENER CULTOS
+// =========================
 
     const getPlaylists = async () => {
 
@@ -103,6 +104,33 @@ export function usePlaylists() {
     };
 
 // =========================
+// OBTENER CANCIONES DEL CULTO
+// =========================
+
+const getPlaylistSongs = async (playlistId) => {
+
+    if (!playlistId) return;
+
+    try {
+
+        const response = await API.get(
+
+            `/playlist-songs/${playlistId}`
+
+        );
+
+        setPlaylistSongs(response.data);
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+};
+    
+
+// =========================
 // ELIMINAR CULTO
 // =========================
 
@@ -110,8 +138,7 @@ const deletePlaylist = async (
 
     selectedPlaylist,
     setSelectedPlaylist,
-    setPlaylistSongs
-
+    
 ) => {
 
     if (!selectedPlaylist) {
@@ -185,12 +212,17 @@ const deletePlaylist = async (
 
 };
 
-    return {
+return {
 
     playlists,
     setPlaylists,
+
+    playlistSongs,
+    setPlaylistSongs,
+
     getPlaylists,
     createPlaylist,
+    getPlaylistSongs,
     deletePlaylist
 
 };

@@ -32,9 +32,14 @@ const [nextService, setNextService] = useState(null);
 const {
     playlists,
     setPlaylists,
+
+    playlistSongs,
+    setPlaylistSongs,
+
     getPlaylists,
     createPlaylist,
-    deletePlaylist
+    getPlaylistSongs
+
 } = usePlaylists();
 
 const {
@@ -318,27 +323,6 @@ const {
 // =========================
 // FUNCIONES PLAYLISTS
 // =========================
-
-// Obtener canciones del culto
-const getPlaylistSongs = async (
-  playlistId
-) => {
-
-  if (!playlistId) return;
-
-  try {
-
-    const response = await API.get(
-      `/playlist-songs/${playlistId}`
-    );
-
-    setPlaylistSongs(response.data);
-
-  } catch (error) {
-
-    console.error(error);
-  }
-};
 
 // Agregar canción al culto
 const addSongToPlaylist = async () => {
