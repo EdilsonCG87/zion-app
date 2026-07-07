@@ -4,12 +4,16 @@ import Swal from "sweetalert2";
 
 export function usePlaylists() {
 
-const [playlists, setPlaylists] = useState([]);
-const [playlistSongs, setPlaylistSongs] = useState([]);
+    // =========================
+    // STATES
+    // =========================
 
-// =========================
-// OBTENER CULTOS
-// =========================
+    const [playlists, setPlaylists] = useState([]);
+    const [playlistSongs, setPlaylistSongs] = useState([]);
+
+    // =========================
+    // OBTENER CULTOS
+    // =========================
 
     const getPlaylists = async () => {
 
@@ -24,15 +28,16 @@ const [playlistSongs, setPlaylistSongs] = useState([]);
             console.error(error);
 
             Swal.fire({
+
                 icon: "error",
                 title: "Error",
-                text: "No fue posible cargar playlists"
+                text: "No fue posible cargar los cultos"
+
             });
 
         }
 
     };
-
 
     // =========================
     // CREAR CULTO
@@ -50,12 +55,15 @@ const [playlistSongs, setPlaylistSongs] = useState([]);
         if (!playlistName.trim()) {
 
             Swal.fire({
+
                 icon: "warning",
                 title: "Nombre requerido",
                 text: "Escribe un nombre para el culto"
+
             });
 
             return;
+
         }
 
         try {
@@ -63,25 +71,20 @@ const [playlistSongs, setPlaylistSongs] = useState([]);
             await API.post("/playlists", {
 
                 name: playlistName,
-
-                serviceDate: serviceDate
+                serviceDate
 
             });
 
             Swal.fire({
 
                 icon: "success",
-
                 title: "Culto creado",
-
                 timer: 1500,
-
                 showConfirmButton: false
 
             });
 
             setPlaylistName("");
-
             setServiceDate("");
 
             await getPlaylists();
@@ -93,9 +96,7 @@ const [playlistSongs, setPlaylistSongs] = useState([]);
             Swal.fire({
 
                 icon: "error",
-
                 title: "Error",
-
                 text: "No se pudo crear el culto"
 
             });
@@ -104,127 +105,147 @@ const [playlistSongs, setPlaylistSongs] = useState([]);
 
     };
 
-// =========================
-// OBTENER CANCIONES DEL CULTO
-// =========================
+    // =========================
+    // ACTUALIZAR CULTO
+    // =========================
 
-const getPlaylistSongs = async (playlistId) => {
+    const updatePlaylist = async (
 
-    if (!playlistId) return;
+        selectedPlaylist,
+        data
 
-    try {
+    ) => {
 
-        const response = await API.get(
+        try {
 
-            `/playlist-songs/${playlistId}`
+            await API.put(
 
-        );
+                `/playlists/${selectedPlaylist}`,
+                data
 
-        setPlaylistSongs(response.data);
+            );
 
-    } catch (error) {
+            Swal.fire({
 
-        console.error(error);
+                icon: "success",
+                title: "Culto actualizado",
+                timer: 1500,
+                showConfirmButton: false
 
-    }
+            });
 
-};
+            await getPlaylists();
 
-// =========================
-// ELIMINAR CULTO
-// =========================
+        } catch (error) {
 
-const deletePlaylist = async (
+            console.error(error);
 
-    selectedPlaylist,
-    setSelectedPlaylist,
-    
-) => {
+            Swal.fire({
 
-    if (!selectedPlaylist) {
+                icon: "error",
+                title: "Error",
+                text: "No se pudo actualizar el culto"
 
-        Swal.fire({
+            });
+
+        }
+
+    };
+
+    // =========================
+    // ELIMINAR CULTO
+    // =========================
+
+    const deletePlaylist = async (
+
+        selectedPlaylist,
+        setSelectedPlaylist
+
+    ) => {
+
+        if (!selectedPlaylist) {
+
+            Swal.fire({
+
+                icon: "warning",
+                title: "Selecciona un culto"
+
+            });
+
+            return;
+
+        }
+
+        const result = await Swal.fire({
+
+            title: "¿Eliminar culto?",
+            text: "Esta acción no se puede deshacer.",
             icon: "warning",
-            title: "Selecciona un culto"
-        });
 
-        return;
-    }
+            showCancelButton: true,
 
-    const result = await Swal.fire({
-
-        title: "¿Eliminar culto?",
-
-        text: "Esta acción no se puede deshacer",
-
-        icon: "warning",
-
-        showCancelButton: true,
-
-        confirmButtonText: "Sí, eliminar",
-
-        cancelButtonText: "Cancelar"
-
-    });
-
-    if (!result.isConfirmed)
-        return;
-
-    try {
-
-        await API.delete(`/playlists/${selectedPlaylist}`);
-
-        Swal.fire({
-
-            icon: "success",
-
-            title: "Culto eliminado",
-
-            timer: 1200,
-
-            showConfirmButton: false
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
 
         });
 
-        setSelectedPlaylist("");
+        if (!result.isConfirmed)
+            return;
 
-        setPlaylistSongs([]);
+        try {
 
-        await getPlaylists();
+            await API.delete(
 
-    } catch (error) {
+                `/playlists/${selectedPlaylist}`
 
-        console.error(error);
+            );
 
-        Swal.fire({
+            Swal.fire({
 
-            icon: "error",
+                icon: "success",
+                title: "Culto eliminado",
+                timer: 1200,
+                showConfirmButton: false
 
-            title: "Error",
+            });
 
-            text:
-                error.response?.data?.message ||
-                error.message
+            setSelectedPlaylist("");
 
-        });
+            setPlaylistSongs([]);
 
-    }
+            await getPlaylists();
 
-};
+        } catch (error) {
 
-return {
+            console.error(error);
 
-    playlists,
-    setPlaylists,
+            Swal.fire({
 
-    playlistSongs,
-    setPlaylistSongs,
+                icon: "error",
+                title: "Error",
+                text:
+                    error.response?.data?.message ||
+                    error.message
 
-    getPlaylists,
-    createPlaylist,
-    getPlaylistSongs,
-    deletePlaylist
+            });
 
-};
+        }
+
+    };
+
+    return {
+
+        playlists,
+        setPlaylists,
+
+        playlistSongs,
+        setPlaylistSongs,
+
+        getPlaylists,
+        createPlaylist,
+        updatePlaylist,
+        deletePlaylist
+
+    };
 
 }
