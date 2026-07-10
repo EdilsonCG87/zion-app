@@ -16,7 +16,7 @@ return (
         type="text"
         placeholder="Nombre"
         value={name}
-        onChange={(e) => setName(e.target.value)}
+        onChange={({ target }) => setName(target.value)}
     />
 
     <input
@@ -41,8 +41,9 @@ return (
     />
 
     <button
-        className="save-btn"
-        onClick={saveSong}
+    type="button"
+    className="save-btn"
+    onClick={saveSong}
     >
         {editingId ? "Actualizar" : "Guardar"}
     </button>
