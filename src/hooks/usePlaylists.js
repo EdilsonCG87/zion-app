@@ -11,9 +11,19 @@ export function usePlaylists() {
     const [playlists, setPlaylists] = useState([]);
     const [playlistSongs, setPlaylistSongs] = useState([]);
 
-    // =========================
-    // OBTENER CULTOS
-    // =========================
+// =========================
+// ESTADOS DEL MÓDULO PLAYLIST
+// =========================
+
+const [playlistName, setPlaylistName] = useState("");
+const [serviceDate, setServiceDate] = useState("");
+
+const [selectedPlaylist, setSelectedPlaylist] = useState("");
+const [selectedSong, setSelectedSong] = useState("");
+
+// =========================
+// OBTENER CULTOS
+// =========================
 
     const getPlaylists = async () => {
 
@@ -235,17 +245,33 @@ export function usePlaylists() {
 
     return {
 
-        playlists,
-        setPlaylists,
+    // Estados
 
-        playlistSongs,
-        setPlaylistSongs,
+    playlists,
+    setPlaylists,
 
-        getPlaylists,
-        createPlaylist,
-        updatePlaylist,
-        deletePlaylist
+    playlistSongs,
+    setPlaylistSongs,
 
-    };
+    playlistName,
+    setPlaylistName,
+
+    serviceDate,
+    setServiceDate,
+
+    selectedPlaylist,
+    setSelectedPlaylist,
+
+    selectedSong,
+    setSelectedSong,
+
+    // Funciones
+
+    getPlaylists,
+    createPlaylist,
+    updatePlaylist,
+    deletePlaylist
+
+};
 
 }
