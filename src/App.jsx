@@ -43,25 +43,36 @@ const {
 
 } = usePlaylists();
 
+const songsHook = useSongs();
+
 const {
+
     songs,
-    setSongs,
     search,
     setSearch,
+
     name,
     setName,
+
     author,
     setAuthor,
+
     keyTone,
     setKeyTone,
+
     bpm,
     setBpm,
+
     editingId,
-    setEditingId,
-    deletedSong,
-    setDeletedSong,
-    getSongs
-} = useSongs();
+
+    getSongs,
+
+    saveSong,
+    editSong,
+    toggleFavorite,
+    confirmDelete
+
+} = songsHook;
   
 // Canciones 
 const [playlistName, setPlaylistName] = useState("");
@@ -109,216 +120,6 @@ const {
     getUnusedSongs,
     getOverusedSongs
 } = useStatistics();
-
-// =========================
-// CRUD CANCIONES
-// =========================
-  const saveSong = async () => {
-
-    const songData = {
-      name,
-      author,
-      keyTone,
-      bpm
-    };
-
-    try {
-
-      // EDITAR
-      if (editingId) {
-
-        await API.put(
-          `/songs/${editingId}`,
-          songData
-        );
-
-        Swal.fire({
-          icon: "success",
-          title: "Canción actualizada",
-          timer: 1500,
-          showConfirmButton: false
-        });
-
-      } else {
-
-        // CREAR
-        await API.post(
-          `/songs`,
-          songData
-        );
-
-        Swal.fire({
-          icon: "success",
-          title: "Canción guardada",
-          timer: 1500,
-          showConfirmButton: false
-        });
-      }
-
-      // LIMPIAR FORMULARIO
-
-      setName("");
-      setAuthor("");
-      setKeyTone("");
-      setBpm("");
-      setEditingId(null);
-
-      getSongs();
-
-    } catch (error) {
-
-      console.error(error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No fue posible guardar"
-      });
-    }
-  };
-
-  // =========================
-  // EDITAR
-  // =========================
-
-  const editSong = (song) => {
-
-    setName(song.name);
-    setAuthor(song.author);
-    setKeyTone(song.keyTone);
-    setBpm(song.bpm);
-
-    setEditingId(song.id);
-  };
-
-  // =========================
-  // FAVORITAS
-  // =========================
-
-  const toggleFavorite = async (song) => {
-
-    try {
-
-      await API.put(
-        `/songs/${song.id}`,
-        {
-          ...song,
-          favorite: !song.favorite
-        }
-      );
-
-      getSongs();
-
-    } catch (error) {
-
-      console.error(error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo actualizar favorita"
-      });
-    }
-  };
-
-  // =========================
-  // ELIMINAR
-  // =========================
-
-  const deleteSong = async (id) => {
-
-    try {
-
-      const songToDelete = songs.find(song => song.id === id);
-
-      setDeletedSong(songToDelete);
-
-      await API.delete(
-        `/songs/${id}`
-      );
-
-      getSongs();
-
-      Swal.fire({
-        title: "Canción eliminada",
-        text: "Puedes deshacer la acción",
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonText: "Deshacer",
-        cancelButtonText: "Cerrar"
-      }).then((result) => {
-
-        if (result.isConfirmed) {
-
-          undoDelete();
-        }
-      });
-
-    } catch (error) {
-
-      console.error(error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No fue posible eliminar"
-      });
-    }
-  };
-
-  // =========================
-  // DESHACER ELIMINACIÓN
-  // =========================
-
-  const undoDelete = async () => {
-
-    if (!deletedSong) return;
-
-    try {
-
-      await API.post(
-        `/songs`,
-        deletedSong
-      );
-
-      getSongs();
-
-      Swal.fire({
-        icon: "success",
-        title: "Canción restaurada",
-        timer: 1500,
-        showConfirmButton: false
-      });
-
-    } catch (error) {
-
-      console.error(error);
-    }
-  };
-
-  // =========================
-  // CONFIRMAR ELIMINAR
-  // =========================
-
-  const confirmDelete = (id) => {
-
-    Swal.fire({
-      title: "¿Eliminar canción?",
-      text: "Podrás deshacer la acción",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar"
-    }).then((result) => {
-
-      if (result.isConfirmed) {
-
-        deleteSong(id);
-      }
-    });
-  };
 
 // =========================
 // FUNCIONES PLAYLISTS
