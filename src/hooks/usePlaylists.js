@@ -10,16 +10,18 @@ import API from "../services/api";
 // =========================
 export function usePlaylists() {
 
-    // =========================
-    // STATES
-    // =========================
+// =========================
+// STATES
+// =========================
 
-    const [playlists, setPlaylists] = useState([]);
-    const [playlistName, setPlaylistName] = useState("");
-    const [serviceDate, setServiceDate] = useState("");
+const [playlists, setPlaylists] = useState([]);
+const [playlistSongs, setPlaylistSongs] = useState([]);
 
-    const [selectedPlaylist, setSelectedPlaylist] = useState("");
-    const [selectedSong, setSelectedSong] = useState("");
+const [playlistName, setPlaylistName] = useState("");
+const [serviceDate, setServiceDate] = useState("");
+
+const [selectedPlaylist, setSelectedPlaylist] = useState("");
+const [selectedSong, setSelectedSong] = useState("");
 
     // =========================
     // FUNCIONES AUXILIARES
@@ -237,18 +239,93 @@ await getPlaylists();
         }
 
     };
+
+// =========================
+// INICIAR EDICIÓN DE CULTO
+// =========================
+
+const startEditPlaylist = async () => {
+
+    if (!selectedPlaylist) {
+
+        Swal.fire({
+
+            icon: "warning",
+            title: "Selecciona un culto"
+
+        });
+
+        return;
+
+    }
+
+    const selected = playlists.find(
+
+        playlist => playlist.id === Number(selectedPlaylist)
+
+    );
+
+    if (!selected) return;
+
+    const result = await Swal.fire({
+
+        title: "Editar Culto",
+
+        html: `
+
+            <input
+                id="swal-name"
+                class="swal2-input"
+                placeholder="Nombre"
+                value="${selected.name}"
+            >
+
+            <input
+                id="swal-date"
+                type="date"
+                class="swal2-input"
+                value="${selected.serviceDate}"
+            >
+
+        `,
+
+        focusConfirm: false,
+
+        showCancelButton: true,
+
+        confirmButtonText: "Guardar",
+
+        cancelButtonText: "Cancelar",
+
+        preConfirm: () => ({
+
+            name: document.getElementById("swal-name").value,
+
+            serviceDate: document.getElementById("swal-date").value
+
+        })
+
+    });
+
+    if (!result.isConfirmed) return;
+
+    await updatePlaylist(result.value);
+
+};
+
 // =========================
 // RETURN
 // =========================
 
 return {
 
-// =========================
-// STATES
-// =========================
+    // Estados
 
     playlists,
     setPlaylists,
+
+    playlistSongs,
+    setPlaylistSongs,
 
     playlistName,
     setPlaylistName,
@@ -262,17 +339,13 @@ return {
     selectedSong,
     setSelectedSong,
 
-// =========================
-// FUNCIONES
-// =========================
+    // Funciones
 
     getPlaylists,
-
     createPlaylist,
-
     updatePlaylist,
-
-    deletePlaylist
+    deletePlaylist,
+    startEditPlaylist
 
 };
 

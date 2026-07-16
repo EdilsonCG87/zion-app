@@ -8,6 +8,7 @@ import logo from "./assets/logo.png";
 
 import { useSongs } from "./hooks/useSongs";
 import { usePlaylists } from "./hooks/usePlaylists";
+import { usePlaylistSongs } from "./hooks/usePlaylistSongs";
 import { useDashboard } from "./hooks/useDashboard";
 import { useReports } from "./hooks/useReports";
 import { useStatistics } from "./hooks/useStatistics";
@@ -30,16 +31,6 @@ const [activeTab, setActiveTab] =
     useState("dashboard");
 const [nextService, setNextService] =
     useState(null);
-
-// Playlist
-const [playlistName, setPlaylistName] =
-    useState("");
-const [serviceDate, setServiceDate] =
-    useState("");
-const [selectedPlaylist, setSelectedPlaylist] =
-    useState("");
-const [selectedSong, setSelectedSong] =
-    useState("");
 
 // Dashboard
 const [showTopSongs, setShowTopSongs] =
@@ -80,18 +71,46 @@ const {
 
 // Cultos
 const playlistsHook = usePlaylists();
-const {
-    playlists,
-    setPlaylists,
 
-    playlistSongs,
-    setPlaylistSongs,
+const {
+
+    playlists,
+
+    playlistName,
+    setPlaylistName,
+
+    serviceDate,
+    setServiceDate,
+
+    selectedPlaylist,
+    setSelectedPlaylist,
+
+    selectedSong,
+    setSelectedSong,
 
     getPlaylists,
     createPlaylist,
-    getPlaylistSongs,
-    deletePlaylist
+    updatePlaylist,
+    deletePlaylist,
+    startEditPlaylist
+
 } = playlistsHook;
+
+const playlistSongsHook = usePlaylistSongs();
+
+const {
+
+    playlistSongs,
+
+    getPlaylistSongs,
+
+    addSongToPlaylist,
+
+    removeSongFromPlaylist,
+
+    moveSong
+
+} = playlistSongsHook;
 
 // Dashboard
 const dashboardHook = useDashboard();
@@ -135,310 +154,6 @@ const {
   const [showUnusedSongs, setShowUnusedSongs] = useState(false);
   const [showOverusedSongs, setShowOverusedSongs] = useState(false);
   const [showYearReport, setShowYearReport] = useState(false);
-  
-// =========================
-// FUNCIONES PLAYLISTS
-// =========================
-
-// Agregar canción al culto
-const addSongToPlaylist = async () => {
-
-  if (!selectedPlaylist || !selectedSong) {
-
-    Swal.fire({
-      icon: "warning",
-      title: "Faltan datos",
-      text: "Selecciona culto y canción"
-    });
-
-    return;
-  }
-
-  try {
-
-    await API.post(
-      `/playlist-songs`,
-      {
-        playlistId: Number(selectedPlaylist),
-        songId: Number(selectedSong),
-        orderNumber:
-          playlistSongs.length + 1
-      }
-    );
-
-      // AUMENTAR ESTADÍSTICA
-
-    await API.put(
-      `/songs/${selectedSong}/play`
-    );
-    
-    Swal.fire({
-      icon: "success",
-      title: "Canción agregada",
-      timer: 1200,
-      showConfirmButton: false
-    });
-
-    getPlaylistSongs(
-      selectedPlaylist
-    );
-    getTopSongs();
-    
-  } catch (error) {
-
-    console.error(error);
-
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text:
-        "No se pudo agregar la canción"
-    });
-  }
-};
-
-// Eliminar canción del culto
-const removeSongFromPlaylist = async (
-  playlistSongId
-) => {
-
-  try {
-
-    await API.delete(
-      `/playlist-songs/${playlistSongId}`
-    );
-
-    Swal.fire({
-      icon: "success",
-      title: "Canción eliminada",
-      timer: 1200,
-      showConfirmButton: false
-    });
-
-    getPlaylistSongs(
-      selectedPlaylist
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text:
-        "No se pudo eliminar la canción"
-    });
-  }
-};
-
-// Mover canción en el orden del culto
-const moveSong = async (
-  index,
-  direction
-) => {
-
-  const updatedSongs =
-    [...playlistSongs];
-
-  const newIndex =
-    direction === "up"
-      ? index - 1
-      : index + 1;
-
-  // VALIDAR LÍMITES
-
-  if (
-    newIndex < 0 ||
-    newIndex >= updatedSongs.length
-  ) {
-    return;
-  }
-
-  // INTERCAMBIAR POSICIÓN
-
-  [
-    updatedSongs[index],
-    updatedSongs[newIndex]
-  ] = [
-    updatedSongs[newIndex],
-    updatedSongs[index]
-  ];
-
-  // NUEVO ORDEN
-
-  const reorderedSongs =
-    updatedSongs.map(
-      (song, i) => ({
-        ...song,
-        orderNumber: i + 1
-      })
-    );
-
-  try {
-
-    // GUARDAR EN BACKEND
-
-    for (
-      const item of reorderedSongs
-    ) {
-
-      await API.put(
-        `/playlist-songs/${item.id}`,
-        item
-      );
-    }
-
-    // ACTUALIZAR PANTALLA
-
-    setPlaylistSongs(
-      reorderedSongs
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text:
-        "No se pudo mover la canción"
-    });
-  }
-};
-
-
-// Editar Cultos
-
-const startEditPlaylist = async () => {
-
-  if (!selectedPlaylist) {
-
-    Swal.fire({
-      icon: "warning",
-      title: "Selecciona un culto"
-    });
-
-    return;
-  }
-
-  const selected =
-    playlists.find(
-      p =>
-        p.id ===
-        Number(selectedPlaylist)
-    );
-
-  if (!selected) return;
-
-  const result =
-    await Swal.fire({
-
-      title: "Editar Culto",
-
-      html: `
-
-        <input
-          id="swal-name"
-          class="swal2-input"
-          placeholder="Nombre"
-          value="${selected.name}"
-        >
-
-        <input
-          id="swal-date"
-          type="date"
-          class="swal2-input"
-          value="${selected.serviceDate}"
-        >
-
-      `,
-
-      focusConfirm: false,
-
-      showCancelButton: true,
-
-      confirmButtonText: "Guardar",
-
-      cancelButtonText: "Cancelar",
-
-      preConfirm: () => {
-
-        return {
-
-          name:
-            document.getElementById(
-              "swal-name"
-            ).value,
-
-          serviceDate:
-            document.getElementById(
-              "swal-date"
-            ).value
-
-        };
-
-      }
-
-    });
-
-  if (!result.isConfirmed)
-    return;
-
-  updatePlaylist(
-    result.value
-  );
-};
-
-// Parte 3 Edición Cultos
-
-const updatePlaylist =
-  async (data) => {
-
-    try {
-
-      await API.put(
-
-        `/playlists/${selectedPlaylist}`,
-
-        data
-
-      );
-
-      Swal.fire({
-
-        icon: "success",
-
-        title:
-          "Culto actualizado",
-
-        timer: 1500,
-
-        showConfirmButton:
-          false
-
-      });
-
-      getPlaylists();
-
-    } catch (error) {
-
-      console.error(error);
-
-      Swal.fire({
-
-        icon: "error",
-
-        title: "Error",
-
-        text:
-          "No se pudo actualizar"
-
-      });
-
-    }
-};
 
 
 // =========================
