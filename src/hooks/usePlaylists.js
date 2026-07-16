@@ -1,7 +1,13 @@
+// =========================
+// IMPORTS
+// =========================
 import { useState } from "react";
-import API from "../services/api";
 import Swal from "sweetalert2";
+import API from "../services/api";
 
+// =========================
+// HOOK
+// =========================
 export function usePlaylists() {
 
     // =========================
@@ -9,21 +15,26 @@ export function usePlaylists() {
     // =========================
 
     const [playlists, setPlaylists] = useState([]);
-    const [playlistSongs, setPlaylistSongs] = useState([]);
+    const [playlistName, setPlaylistName] = useState("");
+    const [serviceDate, setServiceDate] = useState("");
 
-// =========================
-// ESTADOS DEL MÓDULO PLAYLIST
-// =========================
+    const [selectedPlaylist, setSelectedPlaylist] = useState("");
+    const [selectedSong, setSelectedSong] = useState("");
 
-const [playlistName, setPlaylistName] = useState("");
-const [serviceDate, setServiceDate] = useState("");
+    // =========================
+    // FUNCIONES AUXILIARES
+    // =========================
 
-const [selectedPlaylist, setSelectedPlaylist] = useState("");
-const [selectedSong, setSelectedSong] = useState("");
+    const clearPlaylistForm = () => {
 
-// =========================
-// OBTENER CULTOS
-// =========================
+        setPlaylistName("");
+        setServiceDate("");
+
+    };
+
+    // =========================
+    // OBTENER CULTOS
+    // =========================
 
     const getPlaylists = async () => {
 
@@ -41,7 +52,7 @@ const [selectedSong, setSelectedSong] = useState("");
 
                 icon: "error",
                 title: "Error",
-                text: "No fue posible cargar los cultos"
+                text: "No fue posible cargar los cultos."
 
             });
 
@@ -53,14 +64,7 @@ const [selectedSong, setSelectedSong] = useState("");
     // CREAR CULTO
     // =========================
 
-    const createPlaylist = async (
-
-        playlistName,
-        serviceDate,
-        setPlaylistName,
-        setServiceDate
-
-    ) => {
+    const createPlaylist = async () => {
 
         if (!playlistName.trim()) {
 
@@ -68,7 +72,7 @@ const [selectedSong, setSelectedSong] = useState("");
 
                 icon: "warning",
                 title: "Nombre requerido",
-                text: "Escribe un nombre para el culto"
+                text: "Debes escribir un nombre para el culto."
 
             });
 
@@ -80,7 +84,7 @@ const [selectedSong, setSelectedSong] = useState("");
 
             await API.post("/playlists", {
 
-                name: playlistName,
+                name: playlistName.trim(),
                 serviceDate
 
             });
@@ -89,13 +93,13 @@ const [selectedSong, setSelectedSong] = useState("");
 
                 icon: "success",
                 title: "Culto creado",
+
                 timer: 1500,
                 showConfirmButton: false
 
             });
 
-            setPlaylistName("");
-            setServiceDate("");
+            clearPlaylistForm();
 
             await getPlaylists();
 
@@ -107,7 +111,7 @@ const [selectedSong, setSelectedSong] = useState("");
 
                 icon: "error",
                 title: "Error",
-                text: "No se pudo crear el culto"
+                text: "No fue posible crear el culto."
 
             });
 
@@ -119,18 +123,14 @@ const [selectedSong, setSelectedSong] = useState("");
     // ACTUALIZAR CULTO
     // =========================
 
-    const updatePlaylist = async (
-
-        selectedPlaylist,
-        data
-
-    ) => {
+    const updatePlaylist = async (data) => {
 
         try {
 
             await API.put(
 
                 `/playlists/${selectedPlaylist}`,
+
                 data
 
             );
@@ -139,6 +139,7 @@ const [selectedSong, setSelectedSong] = useState("");
 
                 icon: "success",
                 title: "Culto actualizado",
+
                 timer: 1500,
                 showConfirmButton: false
 
@@ -154,7 +155,7 @@ const [selectedSong, setSelectedSong] = useState("");
 
                 icon: "error",
                 title: "Error",
-                text: "No se pudo actualizar el culto"
+                text: "No fue posible actualizar el culto."
 
             });
 
@@ -166,12 +167,7 @@ const [selectedSong, setSelectedSong] = useState("");
     // ELIMINAR CULTO
     // =========================
 
-    const deletePlaylist = async (
-
-        selectedPlaylist,
-        setSelectedPlaylist
-
-    ) => {
+    const deletePlaylist = async () => {
 
         if (!selectedPlaylist) {
 
@@ -189,41 +185,39 @@ const [selectedSong, setSelectedSong] = useState("");
         const result = await Swal.fire({
 
             title: "¿Eliminar culto?",
+
             text: "Esta acción no se puede deshacer.",
+
             icon: "warning",
 
             showCancelButton: true,
 
             confirmButtonText: "Sí, eliminar",
+
             cancelButtonText: "Cancelar"
 
         });
 
-        if (!result.isConfirmed)
-            return;
+        if (!result.isConfirmed) return;
 
         try {
 
             await API.delete(
+    `/playlists/${selectedPlaylist}`
+);
 
-                `/playlists/${selectedPlaylist}`
+Swal.fire({
 
-            );
+    icon: "success",
+    title: "Culto eliminado",
+    timer: 1200,
+    showConfirmButton: false
 
-            Swal.fire({
+});
 
-                icon: "success",
-                title: "Culto eliminado",
-                timer: 1200,
-                showConfirmButton: false
+setSelectedPlaylist("");
 
-            });
-
-            setSelectedPlaylist("");
-
-            setPlaylistSongs([]);
-
-            await getPlaylists();
+await getPlaylists();
 
         } catch (error) {
 
@@ -233,25 +227,28 @@ const [selectedSong, setSelectedSong] = useState("");
 
                 icon: "error",
                 title: "Error",
+
                 text:
                     error.response?.data?.message ||
-                    error.message
+                    "No fue posible eliminar el culto."
 
             });
 
         }
 
     };
+// =========================
+// RETURN
+// =========================
 
-    return {
+return {
 
-    // Estados
+// =========================
+// STATES
+// =========================
 
     playlists,
     setPlaylists,
-
-    playlistSongs,
-    setPlaylistSongs,
 
     playlistName,
     setPlaylistName,
@@ -265,13 +262,22 @@ const [selectedSong, setSelectedSong] = useState("");
     selectedSong,
     setSelectedSong,
 
-    // Funciones
+// =========================
+// FUNCIONES
+// =========================
 
     getPlaylists,
+
     createPlaylist,
+
     updatePlaylist,
+
     deletePlaylist
 
 };
 
 }
+
+// =========================
+// FIN DEL HOOK
+// =========================
