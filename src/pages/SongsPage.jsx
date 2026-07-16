@@ -12,12 +12,9 @@ import SongTable from "../components/SongTable";
 // COMPONENTE
 // =========================
 function SongsPage({
-
     songsHook,
-
     getTopSongs,
     getOverusedSongs
-
 }) {
 
     // =========================

@@ -773,13 +773,9 @@ const daysRemaining = nextService
 {activeTab === "songs" && (
 
     <SongsPage
-
         songsHook={songsHook}
-
         getTopSongs={getTopSongs}
-
         getOverusedSongs={getOverusedSongs}
-
     />
 
 )}
