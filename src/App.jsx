@@ -2,16 +2,16 @@
 // IMPORTS
 // =========================
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
-import jsPDF from "jspdf";
 import "./App.css";
+
 import logo from "./assets/logo.png";
-import API from "./services/api";
+
 import { useSongs } from "./hooks/useSongs";
 import { usePlaylists } from "./hooks/usePlaylists";
 import { useDashboard } from "./hooks/useDashboard";
 import { useReports } from "./hooks/useReports";
 import { useStatistics } from "./hooks/useStatistics";
+
 import DashboardPage from "./pages/DashboardPage";
 import PlaylistPage from "./pages/PlaylistPage";
 import SongsPage from "./pages/SongsPage";
@@ -49,44 +49,87 @@ const [showTopSongs, setShowTopSongs] =
 // HOOKS
 // =========================
 
+// Canciones
 const songsHook = useSongs();
-
 const {
     songs,
-    getSongs
+    search,
+    setSearch,
+
+    name,
+    setName,
+
+    author,
+    setAuthor,
+
+    keyTone,
+    setKeyTone,
+
+    bpm,
+    setBpm,
+
+    editingId,
+
+    getSongs,
+
+    saveSong,
+    editSong,
+    toggleFavorite,
+    confirmDelete
 } = songsHook;
 
+// Cultos
+const playlistsHook = usePlaylists();
 const {
     playlists,
+    setPlaylists,
+
     playlistSongs,
+    setPlaylistSongs,
+
     getPlaylists,
     createPlaylist,
     getPlaylistSongs,
-    deletePlaylist,
-    setPlaylistSongs
-} = usePlaylists();
+    deletePlaylist
+} = playlistsHook;
 
+// Dashboard
+const dashboardHook = useDashboard();
 const {
     totalSongs,
     totalServices,
     mostUsedSong,
     loadDashboard
-} = useDashboard();
+} = dashboardHook;
 
+// Reportes
+const reportsHook = useReports();
 const {
     selectedHistorySong,
     setSelectedHistorySong,
+
     songHistory,
+    yearUsage,
+    yearStats,
+    monthlyStats,
+
     getSongHistory,
     getYearUsage
-} = useReports();
+} = reportsHook;
 
+// Estadísticas
+const statisticsHook = useStatistics();
 const {
     topSongs,
+    unusedSongs,
+    overusedSongs,
+
     getTopSongs,
     getUnusedSongs,
     getOverusedSongs
-} = useStatistics();
+} = statisticsHook;
+
+
   
 // Plalist
   const [showUnusedSongs, setShowUnusedSongs] = useState(false);
