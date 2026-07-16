@@ -22,68 +22,50 @@ import AgendaPage from "./pages/AgendaPage";
 // =========================
 function App() {
 
-  // =========================
-  // STATES
-  // =========================
-const [showOrder, setShowOrder] = useState(true);
-const [showSongsList, setShowSongsList] = useState(false);
-const [activeTab, setActiveTab] = useState("dashboard");
-const [nextService, setNextService] = useState(null);
-const {
-    playlists,
-    setPlaylists,
+// =========================
+// STATES
+// =========================
 
-    playlistSongs,
-    setPlaylistSongs,
+const [activeTab, setActiveTab] =
+    useState("dashboard");
+const [nextService, setNextService] =
+    useState(null);
 
-    getPlaylists,
-    createPlaylist,
-    getPlaylistSongs,
-    deletePlaylist
+// Playlist
+const [playlistName, setPlaylistName] =
+    useState("");
+const [serviceDate, setServiceDate] =
+    useState("");
+const [selectedPlaylist, setSelectedPlaylist] =
+    useState("");
+const [selectedSong, setSelectedSong] =
+    useState("");
 
-} = usePlaylists();
+// Dashboard
+const [showTopSongs, setShowTopSongs] =
+    useState(false);
+
+// =========================
+// HOOKS
+// =========================
 
 const songsHook = useSongs();
 
 const {
-
     songs,
-    search,
-    setSearch,
-
-    name,
-    setName,
-
-    author,
-    setAuthor,
-
-    keyTone,
-    setKeyTone,
-
-    bpm,
-    setBpm,
-
-    editingId,
-
-    getSongs,
-
-    saveSong,
-    editSong,
-    toggleFavorite,
-    confirmDelete
-
+    getSongs
 } = songsHook;
-  
-// Canciones 
-const [playlistName, setPlaylistName] = useState("");
-const [serviceDate, setServiceDate] = useState("");
-const [selectedPlaylist, setSelectedPlaylist] = useState("");
-const sortedPlaylists = [...playlists].sort( (a, b) => new Date(a.serviceDate) - new Date(b.serviceDate)  );
-  
-// Dashboard
-const [selectedSong, setSelectedSong] = useState("");
 
-// Reportes
+const {
+    playlists,
+    playlistSongs,
+    getPlaylists,
+    createPlaylist,
+    getPlaylistSongs,
+    deletePlaylist,
+    setPlaylistSongs
+} = usePlaylists();
+
 const {
     totalSongs,
     totalServices,
@@ -92,35 +74,25 @@ const {
 } = useDashboard();
 
 const {
-
     selectedHistorySong,
     setSelectedHistorySong,
-
     songHistory,
-    yearUsage,
-    yearStats,
-    monthlyStats,
-
     getSongHistory,
     getYearUsage
-
 } = useReports();
 
-// Plalist
-  const [showTopSongs, setShowTopSongs] = useState(false);
-  const [showUnusedSongs, setShowUnusedSongs] = useState(false);
-  const [showOverusedSongs, setShowOverusedSongs] = useState(false);
-  const [showYearReport, setShowYearReport] = useState(false);
-  
-  const {
+const {
     topSongs,
-    unusedSongs,
-    overusedSongs,
     getTopSongs,
     getUnusedSongs,
     getOverusedSongs
 } = useStatistics();
-
+  
+// Plalist
+  const [showUnusedSongs, setShowUnusedSongs] = useState(false);
+  const [showOverusedSongs, setShowOverusedSongs] = useState(false);
+  const [showYearReport, setShowYearReport] = useState(false);
+  
 // =========================
 // FUNCIONES PLAYLISTS
 // =========================
@@ -636,14 +608,6 @@ useEffect(() => {
 // =========================
 // VARIABLES AUXILIARES
 // =========================
-const selectedPlaylistData =
-  Array.isArray(playlists)
-    ? playlists.find(
-        playlist =>
-          playlist.id ===
-          Number(selectedPlaylist)
-      )
-    : null;
 
 // Próximo culto
 
@@ -755,12 +719,25 @@ const daysRemaining = nextService
     startEditPlaylist={startEditPlaylist}
     exportPlaylistPDF={exportPlaylistPDF}
     shareWhatsApp={shareWhatsApp}
-
     selectedHistorySong={selectedHistorySong}
     setSelectedHistorySong={setSelectedHistorySong}
     songHistory={songHistory}
     getSongHistory={getSongHistory}
 />
+
+)}
+
+{activeTab === "songs" && (
+
+    <SongsPage
+
+        songsHook={songsHook}
+
+        getTopSongs={getTopSongs}
+
+        getOverusedSongs={getOverusedSongs}
+
+    />
 
 )}
 

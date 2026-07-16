@@ -1,120 +1,157 @@
+// =========================
+// IMPORTS
+// =========================
+import { useState } from "react";
+
 import SongForm from "../components/SongForm";
 import SearchBar from "../components/SearchBar";
 import ImportExcel from "../components/ImportExcel";
 import SongTable from "../components/SongTable";
 
+// =========================
+// COMPONENTE
+// =========================
 function SongsPage({
 
-songs,
-search,
-setSearch,
+    songsHook,
 
-name,
-setName,
-
-author,
-setAuthor,
-
-keyTone,
-setKeyTone,
-
-bpm,
-setBpm,
-
-editingId,
-saveSong,
-
-editSong,
-
-confirmDelete,
-
-toggleFavorite,
-
-showSongsList,
-
-setShowSongsList,
-
-getSongs,
-
-getTopSongs,
-
-getOverusedSongs
+    getTopSongs,
+    getOverusedSongs
 
 }) {
 
-return (
+    // =========================
+    // HOOK CANCIONES
+    // =========================
 
-<div className="tab-content">
+    const {
 
-<div className="playlist-card">
+        songs,
 
-<h2
-className="playlist-title"
-style={{ cursor: "pointer" }}
-onClick={() =>
-setShowSongsList(!showSongsList)
-}
->
+        search,
+        setSearch,
 
-🎵 Biblioteca de Canciones ({songs.length})
+        name,
+        setName,
 
-{showSongsList ? " ▼" : " ►"}
+        author,
+        setAuthor,
 
-</h2>
+        keyTone,
+        setKeyTone,
 
-</div>
+        bpm,
+        setBpm,
 
-<SongForm
-    name={name}
-    setName={setName}
+        editingId,
 
-    author={author}
-    setAuthor={setAuthor}
+        saveSong,
 
-    keyTone={keyTone}
-    setKeyTone={setKeyTone}
+        editSong,
 
-    bpm={bpm}
-    setBpm={setBpm}
+        confirmDelete,
 
-    saveSong={saveSong}
-    editingId={editingId}
-/>
+        toggleFavorite,
 
-<ImportExcel
+        getSongs
 
-onImported={() => {
+    } = songsHook;
 
-getSongs();
+    // =========================
+    // STATES LOCALES
+    // =========================
 
-getTopSongs();
+    const [showSongsList, setShowSongsList] = useState(false);
 
-getOverusedSongs();
+    // =========================
+    // HTML
+    // =========================
 
-}}
+    return (
 
-/>
+        <div className="tab-content">
 
-<SearchBar
-    search={search}
-    setSearch={setSearch}
-/>
+            <div className="playlist-card">
 
-{showSongsList && (
+                <h2
+                    className="playlist-title"
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                        setShowSongsList(!showSongsList)
+                    }
+                >
 
-    <SongTable
-        songs={songs}
-        search={search}
-        editSong={editSong}
-        confirmDelete={confirmDelete}
-        toggleFavorite={toggleFavorite}
-    />
+                    🎵 Biblioteca de Canciones ({songs.length})
 
-)}
+                    {showSongsList ? " ▼" : " ►"}
 
-</div>
+                </h2>
 
-);
+            </div>
+
+            <SongForm
+
+                name={name}
+                setName={setName}
+
+                author={author}
+                setAuthor={setAuthor}
+
+                keyTone={keyTone}
+                setKeyTone={setKeyTone}
+
+                bpm={bpm}
+                setBpm={setBpm}
+
+                saveSong={saveSong}
+
+                editingId={editingId}
+
+            />
+
+            <ImportExcel
+
+                onImported={() => {
+
+                    getSongs();
+
+                    getTopSongs();
+
+                    getOverusedSongs();
+
+                }}
+
+            />
+
+            <SearchBar
+
+                search={search}
+
+                setSearch={setSearch}
+
+            />
+
+            {showSongsList && (
+
+                <SongTable
+
+                    songs={songs}
+
+                    search={search}
+
+                    editSong={editSong}
+
+                    confirmDelete={confirmDelete}
+
+                    toggleFavorite={toggleFavorite}
+
+                />
+
+            )}
+
+        </div>
+
+    );
 
 }
 
