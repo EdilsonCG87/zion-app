@@ -240,6 +240,147 @@ await getPlaylists();
 
     };
 
+
+// =========================
+// OBTENER CANCIONES DEL CULTO
+// =========================
+
+const getPlaylistSongs = async (playlistId) => {
+
+    if (!playlistId) {
+
+        setPlaylistSongs([]);
+        return;
+
+    }
+
+    try {
+
+        const response = await API.get(
+            `/playlist-songs/playlist/${playlistId}`
+        );
+
+        setPlaylistSongs(response.data);
+
+    } catch (error) {
+
+        console.error(error);
+
+        Swal.fire({
+
+            icon: "error",
+            title: "Error",
+            text: "No fue posible cargar las canciones del culto."
+
+        });
+
+    }
+
+};
+
+// =========================
+// AGREGAR CANCIÓN AL CULTO
+// =========================
+
+const addSongToPlaylist = async () => {
+
+    if (!selectedPlaylist || !selectedSong) {
+
+        Swal.fire({
+
+            icon: "warning",
+            title: "Faltan datos",
+            text: "Selecciona un culto y una canción."
+
+        });
+
+        return;
+
+    }
+
+    try {
+
+        await API.post("/playlist-songs", {
+
+            playlistId: Number(selectedPlaylist),
+            songId: Number(selectedSong),
+            orderNumber: playlistSongs.length + 1
+
+        });
+
+        await API.put(
+            `/songs/${selectedSong}/play`
+        );
+
+        Swal.fire({
+
+            icon: "success",
+            title: "Canción agregada",
+
+            timer: 1200,
+            showConfirmButton: false
+
+        });
+
+        await getPlaylistSongs(selectedPlaylist);
+
+    } catch (error) {
+
+        console.error(error);
+
+        Swal.fire({
+
+            icon: "error",
+            title: "Error",
+            text: "No fue posible agregar la canción."
+
+        });
+
+    }
+
+};
+
+// =========================
+// ELIMINAR CANCIÓN DEL CULTO
+// =========================
+
+const removeSongFromPlaylist = async (playlistSongId) => {
+
+    try {
+
+        await API.delete(
+            `/playlist-songs/${playlistSongId}`
+        );
+
+        Swal.fire({
+
+            icon: "success",
+            title: "Canción eliminada",
+
+            timer: 1200,
+            showConfirmButton: false
+
+        });
+
+        await getPlaylistSongs(selectedPlaylist);
+
+    } catch (error) {
+
+        console.error(error);
+
+        Swal.fire({
+
+            icon: "error",
+            title: "Error",
+            text: "No fue posible eliminar la canción."
+
+        });
+
+    }
+
+};
+
+
 // =========================
 // INICIAR EDICIÓN DE CULTO
 // =========================
@@ -342,9 +483,15 @@ return {
     // Funciones
 
     getPlaylists,
+    getPlaylistSongs,
+
     createPlaylist,
     updatePlaylist,
     deletePlaylist,
+
+    addSongToPlaylist,
+    removeSongFromPlaylist,
+    
     startEditPlaylist
 
 };
