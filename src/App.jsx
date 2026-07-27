@@ -89,18 +89,14 @@ const {
     setSelectedSong,
 
     getPlaylists,
-    getPlaylistSongs,
 
     createPlaylist,
     updatePlaylist,
     deletePlaylist,
 
-    addSongToPlaylist,
-    removeSongFromPlaylist,
-
     startEditPlaylist
 
-} = usePlaylists();
+} = playlistsHook;
 
 const playlistSongsHook = usePlaylistSongs();
 
