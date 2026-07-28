@@ -15,7 +15,6 @@ export function usePlaylists() {
 // =========================
 
 const [playlists, setPlaylists] = useState([]);
-const [playlistSongs, setPlaylistSongs] = useState([]);
 
 const [playlistName, setPlaylistName] = useState("");
 const [serviceDate, setServiceDate] = useState("");
@@ -245,15 +244,6 @@ await getPlaylists();
 // OBTENER CANCIONES DEL CULTO
 // =========================
 
-const getPlaylistSongs = async (playlistId) => {
-
-    if (!playlistId) {
-
-        setPlaylistSongs([]);
-        return;
-
-    }
-
     try {
 
         const response = await API.get(
@@ -281,22 +271,6 @@ const getPlaylistSongs = async (playlistId) => {
 // =========================
 // AGREGAR CANCIÓN AL CULTO
 // =========================
-
-const addSongToPlaylist = async () => {
-
-    if (!selectedPlaylist || !selectedSong) {
-
-        Swal.fire({
-
-            icon: "warning",
-            title: "Faltan datos",
-            text: "Selecciona un culto y una canción."
-
-        });
-
-        return;
-
-    }
 
     try {
 
@@ -338,47 +312,12 @@ const addSongToPlaylist = async () => {
 
     }
 
-};
 
 // =========================
 // ELIMINAR CANCIÓN DEL CULTO
 // =========================
 
-const removeSongFromPlaylist = async (playlistSongId) => {
 
-    try {
-
-        await API.delete(
-            `/playlist-songs/${playlistSongId}`
-        );
-
-        Swal.fire({
-
-            icon: "success",
-            title: "Canción eliminada",
-
-            timer: 1200,
-            showConfirmButton: false
-
-        });
-
-        await getPlaylistSongs(selectedPlaylist);
-
-    } catch (error) {
-
-        console.error(error);
-
-        Swal.fire({
-
-            icon: "error",
-            title: "Error",
-            text: "No fue posible eliminar la canción."
-
-        });
-
-    }
-
-};
 
 
 // =========================
@@ -465,9 +404,6 @@ return {
     playlists,
     setPlaylists,
 
-    playlistSongs,
-    setPlaylistSongs,
-
     playlistName,
     setPlaylistName,
 
@@ -483,15 +419,11 @@ return {
     // Funciones
 
     getPlaylists,
-    getPlaylistSongs,
 
     createPlaylist,
     updatePlaylist,
     deletePlaylist,
 
-    addSongToPlaylist,
-    removeSongFromPlaylist,
-    
     startEditPlaylist
 
 };
