@@ -12,6 +12,7 @@ import { usePlaylistSongs } from "./hooks/usePlaylistSongs";
 import { useDashboard } from "./hooks/useDashboard";
 import { useReports } from "./hooks/useReports";
 import { useStatistics } from "./hooks/useStatistics";
+import { useNextService } from "./hooks/useNextService";
 
 import DashboardPage from "./pages/DashboardPage";
 import PlaylistPage from "./pages/PlaylistPage";
@@ -29,8 +30,6 @@ function App() {
 
 const [activeTab, setActiveTab] =
     useState("dashboard");
-const [nextService, setNextService] =
-    useState(null);
 
 // Dashboard
 const [showTopSongs, setShowTopSongs] =
@@ -150,13 +149,18 @@ const {
     getOverusedSongs
 } = statisticsHook;
 
-
-  
 // Plalist
   const [showUnusedSongs, setShowUnusedSongs] = useState(false);
   const [showOverusedSongs, setShowOverusedSongs] = useState(false);
   const [showYearReport, setShowYearReport] = useState(false);
 
+const {
+
+    nextService,
+
+    daysRemaining
+
+} = useNextService(playlists);
 
 // =========================
 // FUNCIONES PDF
@@ -305,9 +309,9 @@ const exportPlaylistPDF = () => {
   });
 };
 
-  // =========================
-  // USE EFFECT
-  // =========================
+// =========================
+// USE EFFECT
+// =========================
 
 useEffect(() => {
 
@@ -329,57 +333,6 @@ useEffect(() => {
   getYearUsage(2026);
 
 }, []);
-
-useEffect(() => {
-
-  const today = new Date();
-
-  today.setHours(0,0,0,0);
-
-  const upcomingServices =
-  Array.isArray(playlists)
-    ? playlists
-        .filter((playlist) => {
-          const serviceDate =
-            new Date(playlist.serviceDate);
-
-          serviceDate.setHours(0,0,0,0);
-
-          return serviceDate >= today;
-        })
-        .sort(
-          (a,b) =>
-            new Date(a.serviceDate) -
-            new Date(b.serviceDate)
-        )
-    : [];
-
-  if (upcomingServices.length > 0) {
-
-    setNextService(
-      upcomingServices[0]
-    );
-
-  }
-
-}, [playlists]);
-
-
-// =========================
-// VARIABLES AUXILIARES
-// =========================
-
-// Próximo culto
-
-const daysRemaining = nextService
-  ? Math.ceil(
-      (
-        new Date(nextService.serviceDate) -
-        new Date()
-      ) /
-      (1000 * 60 * 60 * 24)
-    )
-  : null;
 
 // =========================
   // HTML
