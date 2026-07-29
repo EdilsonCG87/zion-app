@@ -13,6 +13,7 @@ import { useDashboard } from "./hooks/useDashboard";
 import { useReports } from "./hooks/useReports";
 import { useStatistics } from "./hooks/useStatistics";
 import { useNextService } from "./hooks/useNextService";
+import { useSharePlaylist } from "./hooks/useSharePlaylist";
 
 import DashboardPage from "./pages/DashboardPage";
 import PlaylistPage from "./pages/PlaylistPage";
@@ -40,28 +41,20 @@ const [showTopSongs, setShowTopSongs] =
 // =========================
 
 // Canciones
-const songsHook = useSongs();
 const {
     songs,
     search,
     setSearch,
-
     name,
     setName,
-
     author,
     setAuthor,
-
     keyTone,
     setKeyTone,
-
     bpm,
     setBpm,
-
     editingId,
-
     getSongs,
-
     saveSong,
     editSong,
     toggleFavorite,
@@ -69,52 +62,34 @@ const {
 } = songsHook;
 
 // Cultos
-const playlistsHook = usePlaylists();
-
 const {
-
     playlists,
-
     playlistName,
     setPlaylistName,
-
     serviceDate,
     setServiceDate,
-
     selectedPlaylist,
     setSelectedPlaylist,
-
     selectedSong,
     setSelectedSong,
-
     getPlaylists,
-
     createPlaylist,
     updatePlaylist,
     deletePlaylist,
-
     startEditPlaylist
-
 } = playlistsHook;
 
 const playlistSongsHook = usePlaylistSongs();
 
 const {
-
     playlistSongs,
-
     getPlaylistSongs,
-
     addSongToPlaylist,
-
     removeSongFromPlaylist,
-
     moveSong
-
 } = playlistSongsHook;
 
 // Dashboard
-const dashboardHook = useDashboard();
 const {
     totalSongs,
     totalServices,
@@ -123,191 +98,37 @@ const {
 } = dashboardHook;
 
 // Reportes
-const reportsHook = useReports();
 const {
     selectedHistorySong,
     setSelectedHistorySong,
-
     songHistory,
     yearUsage,
     yearStats,
     monthlyStats,
-
     getSongHistory,
     getYearUsage
 } = reportsHook;
 
 // Estadísticas
-const statisticsHook = useStatistics();
 const {
     topSongs,
     unusedSongs,
     overusedSongs,
-
     getTopSongs,
     getUnusedSongs,
     getOverusedSongs
 } = statisticsHook;
 
 // Plalist
-  const [showUnusedSongs, setShowUnusedSongs] = useState(false);
-  const [showOverusedSongs, setShowOverusedSongs] = useState(false);
-  const [showYearReport, setShowYearReport] = useState(false);
-
 const {
-
     nextService,
-
     daysRemaining
-
 } = useNextService(playlists);
 
-// =========================
-// FUNCIONES PDF
-// =========================
-
-const shareWhatsApp = () => {
-
-  if (
-    !selectedPlaylist ||
-    playlistSongs.length === 0
-  ) {
-
-    Swal.fire({
-      icon: "warning",
-      title: "Sin información",
-      text:
-        "Selecciona un culto con canciones"
-    });
-
-    return;
-  }
-
-  const playlist =
-    playlists.find(
-      p =>
-        p.id ===
-        Number(selectedPlaylist)
-    );
-
-  let message =
-`🎼 ZION Playlist
-
-⛪ ${playlist?.name}
-
-📅 ${playlist?.serviceDate}
-
-`;
-
-  playlistSongs.forEach(
-    (item, index) => {
-
-      const song =
-        songs.find(
-          s =>
-            s.id === item.songId
-        );
-
-      message +=
-`${index + 1}. ${song?.name}\n`;
-
-    }
-  );
-
-  message +=
-`\n🙏 Bendiciones`;
-
-  const url =
-`https://wa.me/?text=${encodeURIComponent(message)}`;
-
-  window.open(
-    url,
-    "_blank"
-  );
-};
-
-const exportPlaylistPDF = () => {
-
-  if (
-    playlistSongs.length === 0
-  ) {
-
-    Swal.fire({
-      icon: "warning",
-      title: "Sin canciones",
-      text:
-        "No hay canciones para exportar"
-    });
-
-    return;
-  }
-
-  const pdf =
-    new jsPDF();
-
-  pdf.setFontSize(18);
-
-  pdf.text(
-    "ZION Playlist - Orden del Culto",
-    20,
-    20
-  );
-
-  pdf.setFontSize(12);
-
-  const selected =
-    playlists.find(
-      p =>
-        p.id ===
-        Number(
-          selectedPlaylist
-        )
-    );
-
-  pdf.text(
-    `Culto: ${
-      selected?.name ||
-      "Sin nombre"
-    }`,
-    20,
-    35
-  );
-
-  let y = 50;
-
-  playlistSongs.forEach(
-    (item, index) => {
-
-      const song =
-        songs.find(
-          s =>
-            s.id ===
-            item.songId
-        );
-
-      pdf.text(
-        `${index + 1}. ${
-          song?.name ||
-          "Canción"
-        }`,
-        20,
-        y
-      );
-
-      y += 10;
-    }
-  );
-
-  pdf.save(
-    "orden-culto-zion.pdf"
-  );
-
-  Swal.fire({
-    icon: "success",
-    title:
-      "PDF exportado"
-  });
-};
+const {
+    shareWhatsApp,
+    exportPlaylistPDF
+} = useSharePlaylist();
 
 // =========================
 // USE EFFECT
