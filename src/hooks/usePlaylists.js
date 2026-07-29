@@ -10,17 +10,19 @@ import API from "../services/api";
 // =========================
 export function usePlaylists() {
 
-// =========================
-// STATES
-// =========================
+    // =========================
+    // STATES
+    // =========================
 
-const [playlists, setPlaylists] = useState([]);
+    const [playlists, setPlaylists] = useState([]);
 
-const [playlistName, setPlaylistName] = useState("");
-const [serviceDate, setServiceDate] = useState("");
+    const [playlistName, setPlaylistName] = useState("");
 
-const [selectedPlaylist, setSelectedPlaylist] = useState("");
-const [selectedSong, setSelectedSong] = useState("");
+    const [serviceDate, setServiceDate] = useState("");
+
+    const [selectedPlaylist, setSelectedPlaylist] = useState("");
+
+    const [selectedSong, setSelectedSong] = useState("");
 
     // =========================
     // FUNCIONES AUXILIARES
@@ -94,7 +96,6 @@ const [selectedSong, setSelectedSong] = useState("");
 
                 icon: "success",
                 title: "Culto creado",
-
                 timer: 1500,
                 showConfirmButton: false
 
@@ -140,7 +141,6 @@ const [selectedSong, setSelectedSong] = useState("");
 
                 icon: "success",
                 title: "Culto actualizado",
-
                 timer: 1500,
                 showConfirmButton: false
 
@@ -204,21 +204,23 @@ const [selectedSong, setSelectedSong] = useState("");
         try {
 
             await API.delete(
-    `/playlists/${selectedPlaylist}`
-);
 
-Swal.fire({
+                `/playlists/${selectedPlaylist}`
 
-    icon: "success",
-    title: "Culto eliminado",
-    timer: 1200,
-    showConfirmButton: false
+            );
 
-});
+            Swal.fire({
 
-setSelectedPlaylist("");
+                icon: "success",
+                title: "Culto eliminado",
+                timer: 1200,
+                showConfirmButton: false
 
-await getPlaylists();
+            });
+
+            setSelectedPlaylist("");
+
+            await getPlaylists();
 
         } catch (error) {
 
@@ -230,7 +232,9 @@ await getPlaylists();
                 title: "Error",
 
                 text:
+
                     error.response?.data?.message ||
+
                     "No fue posible eliminar el culto."
 
             });
@@ -239,194 +243,113 @@ await getPlaylists();
 
     };
 
+    // =========================
+    // INICIAR EDICIÓN DE CULTO
+    // =========================
 
-// =========================
-// OBTENER CANCIONES DEL CULTO
-// =========================
+    const startEditPlaylist = async () => {
 
-    try {
+        if (!selectedPlaylist) {
 
-        const response = await API.get(
-            `/playlist-songs/playlist/${playlistId}`
+            Swal.fire({
+
+                icon: "warning",
+                title: "Selecciona un culto"
+
+            });
+
+            return;
+
+        }
+
+        const selected = playlists.find(
+
+            playlist => playlist.id === Number(selectedPlaylist)
+
         );
 
-        setPlaylistSongs(response.data);
+        if (!selected) return;
 
-    } catch (error) {
+        const result = await Swal.fire({
 
-        console.error(error);
+            title: "Editar Culto",
 
-        Swal.fire({
+            html: `
 
-            icon: "error",
-            title: "Error",
-            text: "No fue posible cargar las canciones del culto."
+                <input
+                    id="swal-name"
+                    class="swal2-input"
+                    placeholder="Nombre"
+                    value="${selected.name}"
+                >
 
-        });
+                <input
+                    id="swal-date"
+                    type="date"
+                    class="swal2-input"
+                    value="${selected.serviceDate}"
+                >
 
-    }
+            `,
 
-};
+            focusConfirm: false,
 
-// =========================
-// AGREGAR CANCIÓN AL CULTO
-// =========================
+            showCancelButton: true,
 
-    try {
+            confirmButtonText: "Guardar",
 
-        await API.post("/playlist-songs", {
+            cancelButtonText: "Cancelar",
 
-            playlistId: Number(selectedPlaylist),
-            songId: Number(selectedSong),
-            orderNumber: playlistSongs.length + 1
+            preConfirm: () => ({
 
-        });
+                name: document.getElementById("swal-name").value,
 
-        await API.put(
-            `/songs/${selectedSong}/play`
-        );
+                serviceDate: document.getElementById("swal-date").value
 
-        Swal.fire({
-
-            icon: "success",
-            title: "Canción agregada",
-
-            timer: 1200,
-            showConfirmButton: false
+            })
 
         });
 
-        await getPlaylistSongs(selectedPlaylist);
+        if (!result.isConfirmed) return;
 
-    } catch (error) {
+        await updatePlaylist(result.value);
 
-        console.error(error);
+    };
 
-        Swal.fire({
+    // =========================
+    // RETURN
+    // =========================
 
-            icon: "error",
-            title: "Error",
-            text: "No fue posible agregar la canción."
+    return {
 
-        });
+        // Estados
 
-    }
+        playlists,
+        setPlaylists,
 
+        playlistName,
+        setPlaylistName,
 
-// =========================
-// ELIMINAR CANCIÓN DEL CULTO
-// =========================
+        serviceDate,
+        setServiceDate,
 
+        selectedPlaylist,
+        setSelectedPlaylist,
 
+        selectedSong,
+        setSelectedSong,
 
+        // Funciones
 
-// =========================
-// INICIAR EDICIÓN DE CULTO
-// =========================
+        getPlaylists,
 
-const startEditPlaylist = async () => {
+        createPlaylist,
+        updatePlaylist,
+        deletePlaylist,
 
-    if (!selectedPlaylist) {
+        startEditPlaylist
 
-        Swal.fire({
-
-            icon: "warning",
-            title: "Selecciona un culto"
-
-        });
-
-        return;
-
-    }
-
-    const selected = playlists.find(
-
-        playlist => playlist.id === Number(selectedPlaylist)
-
-    );
-
-    if (!selected) return;
-
-    const result = await Swal.fire({
-
-        title: "Editar Culto",
-
-        html: `
-
-            <input
-                id="swal-name"
-                class="swal2-input"
-                placeholder="Nombre"
-                value="${selected.name}"
-            >
-
-            <input
-                id="swal-date"
-                type="date"
-                class="swal2-input"
-                value="${selected.serviceDate}"
-            >
-
-        `,
-
-        focusConfirm: false,
-
-        showCancelButton: true,
-
-        confirmButtonText: "Guardar",
-
-        cancelButtonText: "Cancelar",
-
-        preConfirm: () => ({
-
-            name: document.getElementById("swal-name").value,
-
-            serviceDate: document.getElementById("swal-date").value
-
-        })
-
-    });
-
-    if (!result.isConfirmed) return;
-
-    await updatePlaylist(result.value);
-
-};
-
-// =========================
-// RETURN
-// =========================
-
-return {
-
-    // Estados
-
-    playlists,
-    setPlaylists,
-
-    playlistName,
-    setPlaylistName,
-
-    serviceDate,
-    setServiceDate,
-
-    selectedPlaylist,
-    setSelectedPlaylist,
-
-    selectedSong,
-    setSelectedSong,
-
-    // Funciones
-
-    getPlaylists,
-
-    createPlaylist,
-    updatePlaylist,
-    deletePlaylist,
-
-    startEditPlaylist
-
-};
+    };
 
 }
 
