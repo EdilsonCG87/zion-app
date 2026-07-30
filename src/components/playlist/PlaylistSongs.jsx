@@ -1,7 +1,11 @@
 // =========================
+// IMPORTS
+// =========================
+import PlaylistSongItem from "./PlaylistSongItem";
+
+// =========================
 // COMPONENTE
 // =========================
-
 function PlaylistSongs({
 
     playlistSongs,
@@ -16,7 +20,7 @@ function PlaylistSongs({
 
 }) {
 
-    if (playlistSongs.length === 0) {
+    if (!playlistSongs || playlistSongs.length === 0) {
 
         return (
 
@@ -56,55 +60,23 @@ function PlaylistSongs({
 
                 return (
 
-                    <div
+                    <PlaylistSongItem
+
                         key={item.id}
-                        className="playlist-row"
-                    >
 
-                        <span>
+                        item={item}
 
-                            {index + 1}. {song?.name}
+                        index={index}
 
-                        </span>
+                        song={song}
 
-                        <div>
+                        selectedPlaylist={selectedPlaylist}
 
-                            <button
-                                onClick={() =>
-                                    moveSong(
-                                        index,
-                                        "up"
-                                    )
-                                }
-                            >
-                                ⬆
-                            </button>
+                        moveSong={moveSong}
 
-                            <button
-                                onClick={() =>
-                                    moveSong(
-                                        index,
-                                        "down"
-                                    )
-                                }
-                            >
-                                ⬇
-                            </button>
+                        removeSongFromPlaylist={removeSongFromPlaylist}
 
-                            <button
-                                onClick={() =>
-                                    removeSongFromPlaylist(
-                                        item.id,
-                                        selectedPlaylist
-                                    )
-                                }
-                            >
-                                🗑
-                            </button>
-
-                        </div>
-
-                    </div>
+                    />
 
                 );
 

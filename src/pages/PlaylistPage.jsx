@@ -7,9 +7,9 @@ function PlaylistPage(props) {
     return (
         <div className="tab-content">
             <PlaylistManager {...props} />
-            <PlaylistHistory {...props} />
-            <OverusedSongs {...props} />
             <ActivePlaylist {...props} />
+            <PlaylistSongs {...props} />
+            <PlaylistHistory {...props} />            
         </div>
     );
 }
