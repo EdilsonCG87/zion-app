@@ -3,6 +3,7 @@ function PlaylistManager({
   selectedPlaylist,
   setSelectedPlaylist,
   getPlaylistSongs,
+  playlistSongs,
   deletePlaylist,
   playlistName,
   setPlaylistName,
@@ -13,6 +14,7 @@ function PlaylistManager({
   setSelectedSong,
   songs,
   addSongToPlaylist,
+  removeSongFromPlaylist,
   startEditPlaylist,
   exportPlaylistPDF,
   shareWhatsApp
@@ -122,12 +124,65 @@ function PlaylistManager({
 
         </select>
 
-        <button
-          className="save-btn"
-          onClick={addSongToPlaylist}
-        >
-          Agregar canción
-        </button>
+<button
+  className="save-btn"
+  onClick={() =>
+    addSongToPlaylist(
+      selectedPlaylist,
+      selectedSong
+    )
+  }
+>
+  Agregar canción
+</button>
+
+{/* ACCIONES */}
+
+<div className="playlist-row">
+
+    <button
+        className="action-btn btn-edit"
+        onClick={startEditPlaylist}
+    >
+        ✏️ Editar
+    </button>
+
+    <button
+        className="action-btn btn-delete"
+        onClick={deletePlaylist}
+    >
+        🗑 Eliminar
+    </button>
+
+    <button
+        className="action-btn"
+        onClick={() =>
+            exportPlaylistPDF(
+                playlists,
+                selectedPlaylist,
+                playlistSongs,
+                songs
+            )
+        }
+    >
+        📄 PDF
+    </button>
+
+    <button
+        className="action-btn"
+        onClick={() =>
+            shareWhatsApp(
+                playlists,
+                selectedPlaylist,
+                playlistSongs,
+                songs
+            )
+        }
+    >
+        📲 WhatsApp
+    </button>
+
+</div>
 
       </div>
 
