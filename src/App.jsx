@@ -3,7 +3,6 @@
 // =========================
 import { useEffect, useState } from "react";
 import "./App.css";
-
 import logo from "./assets/logo.png";
 
 import { useSongs } from "./hooks/useSongs";
@@ -25,307 +24,388 @@ import AgendaPage from "./pages/AgendaPage";
 // =========================
 function App() {
 
-// =========================
-// STATES
-// =========================
+    // =========================
+    // STATES
+    // =========================
 
-const [activeTab, setActiveTab] =
-    useState("dashboard");
+    const [activeTab, setActiveTab] = useState("dashboard");
 
-// Dashboard
-const [showTopSongs, setShowTopSongs] =
-    useState(false);
+    const [showTopSongs, setShowTopSongs] = useState(false);
 
-// =========================
-// HOOKS
-// =========================
+    // =========================
+    // HOOK CANCIONES
+    // =========================
 
-// Canciones
-const {
-    songs,
-    search,
-    setSearch,
-    name,
-    setName,
-    author,
-    setAuthor,
-    keyTone,
-    setKeyTone,
-    bpm,
-    setBpm,
-    editingId,
-    getSongs,
-    saveSong,
-    editSong,
-    toggleFavorite,
-    confirmDelete
-} = songsHook;
+    const songsHook = useSongs();
 
-// Cultos
-const {
-    playlists,
-    playlistName,
-    setPlaylistName,
-    serviceDate,
-    setServiceDate,
-    selectedPlaylist,
-    setSelectedPlaylist,
-    selectedSong,
-    setSelectedSong,
-    getPlaylists,
-    createPlaylist,
-    updatePlaylist,
-    deletePlaylist,
-    startEditPlaylist
-} = playlistsHook;
+    const {
+        songs,
+        getSongs
+    } = songsHook;
 
-const playlistSongsHook = usePlaylistSongs();
+    // =========================
+    // HOOK CULTOS
+    // =========================
 
-const {
-    playlistSongs,
-    getPlaylistSongs,
-    addSongToPlaylist,
-    removeSongFromPlaylist,
-    moveSong
-} = playlistSongsHook;
+    const playlistsHook = usePlaylists();
 
-// Dashboard
-const {
-    totalSongs,
-    totalServices,
-    mostUsedSong,
-    loadDashboard
-} = dashboardHook;
+    const {
+        playlists,
 
-// Reportes
-const {
-    selectedHistorySong,
-    setSelectedHistorySong,
-    songHistory,
-    yearUsage,
-    yearStats,
-    monthlyStats,
-    getSongHistory,
-    getYearUsage
-} = reportsHook;
+        playlistName,
+        setPlaylistName,
 
-// Estadísticas
-const {
-    topSongs,
-    unusedSongs,
-    overusedSongs,
-    getTopSongs,
-    getUnusedSongs,
-    getOverusedSongs
-} = statisticsHook;
+        serviceDate,
+        setServiceDate,
 
-// Plalist
-const {
-    nextService,
-    daysRemaining
-} = useNextService(playlists);
+        selectedPlaylist,
+        setSelectedPlaylist,
 
-const {
-    shareWhatsApp,
-    exportPlaylistPDF
-} = useSharePlaylist();
+        selectedSong,
+        setSelectedSong,
 
-// =========================
-// USE EFFECT
-// =========================
+        getPlaylists,
 
-useEffect(() => {
+        createPlaylist,
 
-  // Canciones
-  getSongs();
+        deletePlaylist,
 
-  // Cultos
-  getPlaylists();
+        startEditPlaylist
 
-  // Dashboard
-  loadDashboard();
+    } = playlistsHook;
 
-  // Estadísticas
-  getTopSongs();
-  getUnusedSongs();
-  getOverusedSongs();
+    // =========================
+    // HOOK CANCIONES DEL CULTO
+    // =========================
 
-  // Reportes
-  getYearUsage(2026);
+    const playlistSongsHook = usePlaylistSongs();
 
-}, []);
+    const {
 
-// =========================
-  // HTML
-  // =========================
+        playlistSongs,
+
+        getPlaylistSongs,
+
+        addSongToPlaylist
+
+    } = playlistSongsHook;
+
+    // =========================
+    // DASHBOARD
+    // =========================
+
+    const { loadDashboard } = useDashboard();
+
+    // =========================
+    // REPORTES
+    // =========================
+
+    const {
+
+        selectedHistorySong,
+        setSelectedHistorySong,
+
+        songHistory,
+
+        getSongHistory,
+
+        getYearUsage
+
+    } = useReports();
+
+    // =========================
+    // ESTADÍSTICAS
+    // =========================
+
+    const {
+
+        topSongs,
+
+        getTopSongs,
+        getUnusedSongs,
+        getOverusedSongs
+
+    } = useStatistics();
+
+    // =========================
+    // PRÓXIMO CULTO
+    // =========================
+
+    const {
+
+        nextService,
+
+        daysRemaining
+
+    } = useNextService(playlists);
+
+    // =========================
+    // EXPORTAR / WHATSAPP
+    // =========================
+
+    const {
+
+        shareWhatsApp,
+
+        exportPlaylistPDF
+
+    } = useSharePlaylist({
+
+        playlists,
+
+        selectedPlaylist,
+
+        playlistSongs,
+
+        songs
+
+    });
+
+    // =========================
+    // CARGA INICIAL
+    // =========================
+
+    useEffect(() => {
+
+        getSongs();
+
+        getPlaylists();
+
+        loadDashboard();
+
+        getTopSongs();
+
+        getUnusedSongs();
+
+        getOverusedSongs();
+
+        getYearUsage(2026);
+
+    }, []);
+
+    // =========================
+    // RENDER
+    // =========================
 
     return (
 
-    <div className="app-container">
+        <div className="app-container">
 
-      {/* HEADER */}
+            {/* HEADER */}
 
-      <div className="header">
+            <div className="header">
 
-        <img
-          src={logo}
-          alt="Zion Logo"
-          className="logo"
-        />
+                <img
+                    src={logo}
+                    alt="Zion Logo"
+                    className="logo"
+                />
 
-        <div>
-          <h1>ZION Playlist</h1>
-          <p>Gestión inteligente de alabanzas</p>
+                <div>
+
+                    <h1>ZION Playlist</h1>
+
+                    <p>Gestión inteligente de alabanzas</p>
+
+                </div>
+
+            </div>
+
+            {/* PRÓXIMO CULTO */}
+
+            {nextService && (
+
+                <div className="next-service-alert">
+
+                    🔔 Próximo culto:
+
+                    <strong> {nextService.name}</strong>
+
+                    {" - "}
+
+                    {nextService.serviceDate}
+
+                    {" ("}
+
+                    {daysRemaining}
+
+                    {" días)"}
+
+                </div>
+
+            )}
+
+            {/* DASHBOARD */}
+
+            {activeTab === "dashboard" && (
+
+                <DashboardPage
+
+                    songs={songs}
+
+                    playlists={playlists}
+
+                    topSongs={topSongs}
+
+                    showTopSongs={showTopSongs}
+
+                    setShowTopSongs={setShowTopSongs}
+
+                />
+
+            )}
+
+            {/* AGENDA */}
+
+            {activeTab === "agenda" && (
+
+                <AgendaPage
+
+                    playlists={playlists}
+
+                    playlistSongs={playlistSongs}
+
+                    songs={songs}
+
+                    getPlaylistSongs={getPlaylistSongs}
+
+                />
+
+            )}
+
+            {/* CULTOS */}
+
+            {activeTab === "playlist" && (
+
+                <PlaylistPage
+
+                    playlists={playlists}
+
+                    selectedPlaylist={selectedPlaylist}
+
+                    setSelectedPlaylist={setSelectedPlaylist}
+
+                    getPlaylistSongs={getPlaylistSongs}
+
+                    deletePlaylist={deletePlaylist}
+
+                    playlistName={playlistName}
+
+                    setPlaylistName={setPlaylistName}
+
+                    serviceDate={serviceDate}
+
+                    setServiceDate={setServiceDate}
+
+                    createPlaylist={createPlaylist}
+
+                    selectedSong={selectedSong}
+
+                    setSelectedSong={setSelectedSong}
+
+                    songs={songs}
+
+                    addSongToPlaylist={addSongToPlaylist}
+
+                    startEditPlaylist={startEditPlaylist}
+
+                    exportPlaylistPDF={exportPlaylistPDF}
+
+                    shareWhatsApp={shareWhatsApp}
+
+                    selectedHistorySong={selectedHistorySong}
+
+                    setSelectedHistorySong={setSelectedHistorySong}
+
+                    songHistory={songHistory}
+
+                    getSongHistory={getSongHistory}
+
+                />
+
+            )}
+
+            {/* CANCIONES */}
+
+            {activeTab === "songs" && (
+
+                <SongsPage
+
+                    songsHook={songsHook}
+
+                    getTopSongs={getTopSongs}
+
+                    getOverusedSongs={getOverusedSongs}
+
+                />
+
+            )}
+
+            {/* MENÚ */}
+
+            <div className="bottom-nav">
+
+                <button
+
+                    className={activeTab === "dashboard" ? "nav-btn active" : "nav-btn"}
+
+                    onClick={() => setActiveTab("dashboard")}
+
+                >
+
+                    🏠
+
+                    <span>Inicio</span>
+
+                </button>
+
+                <button
+
+                    className={activeTab === "playlist" ? "nav-btn active" : "nav-btn"}
+
+                    onClick={() => setActiveTab("playlist")}
+
+                >
+
+                    🎵
+
+                    <span>Cultos</span>
+
+                </button>
+
+                <button
+
+                    className={activeTab === "agenda" ? "nav-btn active" : "nav-btn"}
+
+                    onClick={() => setActiveTab("agenda")}
+
+                >
+
+                    📅
+
+                    <span>Agenda</span>
+
+                </button>
+
+                <button
+
+                    className={activeTab === "songs" ? "nav-btn active" : "nav-btn"}
+
+                    onClick={() => setActiveTab("songs")}
+
+                >
+
+                    🎼
+
+                    <span>Canciones</span>
+
+                </button>
+
+            </div>
+
         </div>
 
-      </div>
-
-
-{/* NOTIFICACIÓN PRÓXIMO CULTO */}
-
-  {nextService && (
-
-    <div className="next-service-alert">
-
-      🔔 Próximo culto:
-
-      <strong>
-        {" "}
-        {nextService.name}
-      </strong>
-
-      {" - "}
-
-      {nextService.serviceDate}
-
-      {" ("}
-
-      {daysRemaining}
-
-      {" días)"}
-
-    </div>
-
-  )}
-
-{/* DASHBOARD */}
-{activeTab === "dashboard" && (
-
-<DashboardPage
-    songs={songs}
-    playlists={playlists}
-    topSongs={topSongs}
-    showTopSongs={showTopSongs}
-    setShowTopSongs={setShowTopSongs}
-/>
-
-)}
-
-{/* AGENDA */}
-{activeTab === "agenda" && (
-
-    <AgendaPage
-        playlists={playlists}
-        playlistSongs={playlistSongs}
-        songs={songs}
-        getPlaylistSongs={getPlaylistSongs}
-    />
-
-)}
-
-{activeTab === "playlist" && (
-
-    <PlaylistPage
-    playlists={playlists}
-    selectedPlaylist={selectedPlaylist}
-    setSelectedPlaylist={setSelectedPlaylist}
-    getPlaylistSongs={getPlaylistSongs}
-    deletePlaylist={deletePlaylist}
-    playlistName={playlistName}
-    setPlaylistName={setPlaylistName}
-    serviceDate={serviceDate}
-    setServiceDate={setServiceDate}
-    createPlaylist={createPlaylist}
-    selectedSong={selectedSong}
-    setSelectedSong={setSelectedSong}
-    songs={songs}
-    addSongToPlaylist={addSongToPlaylist}
-    startEditPlaylist={startEditPlaylist}
-    exportPlaylistPDF={exportPlaylistPDF}
-    shareWhatsApp={shareWhatsApp}
-    selectedHistorySong={selectedHistorySong}
-    setSelectedHistorySong={setSelectedHistorySong}
-    songHistory={songHistory}
-    getSongHistory={getSongHistory}
-/>
-
-)}
-
-{activeTab === "songs" && (
-
-    <SongsPage
-        songsHook={songsHook}
-        getTopSongs={getTopSongs}
-        getOverusedSongs={getOverusedSongs}
-    />
-
-)}
-
-<div className="bottom-nav">
-
-  <button
-    className={
-      activeTab === "dashboard"
-        ? "nav-btn active"
-        : "nav-btn"
-    }
-    onClick={() => setActiveTab("dashboard")}
-  >
-    🏠
-    <span>Inicio</span>
-  </button>
-
-  <button
-    className={
-      activeTab === "playlist"
-        ? "nav-btn active"
-        : "nav-btn"
-    }
-    onClick={() => setActiveTab("playlist")}
-  >
-    🎵
-    <span>Cultos</span>
-  </button>
-
-  <button
-    className={
-      activeTab === "agenda"
-        ? "nav-btn active"
-        : "nav-btn"
-    }
-    onClick={() => setActiveTab("agenda")}
-  >
-    📅
-    <span>Agenda</span>
-  </button>
-
-  <button
-    className={
-      activeTab === "songs"
-        ? "nav-btn active"
-        : "nav-btn"
-    }
-    onClick={() => setActiveTab("songs")}
-  >
-    🎼
-    <span>Canciones</span>
-  </button>
-
-</div>
-
-</div>
-
-);
+    );
 
 }
 

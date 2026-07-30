@@ -10,15 +10,15 @@ import API from "../services/api";
 // =========================
 export function usePlaylistSongs() {
 
-    // =========================
-    // STATES
-    // =========================
+// =========================
+// STATES
+// =========================
 
     const [playlistSongs, setPlaylistSongs] = useState([]);
 
-    // =========================
-    // OBTENER CANCIONES DEL CULTO
-    // =========================
+// =========================
+// OBTENER CANCIONES DEL CULTO
+// =========================
 
     const getPlaylistSongs = async (playlistId) => {
 
@@ -53,9 +53,9 @@ export function usePlaylistSongs() {
 
     };
 
-    // =========================
-    // AGREGAR CANCIÓN AL CULTO
-    // =========================
+// =========================
+// AGREGAR CANCIÓN AL CULTO
+// =========================
 
     const addSongToPlaylist = async (
         playlistId,
@@ -116,9 +116,9 @@ export function usePlaylistSongs() {
 
     };
 
-    // =========================
-    // ELIMINAR CANCIÓN DEL CULTO
-    // =========================
+// =========================
+// ELIMINAR CANCIÓN DEL CULTO
+// =========================
 
     const removeSongFromPlaylist = async (
         playlistSongId,
@@ -226,23 +226,16 @@ export function usePlaylistSongs() {
 
     };
 
-    // =========================
-    // RETURN
-    // =========================
+// =========================
+// RETURN
+// =========================
 
     return {
-
         playlistSongs,
         setPlaylistSongs,
-
         getPlaylistSongs,
-
         addSongToPlaylist,
-
         removeSongFromPlaylist,
-
         moveSong
-
     };
-
 }

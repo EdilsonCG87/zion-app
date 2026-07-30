@@ -9,20 +9,15 @@ import { jsPDF } from "jspdf";
 // =========================
 export function useSharePlaylist() {
 
-    // =========================
-    // COMPARTIR WHATSAPP
-    // =========================
+// =========================
+// COMPARTIR WHATSAPP
+// =========================
 
     const shareWhatsApp = (
-
         playlists,
-
         selectedPlaylist,
-
         playlistSongs,
-
         songs
-
     ) => {
 
         if (

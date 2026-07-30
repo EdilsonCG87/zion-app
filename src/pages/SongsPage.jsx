@@ -5,20 +5,25 @@ import { useState } from "react";
 
 import SongForm from "../components/SongForm";
 import SearchBar from "../components/SearchBar";
-import ImportExcel from "../components/ImportExcel";
 import SongTable from "../components/SongTable";
+import ImportExcel from "../components/ImportExcel";
 
 // =========================
 // COMPONENTE
 // =========================
+
 function SongsPage({
+
     songsHook,
+
     getTopSongs,
+
     getOverusedSongs
+
 }) {
 
     // =========================
-    // HOOK CANCIONES
+    // HOOK
     // =========================
 
     const {
@@ -55,10 +60,11 @@ function SongsPage({
     } = songsHook;
 
     // =========================
-    // STATES LOCALES
+    // STATES
     // =========================
 
-    const [showSongsList, setShowSongsList] = useState(false);
+    const [showSongsList, setShowSongsList] =
+        useState(false);
 
     // =========================
     // HTML
@@ -77,7 +83,6 @@ function SongsPage({
                         setShowSongsList(!showSongsList)
                     }
                 >
-
                     🎵 Biblioteca de Canciones ({songs.length})
 
                     {showSongsList ? " ▼" : " ►"}
@@ -100,9 +105,9 @@ function SongsPage({
                 bpm={bpm}
                 setBpm={setBpm}
 
-                saveSong={saveSong}
-
                 editingId={editingId}
+
+                saveSong={saveSong}
 
             />
 
