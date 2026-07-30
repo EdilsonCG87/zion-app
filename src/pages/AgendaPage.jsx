@@ -1,4 +1,4 @@
-import CalendarAgenda from "../components/CalendarAgenda";
+import CalendarAgenda from "../components/agenda/CalendarAgenda";
 
 function AgendaPage(props) {
     const {

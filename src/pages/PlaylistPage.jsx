@@ -1,7 +1,7 @@
-import PlaylistManager from "../components/PlaylistManager";
-import PlaylistHistory from "../components/PlaylistHistory";
+import PlaylistManager from "../components/playlist/PlaylistManager";
+import PlaylistHistory from "../components/playlist/PlaylistHistory";
 import OverusedSongs from "../components/OverusedSongs";
-import ActivePlaylist from "../components/ActivePlaylist";
+import ActivePlaylist from "../components/playlist/ActivePlaylist";
 
 function PlaylistPage(props) {
     return (

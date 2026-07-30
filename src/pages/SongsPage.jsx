@@ -3,9 +3,9 @@
 // =========================
 import { useState } from "react";
 
-import SongForm from "../components/SongForm";
-import SearchBar from "../components/SearchBar";
-import SongTable from "../components/SongTable";
+import SongForm from "../components/songs/SongForm";
+import SearchBar from "../components/common/SearchBar";
+import SongTable from "../components/songs/SongTable";
 import ImportExcel from "../components/ImportExcel";
 
 // =========================

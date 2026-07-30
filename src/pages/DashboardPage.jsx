@@ -1,5 +1,5 @@
-import Dashboard from "../components/Dashboard";
-import TopSongs from "../components/TopSongs";
+import Dashboard from "../components/dashboard/Dashboard";
+import TopSongs from "../components/dashboard/TopSongs";
 
 function DashboardPage({
     songs,
