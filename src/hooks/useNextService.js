@@ -8,17 +8,17 @@ import { useEffect, useState } from "react";
 // =========================
 export function useNextService(playlists) {
 
-    // =========================
-    // STATES
-    // =========================
+// =========================
+// STATES
+// =========================
 
     const [nextService, setNextService] = useState(null);
 
     const [daysRemaining, setDaysRemaining] = useState(null);
 
-    // =========================
-    // EFECTO
-    // =========================
+// =========================
+// EFECTO
+// =========================
 
     useEffect(() => {
 
@@ -97,9 +97,9 @@ export function useNextService(playlists) {
 
     }, [playlists]);
 
-    // =========================
-    // RETURN
-    // =========================
+// =========================
+// RETURN
+// =========================
 
     return {
 

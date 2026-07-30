@@ -1,29 +1,21 @@
-// =========================
-// IMPORTS
-// =========================
 import Swal from "sweetalert2";
 import { jsPDF } from "jspdf";
 
-// =========================
-// HOOK
-// =========================
-export function useSharePlaylist() {
+export function useSharePlaylist({
 
-// =========================
-// COMPARTIR WHATSAPP
-// =========================
+    playlists,
 
-    const shareWhatsApp = (
-        playlists,
-        selectedPlaylist,
-        playlistSongs,
-        songs
-    ) => {
+    selectedPlaylist,
 
-        if (
-            !selectedPlaylist ||
-            playlistSongs.length === 0
-        ) {
+    playlistSongs,
+
+    songs
+
+}) {
+
+    const shareWhatsApp = () => {
+
+        if (!selectedPlaylist || playlistSongs.length === 0) {
 
             Swal.fire({
 
@@ -68,28 +60,17 @@ export function useSharePlaylist() {
 
         message += "\n🙏 Bendiciones";
 
-        const url =
-            `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(
 
-        window.open(url, "_blank");
+            `https://wa.me/?text=${encodeURIComponent(message)}`,
+
+            "_blank"
+
+        );
 
     };
 
-    // =========================
-    // EXPORTAR PDF
-    // =========================
-
-    const exportPlaylistPDF = (
-
-        playlists,
-
-        selectedPlaylist,
-
-        playlistSongs,
-
-        songs
-
-    ) => {
+    const exportPlaylistPDF = () => {
 
         if (playlistSongs.length === 0) {
 
@@ -123,7 +104,7 @@ export function useSharePlaylist() {
 
         pdf.setFontSize(12);
 
-        const selected = playlists.find(
+        const playlist = playlists.find(
 
             p => p.id === Number(selectedPlaylist)
 
@@ -131,7 +112,7 @@ export function useSharePlaylist() {
 
         pdf.text(
 
-            `Culto: ${selected?.name || "Sin nombre"}`,
+            `Culto: ${playlist?.name ?? "Sin nombre"}`,
 
             20,
 
@@ -151,7 +132,7 @@ export function useSharePlaylist() {
 
             pdf.text(
 
-                `${index + 1}. ${song?.name || "Canción"}`,
+                `${index + 1}. ${song?.name ?? "Canción"}`,
 
                 20,
 
@@ -175,10 +156,6 @@ export function useSharePlaylist() {
 
     };
 
-    // =========================
-    // RETURN
-    // =========================
-
     return {
 
         shareWhatsApp,
@@ -188,7 +165,3 @@ export function useSharePlaylist() {
     };
 
 }
-
-// =========================
-// FIN DEL HOOK
-// =========================
