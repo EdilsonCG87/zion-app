@@ -358,4 +358,3 @@ return {
     toggleFavorite,
     confirmDelete
 };
-}
