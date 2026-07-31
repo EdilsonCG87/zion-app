@@ -25,7 +25,7 @@ export function usePlaylists() {
     const [selectedSong, setSelectedSong] = useState("");
 
     // =========================
-    // FUNCIONES AUXILIARES
+    // LIMPIAR FORMULARIO
     // =========================
 
     const clearPlaylistForm = () => {
@@ -43,20 +43,18 @@ export function usePlaylists() {
 
         try {
 
-            const response = await API.get("/playlists");
+            const { data } = await API.get("/playlists");
 
-            setPlaylists(response.data);
+            setPlaylists(data);
 
         } catch (error) {
 
             console.error(error);
 
             Swal.fire({
-
                 icon: "error",
                 title: "Error",
                 text: "No fue posible cargar los cultos."
-
             });
 
         }
@@ -72,11 +70,9 @@ export function usePlaylists() {
         if (!playlistName.trim()) {
 
             Swal.fire({
-
                 icon: "warning",
                 title: "Nombre requerido",
                 text: "Debes escribir un nombre para el culto."
-
             });
 
             return;
@@ -132,7 +128,6 @@ export function usePlaylists() {
             await API.put(
 
                 `/playlists/${selectedPlaylist}`,
-
                 data
 
             );
@@ -203,11 +198,7 @@ export function usePlaylists() {
 
         try {
 
-            await API.delete(
-
-                `/playlists/${selectedPlaylist}`
-
-            );
+            await API.delete(`/playlists/${selectedPlaylist}`);
 
             Swal.fire({
 
@@ -230,11 +221,8 @@ export function usePlaylists() {
 
                 icon: "error",
                 title: "Error",
-
                 text:
-
                     error.response?.data?.message ||
-
                     "No fue posible eliminar el culto."
 
             });
@@ -244,7 +232,7 @@ export function usePlaylists() {
     };
 
     // =========================
-    // INICIAR EDICIÓN DE CULTO
+    // EDITAR CULTO
     // =========================
 
     const startEditPlaylist = async () => {
@@ -272,7 +260,7 @@ export function usePlaylists() {
 
         const result = await Swal.fire({
 
-            title: "Editar Culto",
+            title: "Editar culto",
 
             html: `
 
@@ -292,13 +280,13 @@ export function usePlaylists() {
 
             `,
 
-            focusConfirm: false,
-
             showCancelButton: true,
 
             confirmButtonText: "Guardar",
 
             cancelButtonText: "Cancelar",
+
+            focusConfirm: false,
 
             preConfirm: () => ({
 
@@ -342,11 +330,9 @@ export function usePlaylists() {
         // Funciones
 
         getPlaylists,
-
         createPlaylist,
         updatePlaylist,
         deletePlaylist,
-
         startEditPlaylist
 
     };

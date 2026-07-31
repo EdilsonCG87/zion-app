@@ -1,3 +1,6 @@
+// =========================
+// COMPONENTE
+// =========================
 function ActivePlaylist({
 
     playlists,
@@ -11,6 +14,21 @@ function ActivePlaylist({
 
 }) {
 
+    const handleSelectPlaylist = (e) => {
+
+        const playlistId = e.target.value;
+
+        setSelectedPlaylist(playlistId);
+
+        if (!playlistId) {
+            getPlaylistSongs(null);
+            return;
+        }
+
+        getPlaylistSongs(playlistId);
+
+    };
+
     return (
 
         <div className="playlist-card">
@@ -23,15 +41,7 @@ function ActivePlaylist({
 
                 <select
                     value={selectedPlaylist}
-                    onChange={(e) => {
-
-                        const playlistId = e.target.value;
-
-                        setSelectedPlaylist(playlistId);
-
-                        getPlaylistSongs(playlistId);
-
-                    }}
+                    onChange={handleSelectPlaylist}
                 >
 
                     <option value="">

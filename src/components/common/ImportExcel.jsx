@@ -1,18 +1,40 @@
+// =========================
+// IMPORTS
+// =========================
 import { useState } from "react";
-import API from "../services/api";
+import Swal from "sweetalert2";
+import API from "../../services/api";
 
+// =========================
+// COMPONENTE
+// =========================
 function ImportExcel({ onImported }) {
+
+// =========================
+// STATES
+// =========================
 
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
+
+// =========================
+// IMPORTAR EXCEL
+// =========================
 
     const importar = async () => {
 
         if (!file) {
 
-            alert("Seleccione un archivo Excel.");
+            Swal.fire({
+
+                icon: "warning",
+                title: "Archivo requerido",
+                text: "Selecciona un archivo Excel."
+
+            });
 
             return;
+
         }
 
         const formData = new FormData();
@@ -25,7 +47,7 @@ function ImportExcel({ onImported }) {
 
             const response = await API.post(
 
-                `/songs/import`,
+                "/songs/import",
 
                 formData,
 
@@ -41,7 +63,18 @@ function ImportExcel({ onImported }) {
 
             );
 
-            alert(response.data);
+            Swal.fire({
+
+                icon: "success",
+                title: "Importación exitosa",
+                text: response.data,
+
+                timer: 1800,
+                showConfirmButton: false
+
+            });
+
+            setFile(null);
 
             if (onImported) {
 
@@ -50,9 +83,21 @@ function ImportExcel({ onImported }) {
             }
 
         } catch (error) {
+
             console.error(error);
-            alert(error.response?.data ||
-        error.message);
+
+            Swal.fire({
+
+                icon: "error",
+                title: "Error",
+
+                text:
+
+                    error.response?.data ||
+
+                    "No fue posible importar el archivo."
+
+            });
 
         } finally {
 
@@ -61,6 +106,10 @@ function ImportExcel({ onImported }) {
         }
 
     };
+
+    // =========================
+    // HTML
+    // =========================
 
     return (
 
@@ -82,7 +131,8 @@ function ImportExcel({ onImported }) {
 
             />
 
-            <br /><br />
+            <br />
+            <br />
 
             <button
 

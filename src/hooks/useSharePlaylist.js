@@ -1,167 +1,153 @@
+// =========================
+// IMPORTS
+// =========================
 import Swal from "sweetalert2";
 import { jsPDF } from "jspdf";
 
+// =========================
+// HOOK
+// =========================
 export function useSharePlaylist({
-
     playlists,
-
     selectedPlaylist,
-
     playlistSongs,
-
     songs
-
 }) {
+
+    // =========================
+    // OBTENER CULTO SELECCIONADO
+    // =========================
+
+    const selected = playlists.find(
+        playlist => playlist.id === Number(selectedPlaylist)
+    );
+
+    // =========================
+    // COMPARTIR POR WHATSAPP
+    // =========================
 
     const shareWhatsApp = () => {
 
         if (!selectedPlaylist || playlistSongs.length === 0) {
 
             Swal.fire({
-
                 icon: "warning",
-
                 title: "Sin información",
-
-                text: "Selecciona un culto con canciones"
-
+                text: "Selecciona un culto con canciones."
             });
 
             return;
-
         }
 
-        const playlist = playlists.find(
+        let message = `🎼 ZION Playlist
 
-            p => p.id === Number(selectedPlaylist)
+⛪ ${selected?.name ?? "Culto"}
 
-        );
-
-        let message =
-`🎼 ZION Playlist
-
-⛪ ${playlist?.name}
-
-📅 ${playlist?.serviceDate}
+📅 ${selected?.serviceDate ?? ""}
 
 `;
 
         playlistSongs.forEach((item, index) => {
 
             const song = songs.find(
-
                 s => s.id === item.songId
-
             );
 
-            message += `${index + 1}. ${song?.name}\n`;
+            message += `${index + 1}. ${song?.name ?? "Canción"}\n`;
 
         });
 
         message += "\n🙏 Bendiciones";
 
         window.open(
-
             `https://wa.me/?text=${encodeURIComponent(message)}`,
-
             "_blank"
-
         );
 
     };
 
+    // =========================
+    // EXPORTAR PDF
+    // =========================
+
     const exportPlaylistPDF = () => {
 
-        if (playlistSongs.length === 0) {
+        if (!selectedPlaylist || playlistSongs.length === 0) {
 
             Swal.fire({
-
                 icon: "warning",
-
                 title: "Sin canciones",
-
-                text: "No hay canciones para exportar"
-
+                text: "No hay canciones para exportar."
             });
 
             return;
-
         }
 
         const pdf = new jsPDF();
 
         pdf.setFontSize(18);
-
         pdf.text(
-
             "ZION Playlist - Orden del Culto",
-
             20,
-
             20
-
         );
 
         pdf.setFontSize(12);
 
-        const playlist = playlists.find(
-
-            p => p.id === Number(selectedPlaylist)
-
+        pdf.text(
+            `Culto: ${selected?.name ?? "Sin nombre"}`,
+            20,
+            35
         );
 
         pdf.text(
-
-            `Culto: ${playlist?.name ?? "Sin nombre"}`,
-
+            `Fecha: ${selected?.serviceDate ?? ""}`,
             20,
-
-            35
-
+            43
         );
 
-        let y = 50;
+        let y = 58;
 
         playlistSongs.forEach((item, index) => {
 
             const song = songs.find(
-
                 s => s.id === item.songId
-
             );
 
             pdf.text(
-
                 `${index + 1}. ${song?.name ?? "Canción"}`,
-
                 20,
-
                 y
-
             );
 
             y += 10;
+
+            // Nueva página cuando se llena
+            if (y > 270) {
+                pdf.addPage();
+                y = 20;
+            }
 
         });
 
         pdf.save("orden-culto-zion.pdf");
 
         Swal.fire({
-
             icon: "success",
-
-            title: "PDF exportado"
-
+            title: "PDF exportado",
+            timer: 1200,
+            showConfirmButton: false
         });
 
     };
 
+    // =========================
+    // RETURN
+    // =========================
+
     return {
-
         shareWhatsApp,
-
         exportPlaylistPDF
-
     };
 
 }

@@ -5,18 +5,29 @@
 function PlaylistSongItem({
 
     item,
-
     index,
-
     song,
-
     selectedPlaylist,
 
     moveSong,
-
     removeSongFromPlaylist
 
 }) {
+
+    const handleMoveUp = () => {
+        moveSong(index, "up");
+    };
+
+    const handleMoveDown = () => {
+        moveSong(index, "down");
+    };
+
+    const handleDelete = () => {
+        removeSongFromPlaylist(
+            item.id,
+            selectedPlaylist
+        );
+    };
 
     return (
 
@@ -40,9 +51,8 @@ function PlaylistSongItem({
                 <button
                     className="action-btn"
                     title="Subir"
-                    onClick={() =>
-                        moveSong(index, "up")
-                    }
+                    onClick={handleMoveUp}
+                    disabled={index === 0}
                 >
                     ⬆
                 </button>
@@ -50,9 +60,7 @@ function PlaylistSongItem({
                 <button
                     className="action-btn"
                     title="Bajar"
-                    onClick={() =>
-                        moveSong(index, "down")
-                    }
+                    onClick={handleMoveDown}
                 >
                     ⬇
                 </button>
@@ -60,12 +68,7 @@ function PlaylistSongItem({
                 <button
                     className="action-btn btn-delete"
                     title="Eliminar"
-                    onClick={() =>
-                        removeSongFromPlaylist(
-                            item.id,
-                            selectedPlaylist
-                        )
-                    }
+                    onClick={handleDelete}
                 >
                     🗑
                 </button>

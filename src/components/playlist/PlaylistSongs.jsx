@@ -12,24 +12,26 @@ function PlaylistSongs({
 
     songs,
 
-    removeSongFromPlaylist,
+    selectedPlaylist,
 
     moveSong,
 
-    selectedPlaylist
+    removeSongFromPlaylist
 
 }) {
 
-    if (!playlistSongs || playlistSongs.length === 0) {
+    // =========================
+    // SIN CANCIONES
+    // =========================
+
+    if (!playlistSongs?.length) {
 
         return (
 
             <div className="playlist-card">
 
                 <h2 className="playlist-title">
-
                     🎵 Canciones del Culto
-
                 </h2>
 
                 <p>No hay canciones agregadas.</p>
@@ -40,22 +42,22 @@ function PlaylistSongs({
 
     }
 
+    // =========================
+    // HTML
+    // =========================
+
     return (
 
         <div className="playlist-card">
 
             <h2 className="playlist-title">
-
                 🎵 Canciones del Culto
-
             </h2>
 
             {playlistSongs.map((item, index) => {
 
                 const song = songs.find(
-
                     s => s.id === item.songId
-
                 );
 
                 return (

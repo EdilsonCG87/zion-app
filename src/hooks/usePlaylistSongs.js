@@ -10,15 +10,15 @@ import API from "../services/api";
 // =========================
 export function usePlaylistSongs() {
 
-// =========================
-// STATES
-// =========================
+    // =========================
+    // STATES
+    // =========================
 
     const [playlistSongs, setPlaylistSongs] = useState([]);
 
-// =========================
-// OBTENER CANCIONES DEL CULTO
-// =========================
+    // =========================
+    // OBTENER CANCIONES DEL CULTO
+    // =========================
 
     const getPlaylistSongs = async (playlistId) => {
 
@@ -31,11 +31,11 @@ export function usePlaylistSongs() {
 
         try {
 
-            const response = await API.get(
+            const { data } = await API.get(
                 `/playlist-songs/playlist/${playlistId}`
             );
 
-            setPlaylistSongs(response.data);
+            setPlaylistSongs(data);
 
         } catch (error) {
 
@@ -53,13 +53,16 @@ export function usePlaylistSongs() {
 
     };
 
-// =========================
-// AGREGAR CANCIÓN AL CULTO
-// =========================
+    // =========================
+    // AGREGAR CANCIÓN AL CULTO
+    // =========================
 
     const addSongToPlaylist = async (
+
         playlistId,
-        songId
+        songId,
+        onUpdated
+
     ) => {
 
         if (!playlistId || !songId) {
@@ -86,9 +89,17 @@ export function usePlaylistSongs() {
 
             });
 
+            // Incrementa contador de reproducciones
             await API.put(`/songs/${songId}/play`);
 
             await getPlaylistSongs(playlistId);
+
+            // Actualizar estadísticas si existe callback
+            if (onUpdated) {
+
+                onUpdated();
+
+            }
 
             Swal.fire({
 
@@ -116,14 +127,34 @@ export function usePlaylistSongs() {
 
     };
 
-// =========================
-// ELIMINAR CANCIÓN DEL CULTO
-// =========================
+    // =========================
+    // ELIMINAR CANCIÓN DEL CULTO
+    // =========================
 
     const removeSongFromPlaylist = async (
+
         playlistSongId,
         playlistId
+
     ) => {
+
+        const result = await Swal.fire({
+
+            title: "¿Eliminar canción?",
+
+            text: "La canción será retirada del culto.",
+
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonText: "Eliminar",
+
+            cancelButtonText: "Cancelar"
+
+        });
+
+        if (!result.isConfirmed) return;
 
         try {
 
@@ -136,9 +167,11 @@ export function usePlaylistSongs() {
             Swal.fire({
 
                 icon: "success",
+
                 title: "Canción eliminada",
 
                 timer: 1200,
+
                 showConfirmButton: false
 
             });
@@ -150,7 +183,9 @@ export function usePlaylistSongs() {
             Swal.fire({
 
                 icon: "error",
+
                 title: "Error",
+
                 text: "No fue posible eliminar la canción."
 
             });
@@ -164,8 +199,10 @@ export function usePlaylistSongs() {
     // =========================
 
     const moveSong = async (
+
         index,
         direction
+
     ) => {
 
         const updatedSongs = [...playlistSongs];
@@ -176,39 +213,68 @@ export function usePlaylistSongs() {
                 : index + 1;
 
         if (
+
             newIndex < 0 ||
+
             newIndex >= updatedSongs.length
+
         ) return;
 
         [
+
             updatedSongs[index],
             updatedSongs[newIndex]
+
         ] = [
+
             updatedSongs[newIndex],
             updatedSongs[index]
+
         ];
 
-        const reorderedSongs =
-            updatedSongs.map((song, i) => ({
+        const reorderedSongs = updatedSongs.map(
+
+            (song, i) => ({
+
                 ...song,
+
                 orderNumber: i + 1
-            }));
+
+            })
+
+        );
 
         try {
 
-            for (const item of reorderedSongs) {
+            await Promise.all(
 
-                await API.put(
+                reorderedSongs.map(item =>
 
-                    `/playlist-songs/${item.id}`,
+                    API.put(
 
-                    item
+                        `/playlist-songs/${item.id}`,
 
-                );
+                        item
 
-            }
+                    )
+
+                )
+
+            );
 
             setPlaylistSongs(reorderedSongs);
+
+            Swal.fire({
+
+                icon: "success",
+
+                title: "Orden actualizado",
+
+                timer: 900,
+
+                showConfirmButton: false
+
+            });
 
         } catch (error) {
 
@@ -217,7 +283,9 @@ export function usePlaylistSongs() {
             Swal.fire({
 
                 icon: "error",
+
                 title: "Error",
+
                 text: "No fue posible cambiar el orden."
 
             });
@@ -226,16 +294,27 @@ export function usePlaylistSongs() {
 
     };
 
-// =========================
-// RETURN
-// =========================
+    // =========================
+    // RETURN
+    // =========================
 
     return {
+
         playlistSongs,
         setPlaylistSongs,
+
         getPlaylistSongs,
+
         addSongToPlaylist,
+
         removeSongFromPlaylist,
+
         moveSong
+
     };
+
 }
+
+// =========================
+// FIN DEL HOOK
+// =========================

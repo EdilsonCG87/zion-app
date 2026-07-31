@@ -1,7 +1,13 @@
+// =========================
+// IMPORTS
+// =========================
 import { useState } from "react";
 import API from "../services/api";
 import Swal from "sweetalert2";
 
+// =========================
+// HOOK
+// =========================
 export function useReports() {
 
     // =========================
@@ -9,15 +15,23 @@ export function useReports() {
     // =========================
 
     const [songHistory, setSongHistory] = useState([]);
+
     const [selectedHistorySong, setSelectedHistorySong] = useState("");
+
     const [yearUsage, setYearUsage] = useState([]);
 
     const [yearStats, setYearStats] = useState({
+
         totalServices: 0,
+
         totalSongs: 0,
+
         uniqueSongs: 0,
+
         mostUsedSong: null,
+
         mostUsedCount: 0
+
     });
 
     const [monthlyStats, setMonthlyStats] = useState([]);
@@ -28,29 +42,34 @@ export function useReports() {
 
     const getSongHistory = async (songId) => {
 
+        if (!songId) {
+
+            setSongHistory([]);
+
+            return;
+
+        }
+
         try {
 
-            if (!songId) {
-
-                setSongHistory([]);
-                return;
-
-            }
-
-            const response = await API.get(
+            const { data } = await API.get(
                 `/song-usage/${songId}`
             );
 
-            setSongHistory(response.data);
+            setSongHistory(data);
 
         } catch (error) {
 
             console.error(error);
 
             Swal.fire({
+
                 icon: "error",
+
                 title: "Error",
-                text: "No fue posible cargar el historial"
+
+                text: "No fue posible cargar el historial."
+
             });
 
         }
@@ -58,45 +77,38 @@ export function useReports() {
     };
 
     // =========================
-    // REPORTE POR AÑO
+    // REPORTE ANUAL
     // =========================
 
     const getYearUsage = async (year) => {
 
         try {
 
-            const response = await API.get(
+            const { data } = await API.get(
                 `/song-usage/by-year/${year}`
             );
 
-            const usageData = response.data;
+            setYearUsage(data);
 
-            setYearUsage(usageData);
+            // =========================
+            // ESTADÍSTICAS POR MES
+            // =========================
 
             const months = [
-                "Ene",
-                "Feb",
-                "Mar",
-                "Abr",
-                "May",
-                "Jun",
-                "Jul",
-                "Ago",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dic"
+
+                "Ene", "Feb", "Mar", "Abr",
+                "May", "Jun", "Jul", "Ago",
+                "Sep", "Oct", "Nov", "Dic"
+
             ];
 
             const monthlyData = Array(12).fill(0);
 
-            usageData.forEach(item => {
+            data.forEach(item => {
 
                 const date = new Date(item.serviceDate);
 
-                monthlyData[
-                    date.getMonth()
-                ]++;
+                monthlyData[date.getMonth()]++;
 
             });
 
@@ -112,45 +124,57 @@ export function useReports() {
 
             );
 
-            const uniqueSongs = [
+            // =========================
+            // CANCIONES ÚNICAS
+            // =========================
 
-                ...new Set(
+            const uniqueSongs = new Set(
 
-                    usageData.map(
+                data.map(item => item.song?.id)
 
-                        item => item.song?.id
+            );
 
-                    )
+            // =========================
+            // CULTO ÚNICOS
+            // =========================
 
-                )
+            const uniqueServices = new Set(
 
-            ];
+                data.map(item => item.playlist?.id)
 
-            const songCount = {};
+            );
 
-            usageData.forEach(item => {
+            // =========================
+            // CANCIÓN MÁS USADA
+            // =========================
 
-                const songName = item.song?.name;
+            const songCounter = {};
 
-                if (!songName) return;
+            data.forEach(item => {
 
-                songCount[songName] =
+                const name = item.song?.name;
 
-                    (songCount[songName] || 0) + 1;
+                if (!name) return;
+
+                songCounter[name] =
+
+                    (songCounter[name] || 0) + 1;
 
             });
 
-            let topSong = null;
-            let topCount = 0;
+            let mostUsedSong = null;
 
-            Object.entries(songCount).forEach(
+            let mostUsedCount = 0;
+
+            Object.entries(songCounter).forEach(
 
                 ([name, count]) => {
 
-                    if (count > topCount) {
+                    if (count > mostUsedCount) {
 
-                        topSong = name;
-                        topCount = count;
+                        mostUsedSong = name;
+
+                        mostUsedCount = count;
 
                     }
 
@@ -158,31 +182,21 @@ export function useReports() {
 
             );
 
-            const uniqueServices = [
-
-                ...new Set(
-
-                    usageData.map(
-
-                        item => item.playlist?.id
-
-                    )
-
-                )
-
-            ];
+            // =========================
+            // RESUMEN
+            // =========================
 
             setYearStats({
 
-                totalServices: uniqueServices.length,
+                totalServices: uniqueServices.size,
 
-                totalSongs: usageData.length,
+                totalSongs: data.length,
 
-                uniqueSongs: uniqueSongs.length,
+                uniqueSongs: uniqueSongs.size,
 
-                mostUsedSong: topSong,
+                mostUsedSong,
 
-                mostUsedCount: topCount
+                mostUsedCount
 
             });
 
@@ -190,27 +204,45 @@ export function useReports() {
 
             console.error(error);
 
+            Swal.fire({
+
+                icon: "error",
+
+                title: "Error",
+
+                text: "No fue posible generar el reporte."
+
+            });
+
         }
 
     };
 
     // =========================
-    // EXPORTAR
+    // RETURN
     // =========================
 
     return {
 
-    selectedHistorySong,
-    setSelectedHistorySong,
+        selectedHistorySong,
+        setSelectedHistorySong,
 
-    songHistory,
-    yearUsage,
-    yearStats,
-    monthlyStats,
+        songHistory,
 
-    getSongHistory,
-    getYearUsage
+        yearUsage,
 
-};
+        yearStats,
+
+        monthlyStats,
+
+        getSongHistory,
+
+        getYearUsage
+
+    };
 
 }
+
+// =========================
+// FIN DEL HOOK
+// =========================

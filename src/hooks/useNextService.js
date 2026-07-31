@@ -8,21 +8,20 @@ import { useEffect, useState } from "react";
 // =========================
 export function useNextService(playlists) {
 
-// =========================
-// STATES
-// =========================
+    // =========================
+    // STATES
+    // =========================
 
     const [nextService, setNextService] = useState(null);
-
     const [daysRemaining, setDaysRemaining] = useState(null);
 
-// =========================
-// EFECTO
-// =========================
+    // =========================
+    // EFECTO
+    // =========================
 
     useEffect(() => {
 
-        if (!Array.isArray(playlists)) {
+        if (!Array.isArray(playlists) || playlists.length === 0) {
 
             setNextService(null);
             setDaysRemaining(null);
@@ -32,39 +31,28 @@ export function useNextService(playlists) {
         }
 
         const today = new Date();
-
         today.setHours(0, 0, 0, 0);
 
         const upcoming = playlists
-
             .filter((playlist) => {
 
-                const date = new Date(
-                    playlist.serviceDate
-                );
+                if (!playlist.serviceDate) return false;
 
-                date.setHours(0,0,0,0);
+                const date = new Date(playlist.serviceDate);
+                date.setHours(0, 0, 0, 0);
 
                 return date >= today;
 
             })
-
             .sort(
-
-                (a,b)=>
-
-                    new Date(a.serviceDate)
-
-                    -
-
+                (a, b) =>
+                    new Date(a.serviceDate) -
                     new Date(b.serviceDate)
-
             );
 
         if (upcoming.length === 0) {
 
             setNextService(null);
-
             setDaysRemaining(null);
 
             return;
@@ -78,18 +66,11 @@ export function useNextService(playlists) {
         const days = Math.ceil(
 
             (
-
-                new Date(next.serviceDate)
-
-                -
-
+                new Date(next.serviceDate) -
                 new Date()
+            ) /
 
-            )
-
-            /
-
-            (1000*60*60*24)
+            (1000 * 60 * 60 * 24)
 
         );
 
@@ -97,16 +78,19 @@ export function useNextService(playlists) {
 
     }, [playlists]);
 
-// =========================
-// RETURN
-// =========================
+    // =========================
+    // RETURN
+    // =========================
 
     return {
 
         nextService,
-
         daysRemaining
 
     };
 
 }
+
+// =========================
+// FIN DEL HOOK
+// =========================
