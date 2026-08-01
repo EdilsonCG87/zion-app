@@ -95,7 +95,7 @@ export function useSongs() {
 
 }
         }
-    };
+
 
 // =========================
 // GUARDAR CANCIÓN
@@ -358,3 +358,4 @@ return {
     toggleFavorite,
     confirmDelete
 };
+}
