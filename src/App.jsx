@@ -24,17 +24,17 @@ import AgendaPage from "./pages/AgendaPage";
 // =========================
 function App() {
 
-    // =========================
-    // STATES
-    // =========================
+// =========================
+// STATES
+// =========================
 
     const [activeTab, setActiveTab] = useState("dashboard");
 
     const [showTopSongs, setShowTopSongs] = useState(false);
 
-    // =========================
-    // HOOK CANCIONES
-    // =========================
+// =========================
+// HOOK CANCIONES
+// =========================
 
     const songsHook = useSongs();
 
@@ -51,25 +51,17 @@ function App() {
 
     const {
         playlists,
-
         playlistName,
         setPlaylistName,
-
         serviceDate,
         setServiceDate,
-
         selectedPlaylist,
         setSelectedPlaylist,
-
         selectedSong,
         setSelectedSong,
-
         getPlaylists,
-
         createPlaylist,
-
         deletePlaylist,
-
         startEditPlaylist
 
     } = playlistsHook;
@@ -81,13 +73,9 @@ function App() {
     const playlistSongsHook = usePlaylistSongs();
 
     const {
-
         playlistSongs,
-
         getPlaylistSongs,
-
         addSongToPlaylist
-
     } = playlistSongsHook;
 
     // =========================
@@ -101,16 +89,11 @@ function App() {
     // =========================
 
     const {
-
         selectedHistorySong,
         setSelectedHistorySong,
-
         songHistory,
-
         getSongHistory,
-
         getYearUsage
-
     } = useReports();
 
     // =========================
@@ -118,13 +101,10 @@ function App() {
     // =========================
 
     const {
-
         topSongs,
-
         getTopSongs,
         getUnusedSongs,
         getOverusedSongs
-
     } = useStatistics();
 
     // =========================
@@ -132,11 +112,8 @@ function App() {
     // =========================
 
     const {
-
         nextService,
-
         daysRemaining
-
     } = useNextService(playlists);
 
     // =========================
@@ -144,21 +121,13 @@ function App() {
     // =========================
 
     const {
-
         shareWhatsApp,
-
         exportPlaylistPDF
-
     } = useSharePlaylist({
-
         playlists,
-
         selectedPlaylist,
-
         playlistSongs,
-
         songs
-
     });
 
     // =========================

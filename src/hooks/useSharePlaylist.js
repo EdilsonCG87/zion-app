@@ -13,18 +13,21 @@ export function useSharePlaylist({
     playlistSongs,
     songs
 }) {
+    console.log("playlists:", playlists);
+    console.log("Array:", Array.isArray(playlists));
 
-    // =========================
-    // OBTENER CULTO SELECCIONADO
-    // =========================
+// =========================
+// OBTENER CULTO SELECCIONADO
+// =========================
 
-    const selected = playlists.find(
+    const selected = Array.isArray(playlists)
+    ? playlists.find(
         playlist => playlist.id === Number(selectedPlaylist)
-    );
-
-    // =========================
-    // COMPARTIR POR WHATSAPP
-    // =========================
+      )
+    : null;
+// =========================
+// COMPARTIR POR WHATSAPP
+// =========================
 
     const shareWhatsApp = () => {
 
@@ -141,13 +144,12 @@ export function useSharePlaylist({
 
     };
 
-    // =========================
-    // RETURN
-    // =========================
+// =========================
+// RETURN
+// =========================
 
     return {
         shareWhatsApp,
         exportPlaylistPDF
     };
-
 }
