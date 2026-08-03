@@ -14,52 +14,46 @@ export function usePlaylists() {
 // STATES
 // =========================
 
-    const [playlists, setPlaylists] = useState([]);
-
-    const [playlistName, setPlaylistName] = useState("");
-
-    const [serviceDate, setServiceDate] = useState("");
-
-    const [selectedPlaylist, setSelectedPlaylist] = useState("");
-
-    const [selectedSong, setSelectedSong] = useState("");
+const [playlists, setPlaylists] = useState([]);
+const [playlistName, setPlaylistName] = useState("");
+const [serviceDate, setServiceDate] = useState("");
+const [selectedPlaylist, setSelectedPlaylist] = useState("");
+const [selectedSong, setSelectedSong] = useState("");
 
 // =========================
 // LIMPIAR FORMULARIO
 // =========================
 
     const clearPlaylistForm = () => {
-
         setPlaylistName("");
         setServiceDate("");
-
     };
 
-    // =========================
-    // OBTENER CULTOS
-    // =========================
+// =========================
+// OBTENER CULTOS
+// =========================
 
-    const getPlaylists = async () => {
+const getPlaylists = async () => {
 
-        try {
+    try {
 
-            const { data } = await API.get("/playlists");
+        const response = await API.get("/playlists");
 
-            setPlaylists(data);
+console.log("========== PLAYLISTS ==========");
+console.log(response.data);
+console.log(typeof response.data);
+console.log(Array.isArray(response.data));
+console.log(response.data.length);
 
-        } catch (error) {
+setPlaylists(response.data);
 
-            console.error(error);
+    } catch (error) {
 
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "No fue posible cargar los cultos."
-            });
+        console.error(error);
 
-        }
+    }
 
-    };
+};
 
     // =========================
     // CREAR CULTO

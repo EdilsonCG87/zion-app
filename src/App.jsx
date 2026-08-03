@@ -43,9 +43,9 @@ function App() {
         getSongs
     } = songsHook;
 
-    // =========================
-    // HOOK CULTOS
-    // =========================
+// =========================
+// HOOK CULTOS
+// =========================
 
     const playlistsHook = usePlaylists();
 
@@ -66,9 +66,9 @@ function App() {
 
     } = playlistsHook;
 
-    // =========================
-    // HOOK CANCIONES DEL CULTO
-    // =========================
+// =========================
+// HOOK CANCIONES DEL CULTO
+// =========================
 
     const playlistSongsHook = usePlaylistSongs();
 
@@ -78,15 +78,15 @@ function App() {
         addSongToPlaylist
     } = playlistSongsHook;
 
-    // =========================
-    // DASHBOARD
-    // =========================
+// =========================
+// DASHBOARD
+// =========================
 
     const { loadDashboard } = useDashboard();
 
-    // =========================
-    // REPORTES
-    // =========================
+// =========================
+// REPORTES
+// =========================
 
     const {
         selectedHistorySong,
@@ -96,9 +96,9 @@ function App() {
         getYearUsage
     } = useReports();
 
-    // =========================
-    // ESTADÍSTICAS
-    // =========================
+// =========================
+// ESTADÍSTICAS
+// =========================
 
     const {
         topSongs,
@@ -107,18 +107,18 @@ function App() {
         getOverusedSongs
     } = useStatistics();
 
-    // =========================
-    // PRÓXIMO CULTO
-    // =========================
+// =========================
+// PRÓXIMO CULTO
+// =========================
 
     const {
         nextService,
         daysRemaining
     } = useNextService(playlists);
 
-    // =========================
-    // EXPORTAR / WHATSAPP
-    // =========================
+// =========================
+// EXPORTAR / WHATSAPP
+// =========================
 
     const {
         shareWhatsApp,
@@ -130,31 +130,24 @@ function App() {
         songs
     });
 
-    // =========================
-    // CARGA INICIAL
-    // =========================
+// =========================
+// CARGA INICIAL
+// =========================
 
     useEffect(() => {
-
         getSongs();
-
         getPlaylists();
-
         loadDashboard();
-
         getTopSongs();
-
         getUnusedSongs();
-
         getOverusedSongs();
-
         getYearUsage(2026);
 
     }, []);
 
-    // =========================
-    // RENDER
-    // =========================
+// =========================
+// RENDER
+// =========================
 
     return (
 
@@ -207,21 +200,13 @@ function App() {
             {/* DASHBOARD */}
 
             {activeTab === "dashboard" && (
-
                 <DashboardPage
-
                     songs={songs}
-
                     playlists={playlists}
-
                     topSongs={topSongs}
-
                     showTopSongs={showTopSongs}
-
                     setShowTopSongs={setShowTopSongs}
-
                 />
-
             )}
 
             {/* AGENDA */}
@@ -229,17 +214,11 @@ function App() {
             {activeTab === "agenda" && (
 
                 <AgendaPage
-
                     playlists={playlists}
-
                     playlistSongs={playlistSongs}
-
                     songs={songs}
-
                     getPlaylistSongs={getPlaylistSongs}
-
                 />
-
             )}
 
             {/* CULTOS */}
@@ -247,67 +226,38 @@ function App() {
             {activeTab === "playlist" && (
 
                 <PlaylistPage
-
                     playlists={playlists}
-
                     selectedPlaylist={selectedPlaylist}
-
                     setSelectedPlaylist={setSelectedPlaylist}
-
                     getPlaylistSongs={getPlaylistSongs}
-
                     deletePlaylist={deletePlaylist}
-
                     playlistName={playlistName}
-
                     setPlaylistName={setPlaylistName}
-
                     serviceDate={serviceDate}
-
                     setServiceDate={setServiceDate}
-
                     createPlaylist={createPlaylist}
-
                     selectedSong={selectedSong}
-
                     setSelectedSong={setSelectedSong}
-
                     songs={songs}
-
                     addSongToPlaylist={addSongToPlaylist}
-
                     startEditPlaylist={startEditPlaylist}
-
                     exportPlaylistPDF={exportPlaylistPDF}
-
                     shareWhatsApp={shareWhatsApp}
-
                     selectedHistorySong={selectedHistorySong}
-
                     setSelectedHistorySong={setSelectedHistorySong}
-
                     songHistory={songHistory}
-
                     getSongHistory={getSongHistory}
-
                 />
-
             )}
 
             {/* CANCIONES */}
 
             {activeTab === "songs" && (
-
                 <SongsPage
-
                     songsHook={songsHook}
-
                     getTopSongs={getTopSongs}
-
                     getOverusedSongs={getOverusedSongs}
-
                 />
-
             )}
 
             {/* MENÚ */}
