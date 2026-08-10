@@ -10,50 +10,140 @@ import API from "../services/api";
 // =========================
 export function usePlaylists() {
 
-// =========================
-// STATES
-// =========================
+    // =========================
+    // STATES
+    // =========================
 
-const [playlists, setPlaylists] = useState([]);
-const [playlistName, setPlaylistName] = useState("");
-const [serviceDate, setServiceDate] = useState("");
-const [selectedPlaylist, setSelectedPlaylist] = useState("");
-const [selectedSong, setSelectedSong] = useState("");
+    const [playlists, setPlaylists] = useState([]);
 
-// =========================
-// LIMPIAR FORMULARIO
-// =========================
+    const [playlistName, setPlaylistName] = useState("");
+
+    const [serviceDate, setServiceDate] = useState("");
+
+    const [selectedPlaylist, setSelectedPlaylist] = useState("");
+
+    const [selectedSong, setSelectedSong] = useState("");
+
+    // =========================
+    // LIMPIAR FORMULARIO
+    // =========================
 
     const clearPlaylistForm = () => {
+
         setPlaylistName("");
+
         setServiceDate("");
+
     };
 
-// =========================
-// OBTENER CULTOS
-// =========================
+    // =========================
+    // OBTENER CULTOS
+    // =========================
 
-const getPlaylists = async () => {
+    const getPlaylists = async () => {
 
-    try {
+        try {
 
-        const response = await API.get("/playlists");
+            const response = await API.get("/playlists");
 
-console.log("========== PLAYLISTS ==========");
-console.log(response.data);
-console.log(typeof response.data);
-console.log(Array.isArray(response.data));
-console.log(response.data.length);
+            let data = response.data;
 
-setPlaylists(response.data);
+            // ---------------------------------
+            // El backend puede devolver:
+            // 1. Un arreglo directamente
+            // 2. Un JSON convertido en string
+            // ---------------------------------
 
-    } catch (error) {
+            if (typeof data === "string") {
 
-        console.error(error);
+                try {
 
-    }
+                    data = JSON.parse(data);
 
-};
+                } catch (parseError) {
+
+                    console.error(
+                        "La respuesta de /playlists no contiene JSON válido:",
+                        parseError
+                    );
+
+                    setPlaylists([]);
+
+                    Swal.fire({
+
+                        icon: "error",
+
+                        title: "Error",
+
+                        text:
+                            "El servidor devolvió una respuesta inválida para los cultos."
+
+                    });
+
+                    return;
+
+                }
+
+            }
+
+            // ---------------------------------
+            // Verificar que realmente sea array
+            // ---------------------------------
+
+            if (!Array.isArray(data)) {
+
+                console.error(
+                    "La respuesta de /playlists no es un arreglo:",
+                    data
+                );
+
+                setPlaylists([]);
+
+                Swal.fire({
+
+                    icon: "error",
+
+                    title: "Error",
+
+                    text:
+                        "No fue posible interpretar la lista de cultos."
+
+                });
+
+                return;
+
+            }
+
+            // ---------------------------------
+            // Guardar cultos
+            // ---------------------------------
+
+            setPlaylists(data);
+
+        } catch (error) {
+
+            console.error(
+                "Error al obtener cultos:",
+                error
+            );
+
+            setPlaylists([]);
+
+            Swal.fire({
+
+                icon: "error",
+
+                title: "Error",
+
+                text:
+                    error.response?.data?.message ||
+                    "No fue posible cargar los cultos."
+
+            });
+
+        }
+
+    };
 
     // =========================
     // CREAR CULTO
@@ -64,9 +154,14 @@ setPlaylists(response.data);
         if (!playlistName.trim()) {
 
             Swal.fire({
+
                 icon: "warning",
+
                 title: "Nombre requerido",
-                text: "Debes escribir un nombre para el culto."
+
+                text:
+                    "Debes escribir un nombre para el culto."
+
             });
 
             return;
@@ -75,18 +170,28 @@ setPlaylists(response.data);
 
         try {
 
-            await API.post("/playlists", {
+            await API.post(
 
-                name: playlistName.trim(),
-                serviceDate
+                "/playlists",
 
-            });
+                {
+
+                    name: playlistName.trim(),
+
+                    serviceDate
+
+                }
+
+            );
 
             Swal.fire({
 
                 icon: "success",
+
                 title: "Culto creado",
+
                 timer: 1500,
+
                 showConfirmButton: false
 
             });
@@ -97,13 +202,20 @@ setPlaylists(response.data);
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Error al crear culto:",
+                error
+            );
 
             Swal.fire({
 
                 icon: "error",
+
                 title: "Error",
-                text: "No fue posible crear el culto."
+
+                text:
+                    error.response?.data?.message ||
+                    "No fue posible crear el culto."
 
             });
 
@@ -117,11 +229,26 @@ setPlaylists(response.data);
 
     const updatePlaylist = async (data) => {
 
+        if (!selectedPlaylist) {
+
+            Swal.fire({
+
+                icon: "warning",
+
+                title: "Selecciona un culto"
+
+            });
+
+            return;
+
+        }
+
         try {
 
             await API.put(
 
                 `/playlists/${selectedPlaylist}`,
+
                 data
 
             );
@@ -129,8 +256,11 @@ setPlaylists(response.data);
             Swal.fire({
 
                 icon: "success",
+
                 title: "Culto actualizado",
+
                 timer: 1500,
+
                 showConfirmButton: false
 
             });
@@ -139,13 +269,20 @@ setPlaylists(response.data);
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Error al actualizar culto:",
+                error
+            );
 
             Swal.fire({
 
                 icon: "error",
+
                 title: "Error",
-                text: "No fue posible actualizar el culto."
+
+                text:
+                    error.response?.data?.message ||
+                    "No fue posible actualizar el culto."
 
             });
 
@@ -164,6 +301,7 @@ setPlaylists(response.data);
             Swal.fire({
 
                 icon: "warning",
+
                 title: "Selecciona un culto"
 
             });
@@ -176,7 +314,8 @@ setPlaylists(response.data);
 
             title: "¿Eliminar culto?",
 
-            text: "Esta acción no se puede deshacer.",
+            text:
+                "Esta acción no se puede deshacer.",
 
             icon: "warning",
 
@@ -188,17 +327,28 @@ setPlaylists(response.data);
 
         });
 
-        if (!result.isConfirmed) return;
+        if (!result.isConfirmed) {
+
+            return;
+
+        }
 
         try {
 
-            await API.delete(`/playlists/${selectedPlaylist}`);
+            await API.delete(
+
+                `/playlists/${selectedPlaylist}`
+
+            );
 
             Swal.fire({
 
                 icon: "success",
+
                 title: "Culto eliminado",
+
                 timer: 1200,
+
                 showConfirmButton: false
 
             });
@@ -209,12 +359,17 @@ setPlaylists(response.data);
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Error al eliminar culto:",
+                error
+            );
 
             Swal.fire({
 
                 icon: "error",
+
                 title: "Error",
+
                 text:
                     error.response?.data?.message ||
                     "No fue posible eliminar el culto."
@@ -236,6 +391,7 @@ setPlaylists(response.data);
             Swal.fire({
 
                 icon: "warning",
+
                 title: "Selecciona un culto"
 
             });
@@ -246,11 +402,27 @@ setPlaylists(response.data);
 
         const selected = playlists.find(
 
-            playlist => playlist.id === Number(selectedPlaylist)
+            playlist =>
+                playlist.id === Number(selectedPlaylist)
 
         );
 
-        if (!selected) return;
+        if (!selected) {
+
+            Swal.fire({
+
+                icon: "warning",
+
+                title: "Culto no encontrado",
+
+                text:
+                    "No fue posible encontrar el culto seleccionado."
+
+            });
+
+            return;
+
+        }
 
         const result = await Swal.fire({
 
@@ -262,14 +434,14 @@ setPlaylists(response.data);
                     id="swal-name"
                     class="swal2-input"
                     placeholder="Nombre"
-                    value="${selected.name}"
+                    value="${selected.name ?? ""}"
                 >
 
                 <input
                     id="swal-date"
                     type="date"
                     class="swal2-input"
-                    value="${selected.serviceDate}"
+                    value="${selected.serviceDate ?? ""}"
                 >
 
             `,
@@ -282,17 +454,45 @@ setPlaylists(response.data);
 
             focusConfirm: false,
 
-            preConfirm: () => ({
+            preConfirm: () => {
 
-                name: document.getElementById("swal-name").value,
+                const name =
+                    document.getElementById(
+                        "swal-name"
+                    ).value.trim();
 
-                serviceDate: document.getElementById("swal-date").value
+                const serviceDate =
+                    document.getElementById(
+                        "swal-date"
+                    ).value;
 
-            })
+                if (!name) {
+
+                    Swal.showValidationMessage(
+                        "El nombre del culto es obligatorio."
+                    );
+
+                    return false;
+
+                }
+
+                return {
+
+                    name,
+
+                    serviceDate
+
+                };
+
+            }
 
         });
 
-        if (!result.isConfirmed) return;
+        if (!result.isConfirmed) {
+
+            return;
+
+        }
 
         await updatePlaylist(result.value);
 
@@ -307,32 +507,37 @@ setPlaylists(response.data);
         // Estados
 
         playlists,
+
         setPlaylists,
 
         playlistName,
+
         setPlaylistName,
 
         serviceDate,
+
         setServiceDate,
 
         selectedPlaylist,
+
         setSelectedPlaylist,
 
         selectedSong,
+
         setSelectedSong,
 
         // Funciones
 
         getPlaylists,
+
         createPlaylist,
+
         updatePlaylist,
+
         deletePlaylist,
+
         startEditPlaylist
 
     };
 
 }
-
-// =========================
-// FIN DEL HOOK
-// =========================

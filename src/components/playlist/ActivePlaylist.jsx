@@ -48,7 +48,7 @@ function ActivePlaylist({
                         Seleccionar culto
                     </option>
 
-                    {playlists.map((playlist) => (
+                    {Array.isArray(playlists) && playlists.map((playlist) => (
 
                         <option
                             key={playlist.id}
