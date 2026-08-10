@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import logo from "./assets/logo.png";
 
-import { useSongs } from "./hooks/useSongs";
 import { usePlaylists } from "./hooks/usePlaylists";
 import { usePlaylistSongs } from "./hooks/usePlaylistSongs";
 import { useDashboard } from "./hooks/useDashboard";
@@ -79,12 +78,6 @@ function App() {
     } = playlistSongsHook;
 
 // =========================
-// DASHBOARD
-// =========================
-
-    const { loadDashboard } = useDashboard();
-
-// =========================
 // REPORTES
 // =========================
 
@@ -137,7 +130,6 @@ function App() {
     useEffect(() => {
         getSongs();
         getPlaylists();
-        loadDashboard();
         getTopSongs();
         getUnusedSongs();
         getOverusedSongs();
