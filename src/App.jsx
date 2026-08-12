@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import logo from "./assets/logo.png";
 
+import { useSongs } from "./hooks/useSongs";
 import { usePlaylists } from "./hooks/usePlaylists";
 import { usePlaylistSongs } from "./hooks/usePlaylistSongs";
 import { useDashboard } from "./hooks/useDashboard";
