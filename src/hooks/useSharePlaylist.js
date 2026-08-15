@@ -13,25 +13,42 @@ export function useSharePlaylist({
     playlistSongs,
     songs
 }) {
-    console.log("playlists:", playlists);
-    console.log("Array:", Array.isArray(playlists));
 
-// =========================
-// OBTENER CULTO SELECCIONADO
-// =========================
+    // =========================
+    // DATOS SEGUROS
+    // =========================
 
-    const selected = Array.isArray(playlists)
-    ? playlists.find(
-        playlist => playlist.id === Number(selectedPlaylist)
-      )
-    : null;
-// =========================
-// COMPARTIR POR WHATSAPP
-// =========================
+    const safePlaylists = Array.isArray(playlists)
+        ? playlists
+        : [];
+
+    const safePlaylistSongs = Array.isArray(playlistSongs)
+        ? playlistSongs
+        : [];
+
+    const safeSongs = Array.isArray(songs)
+        ? songs
+        : [];
+
+    // =========================
+    // OBTENER CULTO SELECCIONADO
+    // =========================
+
+    const selected = safePlaylists.find(
+        playlist =>
+            playlist.id === Number(selectedPlaylist)
+    );
+
+    // =========================
+    // COMPARTIR POR WHATSAPP
+    // =========================
 
     const shareWhatsApp = () => {
 
-        if (!selectedPlaylist || playlistSongs.length === 0) {
+        if (
+            !selectedPlaylist ||
+            safePlaylistSongs.length === 0
+        ) {
 
             Swal.fire({
                 icon: "warning",
@@ -50,10 +67,10 @@ export function useSharePlaylist({
 
 `;
 
-        playlistSongs.forEach((item, index) => {
+        safePlaylistSongs.forEach((item, index) => {
 
-            const song = songs.find(
-                s => s.id === item.songId
+            const song = safeSongs.find(
+                song => song.id === item.songId
             );
 
             message += `${index + 1}. ${song?.name ?? "Canción"}\n`;
@@ -75,7 +92,10 @@ export function useSharePlaylist({
 
     const exportPlaylistPDF = () => {
 
-        if (!selectedPlaylist || playlistSongs.length === 0) {
+        if (
+            !selectedPlaylist ||
+            safePlaylistSongs.length === 0
+        ) {
 
             Swal.fire({
                 icon: "warning",
@@ -89,6 +109,7 @@ export function useSharePlaylist({
         const pdf = new jsPDF();
 
         pdf.setFontSize(18);
+
         pdf.text(
             "ZION Playlist - Orden del Culto",
             20,
@@ -111,10 +132,10 @@ export function useSharePlaylist({
 
         let y = 58;
 
-        playlistSongs.forEach((item, index) => {
+        safePlaylistSongs.forEach((item, index) => {
 
-            const song = songs.find(
-                s => s.id === item.songId
+            const song = safeSongs.find(
+                song => song.id === item.songId
             );
 
             pdf.text(
@@ -125,15 +146,23 @@ export function useSharePlaylist({
 
             y += 10;
 
-            // Nueva página cuando se llena
+            // =========================
+            // NUEVA PÁGINA
+            // =========================
+
             if (y > 270) {
+
                 pdf.addPage();
+
                 y = 20;
+
             }
 
         });
 
-        pdf.save("orden-culto-zion.pdf");
+        pdf.save(
+            "orden-culto-zion.pdf"
+        );
 
         Swal.fire({
             icon: "success",
@@ -144,12 +173,15 @@ export function useSharePlaylist({
 
     };
 
-// =========================
-// RETURN
-// =========================
+    // =========================
+    // RETURN
+    // =========================
 
     return {
+
         shareWhatsApp,
         exportPlaylistPDF
+
     };
+
 }
