@@ -813,3 +813,419 @@ font-weight:bold;
   border-left: 5px solid #facc15;
 
 }
+
+/* =========================================================
+   ZION - REDISEÑO VISUAL 15.1
+   ORDEN DE CANCIONES DEL CULTO
+   ========================================================= */
+
+/* Contenedor general de cada fila */
+.playlist-card .playlist-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* Cuando la fila contiene una canción */
+.playlist-card .playlist-row > span {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+/* Número de la canción */
+.playlist-card .playlist-row > span strong {
+    min-width: 28px;
+    color: #f8d24b;
+}
+
+/* Contenedor de botones de cada canción */
+.playlist-card .playlist-row > div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+
+    flex-shrink: 0;
+}
+
+/* Botones subir / bajar / eliminar */
+.playlist-card .action-btn {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Efecto al pasar el mouse */
+.playlist-card .action-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Botón deshabilitado */
+.playlist-card .action-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Fila de canción */
+.playlist-card .playlist-row:has(> span) {
+    min-height: 58px;
+
+    padding: 8px 12px;
+
+    background: rgba(255, 255, 255, 0.035);
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    border-radius: 12px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+/* Efecto al pasar por una canción */
+.playlist-card .playlist-row:has(> span):hover {
+    background: rgba(255, 255, 255, 0.07);
+
+    border-color: rgba(248, 210, 75, 0.25);
+}
+
+
+/* =========================================================
+   MEJORA DEL TÍTULO "CANCIONES DEL CULTO"
+   ========================================================= */
+
+.playlist-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+
+/* =========================================================
+   MEJORA GENERAL DE LAS TARJETAS
+   ========================================================= */
+
+.playlist-card {
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .playlist-card {
+        padding: 20px;
+    }
+
+    .playlist-card .playlist-row:has(> span) {
+        padding: 8px 10px;
+    }
+
+    .playlist-card .playlist-row > span {
+        font-size: 15px;
+    }
+
+    .playlist-card .action-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - CELULAR
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 15px;
+        padding-bottom: 90px;
+    }
+
+    .app-container {
+        width: 100%;
+    }
+
+    .playlist-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .playlist-title {
+        font-size: 19px;
+        margin-bottom: 16px;
+    }
+
+    /* Las canciones siguen en una sola línea */
+    .playlist-card .playlist-row:has(> span) {
+        gap: 8px;
+        padding: 7px 8px;
+    }
+
+    .playlist-card .playlist-row > span {
+        font-size: 14px;
+    }
+
+    .playlist-card .playlist-row > div {
+        gap: 5px;
+    }
+
+    .playlist-card .action-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+}
+
+
+/* =========================================================
+   ZION - REDISEÑO VISUAL 15.2
+   GESTIÓN DE CULTOS
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   FILAS DEL FORMULARIO DE CULTOS
+   --------------------------------------------------------- */
+
+.playlist-card .playlist-row {
+    align-items: stretch;
+}
+
+/* Inputs y selects del administrador de cultos */
+.playlist-card .playlist-row input,
+.playlist-card .playlist-row select {
+    min-height: 48px;
+    font-size: 15px;
+}
+
+/* ---------------------------------------------------------
+   BOTONES PRINCIPALES
+   --------------------------------------------------------- */
+
+.playlist-card .save-btn,
+.playlist-card .btn-create {
+    min-height: 48px;
+
+    padding: 0 22px;
+
+    border-radius: 12px;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+.playlist-card .save-btn:hover,
+.playlist-card .btn-create:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 15px rgba(0, 0, 0, 0.25);
+
+    filter: brightness(1.05);
+}
+
+.playlist-card .save-btn:active,
+.playlist-card .btn-create:active {
+    transform: translateY(0);
+}
+
+
+/* ---------------------------------------------------------
+   SELECTOR DEL CULTO
+   --------------------------------------------------------- */
+
+.playlist-card select {
+    cursor: pointer;
+}
+
+.playlist-card select:hover {
+    border-color: rgba(248, 210, 75, 0.35);
+}
+
+
+/* ---------------------------------------------------------
+   BOTONES DEL CULTO ACTIVO
+   --------------------------------------------------------- */
+
+.playlist-card .action-btn {
+    min-height: 44px;
+}
+
+
+/* Botón editar */
+.playlist-card .btn-edit {
+    background: #3b82f6;
+}
+
+.playlist-card .btn-edit:hover {
+    background: #2563eb;
+    box-shadow: 0 5px 12px rgba(37, 99, 235, 0.3);
+}
+
+
+/* Botón eliminar */
+.playlist-card .btn-delete {
+    background: #ef4444;
+}
+
+.playlist-card .btn-delete:hover {
+    background: #dc2626;
+    box-shadow: 0 5px 12px rgba(239, 68, 68, 0.3);
+}
+
+
+/* PDF */
+.playlist-card .btn-pdf {
+    background: #e7ab42;
+}
+
+.playlist-card .btn-pdf:hover {
+    background: #d99a2f;
+    box-shadow: 0 5px 12px rgba(231, 171, 66, 0.3);
+}
+
+
+/* WhatsApp */
+.playlist-card .btn-whatsapp {
+    background: #25d366;
+}
+
+.playlist-card .btn-whatsapp:hover {
+    background: #1ebe5d;
+    box-shadow: 0 5px 12px rgba(37, 211, 102, 0.3);
+}
+
+
+/* ---------------------------------------------------------
+   GRUPO DE BOTONES DEL CULTO ACTIVO
+   --------------------------------------------------------- */
+
+.playlist-card .active-playlist-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+
+/* ---------------------------------------------------------
+   SEPARACIÓN VISUAL DEL SELECTOR
+   --------------------------------------------------------- */
+
+.playlist-card .playlist-row + .playlist-row {
+    margin-top: 4px;
+}
+
+
+/* ---------------------------------------------------------
+   ESTADO DE ENFOQUE
+   --------------------------------------------------------- */
+
+.playlist-card input:focus,
+.playlist-card select:focus {
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .playlist-card .playlist-row {
+        gap: 10px;
+    }
+
+    .playlist-card .playlist-row input,
+    .playlist-card .playlist-row select {
+        min-height: 46px;
+    }
+
+    .playlist-card .save-btn,
+    .playlist-card .btn-create {
+        padding: 0 16px;
+        font-size: 14px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - CELULAR
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    /* Los elementos del formulario pasan a columna */
+    .playlist-card .playlist-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .playlist-card .playlist-row input,
+    .playlist-card .playlist-row select,
+    .playlist-card .playlist-row .save-btn,
+    .playlist-card .playlist-row .btn-create {
+        width: 100%;
+        min-height: 46px;
+    }
+
+    /* Botones del culto activo */
+    .playlist-card .active-playlist-actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .playlist-card .active-playlist-actions .action-btn {
+        width: 100%;
+    }
+
+}
