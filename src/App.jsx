@@ -73,10 +73,12 @@ function App() {
 const playlistSongsHook = usePlaylistSongs();
 
 const {
-        playlistSongs,
-        getPlaylistSongs,
-        addSongToPlaylist
-    } = playlistSongsHook;
+    playlistSongs,
+    getPlaylistSongs,
+    addSongToPlaylist,
+    removeSongFromPlaylist,
+    moveSong
+} = playlistSongsHook;
 
 // =========================
 // REPORTES
@@ -224,20 +226,28 @@ const {
         setSelectedPlaylist={setSelectedPlaylist}
         getPlaylistSongs={getPlaylistSongs}
 
-        playlistSongs={playlistSongs}
+        removeSongFromPlaylist={removeSongFromPlaylist}
+        moveSong={moveSong}
 
         deletePlaylist={deletePlaylist}
+
         playlistName={playlistName}
         setPlaylistName={setPlaylistName}
+
         serviceDate={serviceDate}
         setServiceDate={setServiceDate}
+
         createPlaylist={createPlaylist}
+
         selectedSong={selectedSong}
         setSelectedSong={setSelectedSong}
+
         songs={songs}
+
         addSongToPlaylist={addSongToPlaylist}
 
         startEditPlaylist={startEditPlaylist}
+
         exportPlaylistPDF={exportPlaylistPDF}
         shareWhatsApp={shareWhatsApp}
 
@@ -246,7 +256,6 @@ const {
         songHistory={songHistory}
         getSongHistory={getSongHistory}
     />
-
 )}
 
             {/* CANCIONES */}
