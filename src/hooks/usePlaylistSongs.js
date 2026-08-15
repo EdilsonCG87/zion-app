@@ -10,52 +10,47 @@ import API from "../services/api";
 // =========================
 export function usePlaylistSongs() {
 
-    // =========================
-    // STATES
-    // =========================
+// =========================
+// STATES
+// =========================
 
-    const [playlistSongs, setPlaylistSongs] = useState([]);
+const [playlistSongs, setPlaylistSongs] = useState([]);
 
-    // =========================
-    // OBTENER CANCIONES DEL CULTO
-    // =========================
+// =========================
+// OBTENER CANCIONES DEL CULTO
+// =========================
 
-    const getPlaylistSongs = async (playlistId) => {
+const getPlaylistSongs = async (playlistId) => {
 
-        if (!playlistId) {
+    if (!playlistId) {
+        setPlaylistSongs([]);
+        return;
+    }
 
-            setPlaylistSongs([]);
-            return;
+    try {
 
-        }
+        const { data } = await API.get(
+            `/playlist-songs/${playlistId}`
+        );
 
-        try {
+        setPlaylistSongs(data);
 
-            const { data } = await API.get(
-                `/playlist-songs/playlist/${playlistId}`
-            );
+    } catch (error) {
 
-            setPlaylistSongs(data);
+        console.error(error);
 
-        } catch (error) {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No fue posible cargar las canciones del culto."
+        });
 
-            console.error(error);
+    }
+};
 
-            Swal.fire({
-
-                icon: "error",
-                title: "Error",
-                text: "No fue posible cargar las canciones del culto."
-
-            });
-
-        }
-
-    };
-
-    // =========================
-    // AGREGAR CANCIÓN AL CULTO
-    // =========================
+// =========================
+// AGREGAR CANCIÓN AL CULTO
+// =========================
 
     const addSongToPlaylist = async (
 
