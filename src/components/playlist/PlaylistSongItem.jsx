@@ -41,12 +41,7 @@ function PlaylistSongItem({
 
             </span>
 
-            <div
-                style={{
-                    display: "flex",
-                    gap: "8px"
-                }}
-            >
+           <div className="song-actions">
 
                 <button
                     className="action-btn"

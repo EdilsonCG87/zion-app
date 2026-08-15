@@ -48,56 +48,55 @@ function ActivePlaylist({
                         Seleccionar culto
                     </option>
 
-                    {Array.isArray(playlists) && playlists.map((playlist) => (
+                    {Array.isArray(playlists) &&
+                        playlists.map((playlist) => (
 
-                        <option
-                            key={playlist.id}
-                            value={playlist.id}
-                        >
-                            {playlist.name}
-                        </option>
+                            <option
+                                key={playlist.id}
+                                value={playlist.id}
+                            >
+                                {playlist.name}
+                            </option>
 
-                    ))}
+                        ))
+                    }
 
                 </select>
 
             </div>
 
-            <div
-                style={{
-                    display: "flex",
-                    gap: "10px",
-                    marginTop: "15px",
-                    flexWrap: "wrap"
-                }}
-            >
+            {/* =========================
+                BOTONES DE ACCIÓN
+            ========================= */}
+
+            <div className="active-playlist-actions">
 
                 <button
                     className="action-btn btn-edit"
                     onClick={startEditPlaylist}
                 >
-                    ✏️ Editar
+                    ✏️ <span>Editar</span>
                 </button>
 
                 <button
                     className="action-btn btn-delete"
                     onClick={deletePlaylist}
                 >
-                    🗑 Eliminar
+                    🗑 <span>Eliminar</span>
                 </button>
 
                 <button
                     className="action-btn btn-pdf"
                     onClick={exportPlaylistPDF}
                 >
-                    📄 PDF
+                    📄 <span>PDF</span>
                 </button>
 
                 <button
                     className="action-btn btn-whatsapp"
                     onClick={shareWhatsApp}
                 >
-                    📲 WhatsApp
+                    📲 <span>WhatsApp</span>
                 </button>
 
             </div>

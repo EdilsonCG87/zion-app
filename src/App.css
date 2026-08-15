@@ -814,6 +814,11 @@ font-weight:bold;
 
 }
 
+
+
+/*PRIMER CAMBIO DE DISEÑO 2026-08-14 */
+
+
 /* =========================================================
    ZION - REDISEÑO VISUAL 15.1
    ORDEN DE CANCIONES DEL CULTO
@@ -1011,6 +1016,11 @@ font-weight:bold;
     }
 
 }
+
+
+/*SEGUNDO CAMBIO DE DISEÑO 
+2026-08-14*/
+
 
 
 /* =========================================================
@@ -1229,3 +1239,302 @@ font-weight:bold;
     }
 
 }
+
+
+/* TERCER CAMBIO DE DISEÑO  2026-08-14*/
+
+
+/* =========================================================
+   BOTONES UNIFORMES - ZION PLAYLIST
+   ========================================================= */
+
+/* Contenedor de botones del culto activo */
+.playlist-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+
+/* Botones principales */
+.playlist-actions .action-btn {
+    min-width: 105px;
+    height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 16px;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+
+/* Efecto al pasar el mouse */
+.playlist-actions .action-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+}
+
+
+/* =========================================================
+   BOTONES DE CADA CANCIÓN
+   ========================================================= */
+
+.song-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-width: 125px;
+}
+
+
+/* Botones subir / bajar */
+.song-actions .action-btn {
+    width: 38px;
+    height: 38px;
+
+    padding: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    font-size: 16px;
+}
+
+
+/* Botón eliminar */
+.song-actions .btn-delete {
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   BOTONES DEL FORMULARIO
+   ========================================================= */
+
+.playlist-card .save-btn {
+    min-width: 145px;
+    height: 44px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   BOTÓN CREAR CULTO
+   ========================================================= */
+
+.btn-create {
+    min-width: 145px;
+    height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 18px;
+
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .playlist-actions {
+        width: 100%;
+        gap: 8px;
+    }
+
+    .playlist-actions .action-btn {
+        min-width: 0;
+        flex: 1;
+        height: 42px;
+        padding: 0 10px;
+        font-size: 13px;
+    }
+
+    .song-actions {
+        min-width: auto;
+        gap: 6px;
+    }
+
+    .song-actions .action-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .song-actions .btn-delete {
+        width: 38px;
+        height: 38px;
+    }
+
+}
+
+/* cuarta actualizacion de diseño 2026-08-14*/
+
+/* =========================================
+   BOTONES CULTO ACTIVO
+   ========================================= */
+
+.active-playlist-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Todos los botones tienen exactamente
+   el mismo tamaño */
+
+.active-playlist-actions .action-btn {
+    width: 130px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 12px;
+
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Icono */
+
+.active-playlist-actions .action-btn span {
+    white-space: nowrap;
+}
+
+/* Hover */
+
+.active-playlist-actions .action-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+}
+
+/* Click */
+
+.active-playlist-actions .action-btn:active {
+    transform: translateY(0);
+}
+
+/* =========================================
+   COLORES
+   ========================================= */
+
+.active-playlist-actions .btn-edit {
+    background: #3b82f6;
+}
+
+.active-playlist-actions .btn-delete {
+    background: #ef4444;
+}
+
+.active-playlist-actions .btn-pdf {
+    background: #e7ab42;
+}
+
+.active-playlist-actions .btn-whatsapp {
+    background: #25d366;
+}
+
+
+/* =========================================
+   TABLETS
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    .active-playlist-actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .active-playlist-actions .action-btn {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================
+   MÓVILES
+   ========================================= */
+
+@media (max-width: 480px) {
+
+    .active-playlist-actions {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .active-playlist-actions .action-btn {
+        height: 44px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+
+}
+
