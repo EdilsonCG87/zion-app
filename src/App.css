@@ -1538,3 +1538,216 @@ font-weight:bold;
 
 }
 
+/* QUINTA ACTUALIZACIÓN DE DISEÑO 2026-08-14 */
+
+
+/* =========================================
+   RESPONSIVE - TABLETS Y CELULARES
+   ========================================= */
+
+/* TABLETS */
+@media (max-width: 768px) {
+
+    body {
+        padding: 20px;
+    }
+
+    .app-container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* HEADER */
+
+    .header {
+        padding: 18px;
+        gap: 15px;
+    }
+
+    .logo {
+        width: 75px;
+    }
+
+    .header h1 {
+        font-size: 27px;
+    }
+
+    .header p {
+        font-size: 14px;
+    }
+
+    /* TARJETAS */
+
+    .playlist-card {
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    /* FILAS */
+
+    .playlist-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .playlist-row input,
+    .playlist-row select {
+        width: 100%;
+    }
+
+    /* BOTONES */
+
+    .action-btn {
+        min-height: 44px;
+    }
+
+    /* CALENDARIO */
+
+    .calendar-grid {
+        width: 100%;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 8px;
+        justify-content: stretch;
+    }
+
+    .calendar-day {
+        width: 100%;
+        min-width: 0;
+        min-height: 60px;
+        height: auto;
+    }
+
+}
+
+/* sexta actualizacion de diseño 2026-08-14 */
+
+/* =========================================
+   CELULARES
+   ========================================= */
+
+@media (max-width: 480px) {
+
+    body {
+        padding: 10px;
+        padding-bottom: 85px;
+    }
+
+    .app-container {
+        width: 100%;
+    }
+
+    /* HEADER */
+
+    .header {
+        flex-direction: row;
+        padding: 15px;
+        gap: 12px;
+    }
+
+    .logo {
+        width: 75px;
+        flex-shrink: 0;
+    }
+
+    .header h1 {
+        font-size: 25px;
+        line-height: 1.15;
+    }
+
+    .header p {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    /* TARJETAS */
+
+    .playlist-card {
+        padding: 16px;
+        border-radius: 16px;
+        margin-top: 15px;
+    }
+
+    .playlist-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    /* FORMULARIOS */
+
+    .playlist-row {
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .playlist-row input,
+    .playlist-row select {
+        width: 100%;
+        min-height: 48px;
+    }
+
+    /* BOTONES */
+
+    .action-btn {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+    }
+
+    /* CALENDARIO */
+
+    .calendar-card {
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .calendar-header {
+        gap: 8px;
+    }
+
+    .calendar-header button {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+    }
+
+    .calendar-grid {
+        width: 100%;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 5px;
+        margin-top: 15px;
+    }
+
+    .calendar-weekday {
+        font-size: 13px;
+    }
+
+    .calendar-day {
+        width: 100%;
+        min-width: 0;
+        min-height: 52px;
+        height: 52px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .service-dot {
+        margin-top: 2px;
+        font-size: 14px;
+    }
+
+    /* LEYENDA */
+
+    .calendar-legend {
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 13px;
+    }
+
+    /* NAVEGACIÓN INFERIOR */
+
+    .bottom-nav {
+        height: 70px;
+    }
+
+}
