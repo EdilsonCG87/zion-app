@@ -14,9 +14,9 @@ export function useSharePlaylist({
     songs
 }) {
 
-    // =========================
-    // DATOS SEGUROS
-    // =========================
+// =========================
+// DATOS SEGUROS
+// =========================
 
     const safePlaylists = Array.isArray(playlists)
         ? playlists
@@ -30,18 +30,18 @@ export function useSharePlaylist({
         ? songs
         : [];
 
-    // =========================
-    // OBTENER CULTO SELECCIONADO
-    // =========================
+// =========================
+// OBTENER CULTO SELECCIONADO
+// =========================
 
     const selected = safePlaylists.find(
         playlist =>
             playlist.id === Number(selectedPlaylist)
     );
 
-    // =========================
-    // COMPARTIR POR WHATSAPP
-    // =========================
+// =========================
+// COMPARTIR POR WHATSAPP
+// =========================
 
     const shareWhatsApp = () => {
 
@@ -86,9 +86,9 @@ export function useSharePlaylist({
 
     };
 
-    // =========================
-    // EXPORTAR PDF
-    // =========================
+// =========================
+// EXPORTAR PDF
+// =========================
 
     const exportPlaylistPDF = () => {
 
@@ -146,9 +146,9 @@ export function useSharePlaylist({
 
             y += 10;
 
-            // =========================
-            // NUEVA PÁGINA
-            // =========================
+// =========================
+// NUEVA PÁGINA
+// =========================
 
             if (y > 270) {
 
@@ -173,9 +173,9 @@ export function useSharePlaylist({
 
     };
 
-    // =========================
-    // RETURN
-    // =========================
+// =========================
+// RETURN
+// =========================
 
     return {
 
