@@ -1,82 +1,112 @@
 function TopSongs({
-  topSongs,
-  showTopSongs,
-  setShowTopSongs
+    topSongs,
+    showTopSongs,
+    setShowTopSongs
 }) {
-  return (
-    <div className="form-container">
 
-      <h3
-        style={{ cursor: "pointer" }}
-        onClick={() =>
-          setShowTopSongs(!showTopSongs)
-        }
-      >
-        ⭐ Canciones más usadas{" "}
-        {showTopSongs ? "▼" : "►"}
-      </h3>
+    const maxTimesPlayed =
+        topSongs.length > 0
+            ? Math.max(
+                ...topSongs.map(
+                    song => song.timesPlayed || 0
+                )
+            )
+            : 0;
 
-      {showTopSongs && (
+    return (
 
-        topSongs.length === 0 ? (
+        <div className="top-songs-card">
 
-          <p>No hay estadísticas</p>
+            <h3
+                className="top-songs-title"
+                onClick={() =>
+                    setShowTopSongs(!showTopSongs)
+                }
+            >
 
-        ) : (
+                ⭐ Canciones más usadas
 
-          <div>
+                <span>
+                    {showTopSongs ? "▼" : "►"}
+                </span>
 
-            {topSongs.map(
-              (song, index) => (
+            </h3>
 
-                <div
-                  key={song.id}
-                  className="top-song-item"
-                >
 
-                  <div
-                    className="top-song-header"
-                  >
+            {showTopSongs && (
 
-                    <span>
-                      {index + 1}. {song.name}
-                    </span>
+                topSongs.length === 0 ? (
 
-                    <span>
-                      {song.timesPlayed || 0}
-                    </span>
+                    <p className="top-songs-empty">
+                        No hay estadísticas
+                    </p>
 
-                  </div>
+                ) : (
 
-                  <div
-                    className="top-song-bar"
-                  >
+                    <div className="top-songs-list">
 
-                    <div
-                      className="top-song-fill"
-                      style={{
-                        width: `${Math.min(
-                          (song.timesPlayed || 0) * 10,
-                          100
-                        )}%`
-                      }}
-                    />
+                        {topSongs.map(
+                            (song, index) => {
 
-                  </div>
+                                const timesPlayed =
+                                    song.timesPlayed || 0;
 
-                </div>
+                                const percentage =
+                                    maxTimesPlayed > 0
+                                        ? (
+                                            timesPlayed /
+                                            maxTimesPlayed
+                                        ) * 100
+                                        : 0;
 
-              )
+                                return (
+
+                                    <div
+                                        key={song.id}
+                                        className="top-song-item"
+                                    >
+
+                                        <div className="top-song-header">
+
+                                            <span>
+                                                {index + 1}.{" "}
+                                                {song.name}
+                                            </span>
+
+                                            <span>
+                                                {timesPlayed}
+                                            </span>
+
+                                        </div>
+
+                                        <div className="top-song-bar">
+
+                                            <div
+                                                className="top-song-fill"
+                                                style={{
+                                                    width:
+                                                        `${percentage}%`
+                                                }}
+                                            />
+
+                                        </div>
+
+                                    </div>
+
+                                );
+
+                            }
+                        )}
+
+                    </div>
+
+                )
+
             )}
 
-          </div>
+        </div>
 
-        )
-
-      )}
-
-    </div>
-  );
+    );
 }
 
 export default TopSongs;
