@@ -128,11 +128,21 @@ function SongsPage({
 
             <SearchBar
 
-                search={search}
+    search={search}
 
-                setSearch={setSearch}
+    setSearch={(value) => {
 
-            />
+        setSearch(value);
+
+        if (value.trim() !== "") {
+
+            setShowSongsList(true);
+
+        }
+
+    }}
+
+/>
 
             {showSongsList && (
 
