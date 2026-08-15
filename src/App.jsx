@@ -70,9 +70,9 @@ function App() {
 // HOOK CANCIONES DEL CULTO
 // =========================
 
-    const playlistSongsHook = usePlaylistSongs();
+const playlistSongsHook = usePlaylistSongs();
 
-    const {
+const {
         playlistSongs,
         getPlaylistSongs,
         addSongToPlaylist
@@ -214,34 +214,40 @@ function App() {
                 />
             )}
 
-            {/* CULTOS */}
+{/* CULTOS */}
 
-            {activeTab === "playlist" && (
+{activeTab === "playlist" && (
 
-                <PlaylistPage
-                    playlists={playlists}
-                    selectedPlaylist={selectedPlaylist}
-                    setSelectedPlaylist={setSelectedPlaylist}
-                    getPlaylistSongs={getPlaylistSongs}
-                    deletePlaylist={deletePlaylist}
-                    playlistName={playlistName}
-                    setPlaylistName={setPlaylistName}
-                    serviceDate={serviceDate}
-                    setServiceDate={setServiceDate}
-                    createPlaylist={createPlaylist}
-                    selectedSong={selectedSong}
-                    setSelectedSong={setSelectedSong}
-                    songs={songs}
-                    addSongToPlaylist={addSongToPlaylist}
-                    startEditPlaylist={startEditPlaylist}
-                    exportPlaylistPDF={exportPlaylistPDF}
-                    shareWhatsApp={shareWhatsApp}
-                    selectedHistorySong={selectedHistorySong}
-                    setSelectedHistorySong={setSelectedHistorySong}
-                    songHistory={songHistory}
-                    getSongHistory={getSongHistory}
-                />
-            )}
+    <PlaylistPage
+        playlists={playlists}
+        selectedPlaylist={selectedPlaylist}
+        setSelectedPlaylist={setSelectedPlaylist}
+        getPlaylistSongs={getPlaylistSongs}
+
+        playlistSongs={playlistSongs}
+
+        deletePlaylist={deletePlaylist}
+        playlistName={playlistName}
+        setPlaylistName={setPlaylistName}
+        serviceDate={serviceDate}
+        setServiceDate={setServiceDate}
+        createPlaylist={createPlaylist}
+        selectedSong={selectedSong}
+        setSelectedSong={setSelectedSong}
+        songs={songs}
+        addSongToPlaylist={addSongToPlaylist}
+
+        startEditPlaylist={startEditPlaylist}
+        exportPlaylistPDF={exportPlaylistPDF}
+        shareWhatsApp={shareWhatsApp}
+
+        selectedHistorySong={selectedHistorySong}
+        setSelectedHistorySong={setSelectedHistorySong}
+        songHistory={songHistory}
+        getSongHistory={getSongHistory}
+    />
+
+)}
 
             {/* CANCIONES */}
 
