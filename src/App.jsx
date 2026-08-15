@@ -221,41 +221,34 @@ const {
 {activeTab === "playlist" && (
 
     <PlaylistPage
+
         playlists={playlists}
         selectedPlaylist={selectedPlaylist}
         setSelectedPlaylist={setSelectedPlaylist}
         getPlaylistSongs={getPlaylistSongs}
-
-        removeSongFromPlaylist={removeSongFromPlaylist}
-        moveSong={moveSong}
-
+        playlistSongs={playlistSongs}
         deletePlaylist={deletePlaylist}
-
         playlistName={playlistName}
         setPlaylistName={setPlaylistName}
-
         serviceDate={serviceDate}
         setServiceDate={setServiceDate}
-
         createPlaylist={createPlaylist}
-
         selectedSong={selectedSong}
         setSelectedSong={setSelectedSong}
-
         songs={songs}
-
         addSongToPlaylist={addSongToPlaylist}
-
+        removeSongFromPlaylist={removeSongFromPlaylist}
+        moveSong={moveSong}
         startEditPlaylist={startEditPlaylist}
-
         exportPlaylistPDF={exportPlaylistPDF}
         shareWhatsApp={shareWhatsApp}
-
         selectedHistorySong={selectedHistorySong}
         setSelectedHistorySong={setSelectedHistorySong}
         songHistory={songHistory}
         getSongHistory={getSongHistory}
+
     />
+
 )}
 
             {/* CANCIONES */}
