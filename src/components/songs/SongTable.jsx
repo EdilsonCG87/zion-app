@@ -1,139 +1,93 @@
 function SongTable({
-    songs,
-    search,
-    toggleFavorite,
-    editSong,
-    confirmDelete
+  songs,
+  search,
+  toggleFavorite,
+  editSong,
+  confirmDelete
 }) {
 
-    const searchText = (search ?? "")
-        .trim()
-        .toLowerCase();
+  return (
 
-    const filteredSongs = songs.filter((song) => {
+    <div className="songs-table-container">
 
-        const name = (song.name ?? "")
-            .toLowerCase();
+      <table className="songs-table">
 
-        const author = (song.author ?? "")
-            .toLowerCase();
+        <thead>
 
-        const keyTone = (song.keyTone ?? "")
-            .toLowerCase();
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Autor</th>
+            <th>Tono</th>
+            <th>BPM</th>
+            <th>Acciones</th>
+          </tr>
 
-        return (
-            name.includes(searchText) ||
-            author.includes(searchText) ||
-            keyTone.includes(searchText)
-        );
+        </thead>
 
-    });
+        <tbody>
 
-    return (
+          {songs
+            .filter(song =>
+              song.name?.toLowerCase().includes(search.toLowerCase()) ||
+              song.author?.toLowerCase().includes(search.toLowerCase()) ||
+              song.keyTone?.toLowerCase().includes(search.toLowerCase())
+            )
+            .map((song, index) => (
 
-        <table>
+              <tr key={song.id}>
 
-            <thead>
+                <td>{index + 1}</td>
 
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Autor</th>
-                    <th>Tono</th>
-                    <th>BPM</th>
-                    <th>Acciones</th>
-                </tr>
+                <td>{song.name}</td>
 
-            </thead>
+                <td>{song.author}</td>
 
-            <tbody>
+                <td>{song.keyTone}</td>
 
-                {filteredSongs.map((song, index) => (
+                <td>{song.bpm}</td>
 
-                    <tr key={song.id}>
+                <td className="song-actions">
 
-                        <td>
-                            {index + 1}
-                        </td>
+                  <button
+                    className={
+                      song.favorite
+                        ? "favorite-btn active"
+                        : "favorite-btn"
+                    }
+                    onClick={() => toggleFavorite(song)}
+                    title="Favorita"
+                  >
+                    ★
+                  </button>
 
-                        <td>
-                            {song.name}
-                        </td>
+                  <button
+                    className="edit-btn"
+                    onClick={() => editSong(song)}
+                  >
+                    Editar
+                  </button>
 
-                        <td>
-                            {song.author || "-"}
-                        </td>
+                  <button
+                    className="delete-btn"
+                    onClick={() => confirmDelete(song.id)}
+                  >
+                    Eliminar
+                  </button>
 
-                        <td>
-                            {song.keyTone || "-"}
-                        </td>
+                </td>
 
-                        <td>
-                            {song.bpm || "-"}
-                        </td>
+              </tr>
 
-                        <td>
+            ))}
 
-                            <button
-                                className={
-                                    song.favorite
-                                        ? "favorite-btn active"
-                                        : "favorite-btn"
-                                }
-                                onClick={() =>
-                                    toggleFavorite(song)
-                                }
-                            >
-                                ★
-                            </button>
+        </tbody>
 
-                            <button
-                                className="edit-btn"
-                                onClick={() =>
-                                    editSong(song)
-                                }
-                            >
-                                Editar
-                            </button>
+      </table>
 
-                            <button
-                                className="delete-btn"
-                                onClick={() =>
-                                    confirmDelete(song.id)
-                                }
-                            >
-                                Eliminar
-                            </button>
+    </div>
 
-                        </td>
-
-                    </tr>
-
-                ))}
-
-                {filteredSongs.length === 0 && (
-
-                    <tr>
-
-                        <td
-                            colSpan="6"
-                            style={{
-                                textAlign: "center",
-                                padding: "20px"
-                            }}
-                        >
-                            No se encontraron canciones.
-                        </td>
-
-                    </tr>
-
-                )}
-
-            </tbody>
-
-        </table>
-
-    );
+  );
 }
 
 export default SongTable;

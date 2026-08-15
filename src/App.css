@@ -1751,3 +1751,142 @@ font-weight:bold;
     }
 
 }
+
+
+/*ACTUALIZACION DE DISEÑO 2026-08-15*/
+
+/* =========================================
+   15.3 - BIBLIOTECA RESPONSIVE
+   ========================================= */
+
+/* CONTENEDOR DE LA TABLA */
+
+.songs-table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+    border-radius: 15px;
+}
+
+
+/* TABLA */
+
+.songs-table {
+    width: 100%;
+    min-width: 700px;
+}
+
+
+/* COLUMNA DE ACCIONES */
+
+.song-actions {
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   TABLETS
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    .search-container {
+        width: 90%;
+    }
+
+    .form-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .form-container .save-btn {
+        min-height: 44px;
+    }
+
+    .songs-table th,
+    .songs-table td {
+        padding: 12px 10px;
+        font-size: 14px;
+    }
+
+    .edit-btn,
+    .delete-btn,
+    .favorite-btn {
+        padding: 9px 12px;
+        margin-right: 5px;
+    }
+
+}
+
+
+/* =========================================
+   CELULARES
+   ========================================= */
+
+@media (max-width: 480px) {
+
+    /* BUSCADOR */
+
+    .search-container {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .search-input {
+        padding: 13px 12px 13px 42px;
+        font-size: 14px;
+    }
+
+
+    /* FORMULARIO */
+
+    .form-container {
+        grid-template-columns: 1fr;
+        padding: 18px;
+        gap: 10px;
+    }
+
+    .form-container input {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .form-container .save-btn {
+        width: 100%;
+        min-height: 44px;
+    }
+
+
+    /* TABLA */
+
+    .songs-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .songs-table {
+        min-width: 680px;
+    }
+
+    .songs-table th,
+    .songs-table td {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+
+    /* BOTONES */
+
+    .song-actions {
+        white-space: nowrap;
+    }
+
+    .edit-btn,
+    .delete-btn,
+    .favorite-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+        margin-right: 4px;
+    }
+
+}
