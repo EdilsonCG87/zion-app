@@ -29,11 +29,13 @@ const getPlaylistSongs = async (playlistId) => {
 
     try {
 
-        const { data } = await API.get(
-            `/playlist-songs/${playlistId}`
-        );
+const { data } = await API.get(
+    `/playlist-songs/${playlistId}`
+);
 
-        setPlaylistSongs(data);
+setPlaylistSongs(data);
+
+return data;
 
     } catch (error) {
 

@@ -39,20 +39,35 @@ return "done";
     return "future";
 };
 
-const getSongsForService = (playlistId) => {
+const getSongsForService = async (playlistId) => {
 
-return playlistSongs
-    .filter(
-    item => item.playlistId === playlistId
-    )
-    .map(
-    item =>
-        songs.find(
-        song =>
-            song.id === item.songId
-        )
-    )
-    .filter(Boolean);
+    try {
+
+        const playlistItems =
+            await getPlaylistSongs(playlistId);
+
+        const serviceSongs =
+            playlistItems
+                .map(item =>
+                    songs.find(
+                        song =>
+                            song.id === item.songId
+                    )
+                )
+                .filter(Boolean);
+
+        setSelectedSongs(serviceSongs);
+
+    } catch (error) {
+
+        console.error(
+            "Error al cargar canciones del culto:",
+            error
+        );
+
+        setSelectedSongs([]);
+
+    }
 
 };
 
@@ -170,20 +185,15 @@ return (
         ? "today"
         : ""
     }`}
-    onClick={() => {
+    onClick={async () => {
 
-if (!service) return;
+    if (!service) return;
 
-setSelectedService(service);
+    setSelectedService(service);
 
-const serviceSongs =
-    getSongsForService(
-service.id
+    await getSongsForService(
+        service.id
     );
-
-setSelectedSongs(
-    serviceSongs
-);
 
 }}
 >
