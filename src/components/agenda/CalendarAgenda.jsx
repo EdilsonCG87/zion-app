@@ -92,15 +92,20 @@ return (
 <div className="calendar-header">
 
 <button
-    onClick={() =>
-setCurrentDate(
-        new Date(
-year,
-month - 1,
-1
-        )
-    )
-    }
+    onClick={() => {
+
+        setSelectedService(null);
+        setSelectedSongs([]);
+
+        setCurrentDate(
+            new Date(
+                year,
+                month - 1,
+                1
+            )
+        );
+
+    }}
 >
     ◀
 </button>
@@ -116,15 +121,20 @@ month - 1,
 </h3>
 
 <button
-    onClick={() =>
-setCurrentDate(
-        new Date(
-        year,
-        month + 1,
-        1
-        )
-    )
-    }
+    onClick={() => {
+
+        setSelectedService(null);
+        setSelectedSongs([]);
+
+        setCurrentDate(
+            new Date(
+                year,
+                month + 1,
+                1
+            )
+        );
+
+    }}
 >
     ▶
 </button>
