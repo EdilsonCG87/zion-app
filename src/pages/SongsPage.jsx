@@ -1,10 +1,12 @@
 // =========================
 // IMPORTS
 // =========================
+
 import { useState } from "react";
 
 import SongForm from "../components/songs/SongForm";
 import SongTable from "../components/songs/SongTable";
+import SongDetail from "../components/songs/SongDetail";
 
 import SearchBar from "../components/common/SearchBar";
 import ImportExcel from "../components/common/ImportExcel";
@@ -18,8 +20,14 @@ function SongsPage({
     songsHook,
 
     getTopSongs,
+    getOverusedSongs,
 
-    getOverusedSongs
+    // =========================
+    // REPORTES
+    // =========================
+
+    songHistory,
+    getSongHistory
 
 }) {
 
@@ -67,6 +75,31 @@ function SongsPage({
     const [showSongsList, setShowSongsList] =
         useState(false);
 
+    const [selectedSong, setSelectedSong] =
+        useState(null);
+
+    // =========================
+    // SELECCIONAR CANCIÓN
+    // =========================
+
+    const handleSelectSong = async (song) => {
+
+        setSelectedSong(song);
+
+        await getSongHistory(song.id);
+
+    };
+
+    // =========================
+    // CERRAR DETALLE
+    // =========================
+
+    const handleCloseDetail = () => {
+
+        setSelectedSong(null);
+
+    };
+
     // =========================
     // HTML
     // =========================
@@ -75,22 +108,38 @@ function SongsPage({
 
         <div className="tab-content">
 
+            {/* =========================
+                BIBLIOTECA
+            ========================= */}
+
             <div className="playlist-card">
 
                 <h2
                     className="playlist-title"
                     style={{ cursor: "pointer" }}
+
                     onClick={() =>
-                        setShowSongsList(!showSongsList)
+                        setShowSongsList(
+                            !showSongsList
+                        )
                     }
                 >
-                    🎵 Biblioteca de Canciones ({songs.length})
 
-                    {showSongsList ? " ▼" : " ►"}
+                    🎵 Biblioteca de Canciones
+                    ({songs.length})
+
+                    {showSongsList
+                        ? " ▼"
+                        : " ►"
+                    }
 
                 </h2>
 
             </div>
+
+            {/* =========================
+                FORMULARIO
+            ========================= */}
 
             <SongForm
 
@@ -112,6 +161,10 @@ function SongsPage({
 
             />
 
+            {/* =========================
+                IMPORTAR EXCEL
+            ========================= */}
+
             <ImportExcel
 
                 onImported={() => {
@@ -126,23 +179,33 @@ function SongsPage({
 
             />
 
+            {/* =========================
+                BUSCAR
+            ========================= */}
+
             <SearchBar
 
-    search={search}
+                search={search}
 
-    setSearch={(value) => {
+                setSearch={(value) => {
 
-        setSearch(value);
+                    setSearch(value);
 
-        if (value.trim() !== "") {
+                    if (
+                        value.trim() !== ""
+                    ) {
 
-            setShowSongsList(true);
+                        setShowSongsList(true);
 
-        }
+                    }
 
-    }}
+                }}
 
-/>
+            />
+
+            {/* =========================
+                TABLA
+            ========================= */}
 
             {showSongsList && (
 
@@ -157,6 +220,26 @@ function SongsPage({
                     confirmDelete={confirmDelete}
 
                     toggleFavorite={toggleFavorite}
+
+                    onSelectSong={handleSelectSong}
+
+                />
+
+            )}
+
+            {/* =========================
+                DETALLE
+            ========================= */}
+
+            {selectedSong && (
+
+                <SongDetail
+
+                    song={selectedSong}
+
+                    songHistory={songHistory}
+
+                    onClose={handleCloseDetail}
 
                 />
 

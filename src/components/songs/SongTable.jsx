@@ -1,93 +1,155 @@
 function SongTable({
-  songs,
-  search,
-  toggleFavorite,
-  editSong,
-  confirmDelete
+    songs,
+    search,
+    toggleFavorite,
+    editSong,
+    confirmDelete,
+    onSelectSong
 }) {
 
-  return (
+    const filteredSongs = songs.filter(song =>
 
-    <div className="songs-table-container">
+        song.name
+            ?.toLowerCase()
+            .includes(search.toLowerCase())
 
-      <table className="songs-table">
+        ||
 
-        <thead>
+        song.author
+            ?.toLowerCase()
+            .includes(search.toLowerCase())
 
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Autor</th>
-            <th>Tono</th>
-            <th>BPM</th>
-            <th>Acciones</th>
-          </tr>
+        ||
 
-        </thead>
+        song.keyTone
+            ?.toLowerCase()
+            .includes(search.toLowerCase())
 
-        <tbody>
+    );
 
-          {songs
-            .filter(song =>
-              song.name?.toLowerCase().includes(search.toLowerCase()) ||
-              song.author?.toLowerCase().includes(search.toLowerCase()) ||
-              song.keyTone?.toLowerCase().includes(search.toLowerCase())
-            )
-            .map((song, index) => (
+    return (
 
-              <tr key={song.id}>
+        <div className="songs-table-container">
 
-                <td>{index + 1}</td>
+            <table className="songs-table">
 
-                <td>{song.name}</td>
+                <thead>
 
-                <td>{song.author}</td>
+                    <tr>
 
-                <td>{song.keyTone}</td>
+                        <th>ID</th>
 
-                <td>{song.bpm}</td>
+                        <th>Nombre</th>
 
-                <td className="song-actions">
+                        <th>Autor</th>
 
-                  <button
-                    className={
-                      song.favorite
-                        ? "favorite-btn active"
-                        : "favorite-btn"
-                    }
-                    onClick={() => toggleFavorite(song)}
-                    title="Favorita"
-                  >
-                    ★
-                  </button>
+                        <th>Tono</th>
 
-                  <button
-                    className="edit-btn"
-                    onClick={() => editSong(song)}
-                  >
-                    Editar
-                  </button>
+                        <th>BPM</th>
 
-                  <button
-                    className="delete-btn"
-                    onClick={() => confirmDelete(song.id)}
-                  >
-                    Eliminar
-                  </button>
+                        <th>Acciones</th>
 
-                </td>
+                    </tr>
 
-              </tr>
+                </thead>
 
-            ))}
+                <tbody>
 
-        </tbody>
+                    {filteredSongs.map(
+                        (song, index) => (
 
-      </table>
+                            <tr
+                                key={song.id}
 
-    </div>
+                                onClick={() =>
+                                    onSelectSong &&
+                                    onSelectSong(song)
+                                }
 
-  );
+                                style={{
+                                    cursor: "pointer"
+                                }}
+
+                            >
+
+                                <td>
+                                    {index + 1}
+                                </td>
+
+                                <td>
+                                    {song.name}
+                                </td>
+
+                                <td>
+                                    {song.author}
+                                </td>
+
+                                <td>
+                                    {song.keyTone}
+                                </td>
+
+                                <td>
+                                    {song.bpm}
+                                </td>
+
+                                <td
+                                    className="song-actions"
+                                    onClick={(e) =>
+                                        e.stopPropagation()
+                                    }
+                                >
+
+                                    <button
+                                        className={
+                                            song.favorite
+                                                ? "favorite-btn active"
+                                                : "favorite-btn"
+                                        }
+
+                                        onClick={() =>
+                                            toggleFavorite(song)
+                                        }
+
+                                        title="Favorita"
+                                    >
+                                        ★
+                                    </button>
+
+                                    <button
+                                        className="edit-btn"
+
+                                        onClick={() =>
+                                            editSong(song)
+                                        }
+                                    >
+                                        Editar
+                                    </button>
+
+                                    <button
+                                        className="delete-btn"
+
+                                        onClick={() =>
+                                            confirmDelete(song.id)
+                                        }
+                                    >
+                                        Eliminar
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        )
+                    )}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    );
+
 }
 
 export default SongTable;
