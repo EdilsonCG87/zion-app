@@ -255,10 +255,14 @@ const {
 
             {activeTab === "songs" && (
                 <SongsPage
-                    songsHook={songsHook}
-                    getTopSongs={getTopSongs}
-                    getOverusedSongs={getOverusedSongs}
-                />
+    songsHook={songsHook}
+
+    getTopSongs={getTopSongs}
+    getOverusedSongs={getOverusedSongs}
+
+    songHistory={songHistory}
+    getSongHistory={getSongHistory}
+/>
             )}
 
             {/* MENÚ */}
