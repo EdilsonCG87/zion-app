@@ -1,8 +1,12 @@
 import PlaylistManager from "../components/playlist/PlaylistManager";
+
 import ActivePlaylist from "../components/playlist/ActivePlaylist";
+
 import PlaylistSongs from "../components/playlist/PlaylistSongs";
-import PlaylistHistory from "../components/playlist/PlaylistHistory";
-//import OverusedSongs from "../components/dashboard/OverusedSongs";
+
+// =========================
+// COMPONENTE
+// =========================
 
 function PlaylistPage(props) {
 
@@ -15,11 +19,6 @@ function PlaylistPage(props) {
             <ActivePlaylist {...props} />
 
             <PlaylistSongs {...props} />
-
-            <PlaylistHistory {...props} />
-
-            {/* Lo dejamos preparado para cuando implementemos las estadísticas */}
-            {/* <OverusedSongs {...props} /> */}
 
         </div>
 
