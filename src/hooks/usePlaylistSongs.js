@@ -78,56 +78,47 @@ const addSongToPlaylist = async (
 
     try {
 
-        await API.post("/playlist-songs", {
+    await API.post("/playlist-songs", {
 
-            playlistId: Number(playlistId),
-            songId: Number(songId),
-            orderNumber: playlistSongs.length + 1
+        playlistId: Number(playlistId),
+        songId: Number(songId),
+        orderNumber: playlistSongs.length + 1
 
-        });
+    });
 
-        /*
-         * El backend ahora se encarga de:
-         *
-         * - guardar PlaylistSong
-         * - registrar SongUsage
-         * - aumentar timesPlayed
-         * - actualizar lastPlayed
-         */
+    await getPlaylistSongs(playlistId);
 
-        await getPlaylistSongs(
-            playlistId
-        );
+    // Actualizar estadísticas si existe callback
 
-        if (onUpdated) {
+    if (onUpdated) {
 
-            onUpdated();
-
-        }
-
-        Swal.fire({
-
-            icon: "success",
-            title: "Canción agregada",
-
-            timer: 1200,
-            showConfirmButton: false
-
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        Swal.fire({
-
-            icon: "error",
-            title: "Error",
-            text: "No fue posible agregar la canción."
-
-        });
+        onUpdated();
 
     }
+
+    Swal.fire({
+
+        icon: "success",
+        title: "Canción agregada",
+
+        timer: 1200,
+        showConfirmButton: false
+
+    });
+
+} catch (error) {
+
+    console.error(error);
+
+    Swal.fire({
+
+        icon: "error",
+        title: "Error",
+        text: "No fue posible agregar la canción."
+
+    });
+
+}
 
 };
 
