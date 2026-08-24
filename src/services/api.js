@@ -1,18 +1,20 @@
 // =========================
 // IMPORTS
 // =========================
+
 import axios from "axios";
 
 // =========================
 // INSTANCIA AXIOS
 // =========================
+
 const API = axios.create({
 
     baseURL: import.meta.env.VITE_API_URL,
 
     headers: {
 
-        "Content-Type": "application/json"
+        Accept: "application/json"
 
     }
 
@@ -21,4 +23,5 @@ const API = axios.create({
 // =========================
 // EXPORT
 // =========================
+
 export default API;
