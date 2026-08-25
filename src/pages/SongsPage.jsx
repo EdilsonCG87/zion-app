@@ -78,17 +78,41 @@ function SongsPage({
     const [selectedSong, setSelectedSong] =
         useState(null);
 
+// =========================
+// SELECCIONAR CANCIÓN
+// =========================
+
+const handleSelectSong = async (song) => {
+
     // =========================
-    // SELECCIONAR CANCIÓN
+    // CARGAR CANCIONES ACTUALIZADAS
     // =========================
 
-    const handleSelectSong = async (song) => {
+    const updatedSongs = await getSongs();
 
-        setSelectedSong(song);
+    // =========================
+    // BUSCAR LA CANCIÓN ACTUALIZADA
+    // =========================
 
-        await getSongHistory(song.id);
+    const freshSong =
+        updatedSongs.find(
+            item => item.id === song.id
+        ) || song;
 
-    };
+    // =========================
+    // ACTUALIZAR CANCIÓN
+    // =========================
+
+    setSelectedSong(freshSong);
+
+    // =========================
+    // CARGAR HISTORIAL
+    // =========================
+
+    await getSongHistory(
+        freshSong.id
+    );
+};
 
     // =========================
     // CERRAR DETALLE

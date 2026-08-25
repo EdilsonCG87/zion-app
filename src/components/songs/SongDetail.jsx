@@ -12,8 +12,22 @@ function SongDetail({
         return null;
     }
 
-    return (
+    // =========================
+    // DATOS REALES DEL HISTORIAL
+    // =========================
 
+    const history = Array.isArray(songHistory)
+        ? songHistory
+        : [];
+
+    const timesPlayed = history.length;
+
+    const lastPlayed =
+        history.length > 0
+            ? history[0]?.serviceDate
+            : null;
+
+    return (
         <div className="song-detail-card">
 
             {/* =========================
@@ -52,7 +66,9 @@ function SongDetail({
 
                 <div className="song-detail-item">
 
-                    <span>✍️ Autor</span>
+                    <span>
+                        ✍️ Autor
+                    </span>
 
                     <strong>
                         {song.author || "-"}
@@ -62,7 +78,9 @@ function SongDetail({
 
                 <div className="song-detail-item">
 
-                    <span>🎼 Tono</span>
+                    <span>
+                        🎼 Tono
+                    </span>
 
                     <strong>
                         {song.keyTone || "-"}
@@ -72,7 +90,9 @@ function SongDetail({
 
                 <div className="song-detail-item">
 
-                    <span>🎚️ BPM</span>
+                    <span>
+                        🎚️ BPM
+                    </span>
 
                     <strong>
                         {song.bpm || 0}
@@ -82,7 +102,9 @@ function SongDetail({
 
                 <div className="song-detail-item">
 
-                    <span>⭐ Favorita</span>
+                    <span>
+                        ⭐ Favorita
+                    </span>
 
                     <strong>
                         {song.favorite
@@ -93,22 +115,34 @@ function SongDetail({
 
                 </div>
 
+                {/* =========================
+                    VECES UTILIZADA
+                ========================= */}
+
                 <div className="song-detail-item">
 
-                    <span>🔥 Veces utilizada</span>
+                    <span>
+                        🔥 Veces utilizada
+                    </span>
 
                     <strong>
-                        {song.timesPlayed || 0}
+                        {timesPlayed}
                     </strong>
 
                 </div>
 
+                {/* =========================
+                    ÚLTIMA VEZ
+                ========================= */}
+
                 <div className="song-detail-item">
 
-                    <span>📅 Última vez</span>
+                    <span>
+                        📅 Última vez
+                    </span>
 
                     <strong>
-                        {song.lastPlayed || "-"}
+                        {lastPlayed || "-"}
                     </strong>
 
                 </div>
@@ -125,8 +159,7 @@ function SongDetail({
                     📜 Historial de uso
                 </h3>
 
-                {!songHistory ||
-                songHistory.length === 0 ? (
+                {history.length === 0 ? (
 
                     <p className="song-history-empty">
                         Esta canción todavía no tiene
@@ -137,7 +170,7 @@ function SongDetail({
 
                     <div className="song-history-list">
 
-                        {songHistory.map(
+                        {history.map(
                             (item, index) => (
 
                                 <div
@@ -180,7 +213,6 @@ function SongDetail({
             </div>
 
         </div>
-
     );
 }
 

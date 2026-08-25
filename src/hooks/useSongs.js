@@ -73,28 +73,33 @@ export function useSongs() {
 // OBTENER CANCIONES
 // =========================
 
-    const getSongs = async () => {
-        try {
-            const response = await API.get("/songs");
-            setSongs(response.data || []);
-        } 
-        catch (error) {
+const getSongs = async () => {
 
-    console.error(
-        "Error al obtener canciones:",
-        error
-    );
+    try {
 
-    showError(
+        const response = await API.get("/songs");
 
-        error.response?.data?.message ||
+        const data = response.data || [];
 
-        "No fue posible cargar las canciones."
+        setSongs(data);
 
-    );
+        return data;
 
-}
-        }
+    } catch (error) {
+
+        console.error(
+            "Error al obtener canciones:",
+            error
+        );
+
+        showError(
+            error.response?.data?.message ||
+            "No fue posible cargar las canciones."
+        );
+
+        return [];
+    }
+};
 
 
 // =========================

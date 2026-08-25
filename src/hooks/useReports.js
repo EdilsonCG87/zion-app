@@ -1,7 +1,7 @@
 // =========================
 // IMPORTS
 // =========================
-import { useState } from "react";
+import { useRef, useState } from "react";
 import API from "../services/api";
 import Swal from "sweetalert2";
 
@@ -13,6 +13,8 @@ export function useReports() {
     // =========================
     // STATES
     // =========================
+
+    const historyRequestId = useRef(0);
 
     const [songHistory, setSongHistory] = useState([]);
 
@@ -36,45 +38,45 @@ export function useReports() {
 
     const [monthlyStats, setMonthlyStats] = useState([]);
 
-    // =========================
-    // HISTORIAL DE UNA CANCIÓN
-    // =========================
+// =========================
+// HISTORIAL DE UNA CANCIÓN
+// =========================
 
-    const getSongHistory = async (songId) => {
+const getSongHistory = async (songId) => {
 
-        if (!songId) {
+    // Limpiar inmediatamente
+    // el historial anterior
+    setSongHistory([]);
 
-            setSongHistory([]);
+    if (!songId) {
+        return;
+    }
 
-            return;
+    try {
 
-        }
+        const { data } = await API.get(
+            `/song-usage/${songId}`
+        );
 
-        try {
+        setSongHistory(
+            Array.isArray(data)
+                ? data
+                : []
+        );
 
-            const { data } = await API.get(
-                `/song-usage/${songId}`
-            );
+    } catch (error) {
 
-            setSongHistory(data);
+        console.error(error);
 
-        } catch (error) {
+        setSongHistory([]);
 
-            console.error(error);
-
-            Swal.fire({
-
-                icon: "error",
-
-                title: "Error",
-
-                text: "No fue posible cargar el historial."
-
-            });
-
-        }
-
-    };
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No fue posible cargar el historial."
+        });
+    }
+};
 
     // =========================
     // REPORTE ANUAL
