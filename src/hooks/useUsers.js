@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
     getRoles,
     getUsers,
@@ -7,345 +9,163 @@ import {
     deleteUser
 } from "../services/userService";
 
-import Swal from "sweetalert2";
+export function useUsers() {
+    const [users, setUsers] = useState([]);
+    const [roles, setRoles] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-import { useState } from "react";
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [roleName, setRoleName] = useState("USER");
 
-
-function useUsers() {
-
-    // =========================
-    // ESTADOS
-    // =========================
-
-    const [users, setUsers] =
-        useState([]);
-
-    const [roles, setRoles] =
-        useState([]);
-
-    const [username, setUsername] =
-        useState("");
-
-    const [password, setPassword] =
-        useState("");
-
-    const [roleName, setRoleName] =
-        useState("USER");
-
-
-    // =========================
-    // CARGAR ROLES
-    // =========================
-
-    const loadRoles = async () => {
-
+    const loadData = async () => {
         try {
+            setLoading(true);
+            setError("");
 
-            const data =
-                await getRoles();
+            const [usersData, rolesData] = await Promise.all([
+                getUsers(),
+                getRoles()
+            ]);
 
-            setRoles(data);
+            setUsers(usersData || []);
+            setRoles(rolesData || []);
 
-        } catch (error) {
-
-            console.error(error);
-
-            Swal.fire(
-                "Error",
-                "No fue posible cargar los roles",
-                "error"
+            if (
+                rolesData &&
+                rolesData.length > 0 &&
+                !rolesData.some((role) => role.name === roleName)
+            ) {
+                setRoleName(rolesData[0].name);
+            }
+        } catch (requestError) {
+            setError(
+                requestError.message ||
+                    "No fue posible cargar usuarios y roles."
             );
+        } finally {
+            setLoading(false);
         }
     };
 
-
-    // =========================
-    // CARGAR USUARIOS
-    // =========================
-
-    const loadUsers = async () => {
-
-        try {
-
-            const data =
-                await getUsers();
-
-            setUsers(data);
-
-        } catch (error) {
-
-            console.error(error);
-
-            Swal.fire(
-                "Error",
-                "No fue posible cargar los usuarios",
-                "error"
-            );
-        }
-    };
-
-
-    // =========================
-    // CREAR USUARIO
-    // =========================
-
-    const saveUser = async (
-        event
-    ) => {
-
+    const saveUser = async (event) => {
         event.preventDefault();
 
-        if (
-            !username.trim()
-            ||
-            !password.trim()
-            ||
-            !roleName
-        ) {
-
-            Swal.fire(
-                "Información incompleta",
-                "Completa todos los campos",
-                "warning"
-            );
-
-            return;
+        if (!username.trim() || !password.trim() || !roleName) {
+            setError("Completa todos los campos.");
+            return false;
         }
 
         try {
+            setLoading(true);
+            setError("");
 
             await createUser({
-                username:
-                    username.trim(),
-
-                password,
-
+                username: username.trim(),
+                password: password,
                 role: {
-                    name:
-                        roleName
+                    name: roleName
                 }
             });
-
-            Swal.fire(
-                "Usuario creado",
-                "El usuario fue creado correctamente",
-                "success"
-            );
 
             setUsername("");
             setPassword("");
             setRoleName("USER");
 
-            loadUsers();
+            await loadData();
 
-        } catch (error) {
-
-            console.error(error);
-
-            Swal.fire(
-                "Error",
-                "No fue posible crear el usuario",
-                "error"
+            return true;
+        } catch (requestError) {
+            setError(
+                requestError.message ||
+                    "No fue posible crear el usuario."
             );
+
+            return false;
+        } finally {
+            setLoading(false);
         }
     };
 
+    const toggleUserEnabled = async (user) => {
+        try {
+            setLoading(true);
+            setError("");
 
-    // =========================
-    // ACTIVAR / DESACTIVAR
-    // =========================
+            await setUserEnabled(user.id, !user.enabled);
+            await loadData();
+        } catch (requestError) {
+            setError(
+                requestError.message ||
+                    "No fue posible actualizar el usuario."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const toggleUserEnabled =
-        async (
-            user
-        ) => {
+    const updatePassword = async (user, newPassword) => {
+        if (!newPassword.trim()) {
+            setError("La contraseña no puede estar vacía.");
+            return false;
+        }
 
-            try {
+        try {
+            setLoading(true);
+            setError("");
 
-                await setUserEnabled(
-                    user.id,
-                    !user.enabled
-                );
+            await changeUserPassword(user.id, newPassword);
 
-                await loadUsers();
+            return true;
+        } catch (requestError) {
+            setError(
+                requestError.message ||
+                    "No fue posible cambiar la contraseña."
+            );
 
-            } catch (error) {
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
 
-                console.error(error);
+    const removeUser = async (user) => {
+        try {
+            setLoading(true);
+            setError("");
 
-                Swal.fire(
-                    "Error",
-                    "No fue posible actualizar el usuario",
-                    "error"
-                );
-            }
-        };
+            await deleteUser(user.id);
+            await loadData();
 
+            return true;
+        } catch (requestError) {
+            setError(
+                requestError.message ||
+                    "No fue posible eliminar el usuario."
+            );
 
-    // =========================
-    // CAMBIAR CONTRASEÑA
-    // =========================
-
-    const updatePassword =
-        async (
-            user
-        ) => {
-
-            const result =
-                await Swal.fire({
-
-                    title:
-                        `Cambiar contraseña de ${user.username}`,
-
-                    input:
-                        "password",
-
-                    inputPlaceholder:
-                        "Nueva contraseña",
-
-                    showCancelButton:
-                        true,
-
-                    confirmButtonText:
-                        "Actualizar",
-
-                    cancelButtonText:
-                        "Cancelar"
-                });
-
-            if (
-                !result.isConfirmed
-            ) {
-
-                return;
-            }
-
-            if (
-                !result.value
-            ) {
-
-                return;
-            }
-
-            try {
-
-                await changeUserPassword(
-                    user.id,
-                    result.value
-                );
-
-                Swal.fire(
-                    "Contraseña actualizada",
-                    "La contraseña fue cambiada correctamente",
-                    "success"
-                );
-
-            } catch (error) {
-
-                console.error(error);
-
-                Swal.fire(
-                    "Error",
-                    "No fue posible cambiar la contraseña",
-                    "error"
-                );
-            }
-        };
-
-
-    // =========================
-    // ELIMINAR USUARIO
-    // =========================
-
-    const confirmDeleteUser =
-        async (
-            user
-        ) => {
-
-            const result =
-                await Swal.fire({
-
-                    title:
-                        "¿Eliminar usuario?",
-
-                    text:
-                        `Se eliminará el usuario "${user.username}"`,
-
-                    icon:
-                        "warning",
-
-                    showCancelButton:
-                        true,
-
-                    confirmButtonText:
-                        "Sí, eliminar",
-
-                    cancelButtonText:
-                        "Cancelar"
-                });
-
-            if (
-                !result.isConfirmed
-            ) {
-
-                return;
-            }
-
-            try {
-
-                await deleteUser(
-                    user.id
-                );
-
-                await loadUsers();
-
-                Swal.fire(
-                    "Eliminado",
-                    "El usuario fue eliminado correctamente",
-                    "success"
-                );
-
-            } catch (error) {
-
-                console.error(error);
-
-                Swal.fire(
-                    "Error",
-                    "No fue posible eliminar el usuario",
-                    "error"
-                );
-            }
-        };
-
-
-    // =========================
-    // RETORNAR
-    // =========================
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return {
-
         users,
         roles,
-
+        loading,
+        error,
         username,
         setUsername,
-
         password,
         setPassword,
-
         roleName,
         setRoleName,
-
-        loadUsers,
-        loadRoles,
-
+        loadData,
         saveUser,
         toggleUserEnabled,
         updatePassword,
-        confirmDeleteUser
+        removeUser
     };
 }
-
-
-export default useUsers;
