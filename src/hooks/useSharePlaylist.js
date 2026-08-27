@@ -2,7 +2,6 @@
 // IMPORTS
 // =========================
 import Swal from "sweetalert2";
-import { jsPDF } from "jspdf";
 
 // =========================
 // HOOK
@@ -90,7 +89,7 @@ export function useSharePlaylist({
 // EXPORTAR PDF
 // =========================
 
-    const exportPlaylistPDF = () => {
+    const exportPlaylistPDF = async () => {
 
         if (
             !selectedPlaylist ||
@@ -106,6 +105,7 @@ export function useSharePlaylist({
             return;
         }
 
+        const { jsPDF } = await import("jspdf");
         const pdf = new jsPDF();
 
         pdf.setFontSize(18);

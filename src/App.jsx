@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import "./App.css";
 import logo from "./assets/logo.png";
 
@@ -11,11 +11,11 @@ import { useNextService } from "./hooks/useNextService";
 import { useSharePlaylist } from "./hooks/useSharePlaylist";
 import { useUsers } from "./hooks/useUsers";
 
-import DashboardPage from "./pages/DashboardPage";
-import PlaylistPage from "./pages/PlaylistPage";
-import SongsPage from "./pages/SongsPage";
-import AgendaPage from "./pages/AgendaPage";
-import UsersPage from "./pages/UsersPage";
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const PlaylistPage = lazy(() => import("./pages/PlaylistPage"));
+const SongsPage = lazy(() => import("./pages/SongsPage"));
+const AgendaPage = lazy(() => import("./pages/AgendaPage"));
+const UsersPage = lazy(() => import("./pages/UsersPage"));
 
 function App() {
     const [activeTab, setActiveTab] = useState("dashboard");
@@ -124,6 +124,7 @@ function App() {
                 </div>
             )}
 
+            <Suspense fallback={null}>
             {activeTab === "dashboard" && (
                 <DashboardPage
                     songs={songs}
@@ -185,6 +186,7 @@ function App() {
             {activeTab === "users" && (
                 <UsersPage usersHook={usersHook} />
             )}
+            </Suspense>
 
             <div className="bottom-nav">
                 <button
