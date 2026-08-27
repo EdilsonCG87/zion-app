@@ -1,4 +1,8 @@
-const API_URL = "http://localhost:8080";
+// =========================
+// IMPORTS
+// =========================
+
+import API from "./api";
 
 
 // =========================
@@ -8,18 +12,9 @@ const API_URL = "http://localhost:8080";
 export const getRoles = async () => {
 
     const response =
-        await fetch(
-            `${API_URL}/roles`
-        );
+        await API.get("/roles");
 
-    if (!response.ok) {
-
-        throw new Error(
-            "Error al obtener los roles"
-        );
-    }
-
-    return response.json();
+    return response.data;
 };
 
 
@@ -30,18 +25,9 @@ export const getRoles = async () => {
 export const getUsers = async () => {
 
     const response =
-        await fetch(
-            `${API_URL}/users`
-        );
+        await API.get("/users");
 
-    if (!response.ok) {
-
-        throw new Error(
-            "Error al obtener los usuarios"
-        );
-    }
-
-    return response.json();
+    return response.data;
 };
 
 
@@ -54,30 +40,12 @@ export const createUser = async (
 ) => {
 
     const response =
-        await fetch(
-            `${API_URL}/users`,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body: JSON.stringify(
-                    user
-                )
-            }
+        await API.post(
+            "/users",
+            user
         );
 
-    if (!response.ok) {
-
-        throw new Error(
-            "Error al crear el usuario"
-        );
-    }
-
-    return response.json();
+    return response.data;
 };
 
 
@@ -91,21 +59,17 @@ export const setUserEnabled = async (
 ) => {
 
     const response =
-        await fetch(
-            `${API_URL}/users/${id}/enabled?enabled=${enabled}`,
+        await API.put(
+            `/users/${id}/enabled`,
+            null,
             {
-                method: "PUT"
+                params: {
+                    enabled: enabled
+                }
             }
         );
 
-    if (!response.ok) {
-
-        throw new Error(
-            "Error al actualizar el usuario"
-        );
-    }
-
-    return response.json();
+    return response.data;
 };
 
 
@@ -113,38 +77,21 @@ export const setUserEnabled = async (
 // CAMBIAR CONTRASEÑA
 // =========================
 
-export const changeUserPassword =
-    async (
-        id,
-        password
-    ) => {
+export const changeUserPassword = async (
+    id,
+    password
+) => {
 
-        const response =
-            await fetch(
-                `${API_URL}/users/${id}/password`,
-                {
-                    method: "PUT",
+    const response =
+        await API.put(
+            `/users/${id}/password`,
+            {
+                password: password
+            }
+        );
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        password
-                    })
-                }
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Error al cambiar la contraseña"
-            );
-        }
-
-        return response.json();
-    };
+    return response.data;
+};
 
 
 // =========================
@@ -155,18 +102,7 @@ export const deleteUser = async (
     id
 ) => {
 
-    const response =
-        await fetch(
-            `${API_URL}/users/${id}`,
-            {
-                method: "DELETE"
-            }
-        );
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Error al eliminar el usuario"
-        );
-    }
+    await API.delete(
+        `/users/${id}`
+    );
 };
