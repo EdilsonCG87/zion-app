@@ -1,18 +1,20 @@
-// =========================
+// ========================================================
 // IMPORTS
-// =========================
-import { useState } from "react";
+// ========================================================
+
+import { useCallback, useState } from "react";
 import Swal from "sweetalert2";
 import API from "../services/api";
 
-// =========================
+// ========================================================
 // HOOK
-// =========================
+// ========================================================
+
 export function useSongs() {
 
-// =========================
-// STATES
-// =========================
+    // ========================================================
+    // STATES
+    // ========================================================
 
     const [songs, setSongs] = useState([]);
     const [search, setSearch] = useState("");
@@ -25,9 +27,10 @@ export function useSongs() {
     // Estado privado del Hook
     const [deletedSong, setDeletedSong] = useState(null);
 
-// =========================
-// HELPERS
-// =========================
+
+    // ========================================================
+    // HELPERS
+    // ========================================================
 
     /**
      * Limpia completamente el formulario.
@@ -42,158 +45,200 @@ export function useSongs() {
 
     };
 
+
     /**
      * Muestra un mensaje de error uniforme.
      */
     const showError = (message) => {
 
-    Swal.fire({
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: message
+        });
 
-        icon: "error",
-        title: "Error",
-        text: message
+    };
 
-    });
-
-};
 
     /**
      * Muestra un mensaje de éxito uniforme.
      */
     const showSuccess = (title) => {
+
         Swal.fire({
             icon: "success",
             title,
             timer: 1500,
             showConfirmButton: false
         });
+
     };
-    
-// =========================
-// OBTENER CANCIONES
-// =========================
-
-const getSongs = async () => {
-
-    try {
-
-        const response = await API.get("/songs");
-
-        const data = response.data || [];
-
-        setSongs(data);
-
-        return data;
-
-    } catch (error) {
-
-        console.error(
-            "Error al obtener canciones:",
-            error
-        );
-
-        showError(
-            error.response?.data?.message ||
-            "No fue posible cargar las canciones."
-        );
-
-        return [];
-    }
-};
 
 
-// =========================
-// GUARDAR CANCIÓN
-// =========================
+    // ========================================================
+    // OBTENER CANCIONES
+    // ========================================================
+    //
+    // IMPORTANTE:
+    //
+    // useCallback mantiene estable la referencia de getSongs
+    // entre renders mientras no cambien sus dependencias.
+    //
+    // Esto evita que App.jsx interprete que getSongs cambió
+    // y vuelva a ejecutar su useEffect innecesariamente.
+    //
+    // ========================================================
+
+    const getSongs = useCallback(async () => {
+
+        try {
+
+            const response = await API.get("/songs");
+
+            const data = response.data || [];
+
+            setSongs(data);
+
+            return data;
+
+        } catch (error) {
+
+            console.error(
+                "Error al obtener canciones:",
+                error
+            );
+
+            showError(
+                error.response?.data?.message ||
+                "No fue posible cargar las canciones."
+            );
+
+            return [];
+
+        }
+
+    }, []);
+
+
+    // ========================================================
+    // GUARDAR CANCIÓN
+    // ========================================================
 
     const saveSong = async () => {
 
-// -------------------------
-// Validaciones
-// -------------------------
+        // ----------------------------------------------------
+        // Validaciones
+        // ----------------------------------------------------
 
         if (!name.trim()) {
+
             Swal.fire({
                 icon: "warning",
                 title: "Nombre requerido",
                 text: "Debes ingresar el nombre de la canción."
             });
+
             return;
+
         }
 
-// -------------------------
-// Objeto
-// -------------------------
+
+        // ----------------------------------------------------
+        // Objeto
+        // ----------------------------------------------------
 
         const songData = {
+
             name: name.trim(),
             author: author.trim(),
             keyTone: keyTone.trim(),
             bpm
+
         };
+
 
         try {
 
-// -------------------------
-// Editar
-// -------------------------
+            // ------------------------------------------------
+            // Editar
+            // ------------------------------------------------
 
             if (editingId) {
+
                 await API.put(
                     `/songs/${editingId}`,
                     songData
                 );
+
                 showSuccess(
                     "Canción actualizada"
                 );
+
             }
 
-// -------------------------
-// Crear
-// -------------------------
+            // ------------------------------------------------
+            // Crear
+            // ------------------------------------------------
 
             else {
+
                 await API.post(
                     "/songs",
                     songData
                 );
+
                 showSuccess(
                     "Canción guardada"
                 );
+
             }
+
+
             clearForm();
+
             await getSongs();
-        } 
+
+        }
+
         catch (error) {
+
             console.error(
                 "Error al guardar canción:",
                 error
             );
+
             showError(
                 "No fue posible guardar la canción."
             );
+
         }
+
     };
 
-// =========================
-// EDITAR CANCIÓN
-// =========================
+
+    // ========================================================
+    // EDITAR CANCIÓN
+    // ========================================================
 
     const editSong = (song) => {
+
         setName(song.name);
         setAuthor(song.author ?? "");
         setKeyTone(song.keyTone ?? "");
         setBpm(song.bpm ?? "");
         setEditingId(song.id);
+
     };
 
-    // =========================
+
+    // ========================================================
     // FAVORITA
-    // =========================
+    // ========================================================
 
     const toggleFavorite = async (song) => {
 
         try {
+
             await API.put(
                 `/songs/${song.id}`,
                 {
@@ -204,163 +249,212 @@ const getSongs = async () => {
 
             await getSongs();
 
-        } 
+        }
+
         catch (error) {
 
-    console.error(
-        "Error al actualizar favorita:",
-        error
-    );
+            console.error(
+                "Error al actualizar favorita:",
+                error
+            );
 
-    showError(
+            showError(
+                error.response?.data?.message ||
+                "No fue posible actualizar la canción."
+            );
 
-        error.response?.data?.message ||
+        }
 
-        "No fue posible actualizar la canción."
-
-    );
-
-}
     };
 
-    // =========================
+
+    // ========================================================
     // ELIMINAR CANCIÓN
-    // =========================
+    // ========================================================
 
     const deleteSong = async (id) => {
+
         try {
+
             const songToDelete = songs.find(
                 song => song.id === id
             );
+
             setDeletedSong(songToDelete);
+
             await API.delete(
                 `/songs/${id}`
-
             );
 
             await getSongs();
+
+
             const result = await Swal.fire({
+
                 icon: "success",
+
                 title: "Canción eliminada",
+
                 text: "Puedes deshacer la acción.",
+
                 showCancelButton: true,
+
                 confirmButtonText: "Deshacer",
+
                 cancelButtonText: "Cerrar"
+
             });
+
+
             if (result.isConfirmed) {
+
                 await undoDelete();
+
             }
 
-        } 
+        }
+
         catch (error) {
 
-    console.error(
-        "Error al actualizar favorita:",
-        error
-    );
+            console.error(
+                "Error al eliminar canción:",
+                error
+            );
 
-    showError(
+            showError(
+                error.response?.data?.message ||
+                "No fue posible eliminar la canción."
+            );
 
-        error.response?.data?.message ||
+        }
 
-        "No fue posible actualizar la canción."
-
-    );
-
-}
     };
 
-// =========================
-// DESHACER ELIMINACIÓN
-// =========================
+
+    // ========================================================
+    // DESHACER ELIMINACIÓN
+    // ========================================================
 
     const undoDelete = async () => {
-        if (!deletedSong) return;
+
+        if (!deletedSong) {
+            return;
+        }
+
+
         try {
+
             await API.post(
                 "/songs",
                 deletedSong
             );
+
             await getSongs();
+
             showSuccess(
                 "Canción restaurada"
             );
+
             setDeletedSong(null);
-            
-        } 
-        catch (error) {
-
-    console.error(
-        "Error al actualizar favorita:",
-        error
-    );
-
-    showError(
-
-        error.response?.data?.message ||
-
-        "No fue posible actualizar la canción."
-
-    );
-
-}
-    };
-
-// =========================
-// CONFIRMAR ELIMINACIÓN
-// =========================
-
-const confirmDelete = (id) => {
-
-    Swal.fire({
-
-        title: "¿Eliminar canción?",
-        text: "Podrás deshacer la acción.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar"
-
-    }).then((result) => {
-
-        if (result.isConfirmed) {
-
-            deleteSong(id);
 
         }
 
-    });
+        catch (error) {
 
-};
-// =========================
-// RETURN
-// =========================
+            console.error(
+                "Error al restaurar canción:",
+                error
+            );
 
-return {
+            showError(
+                error.response?.data?.message ||
+                "No fue posible restaurar la canción."
+            );
 
-    // Estados
-    songs,
-    setSongs,
-    search,
-    setSearch,
-    name,
-    setName,
-    author,
-    setAuthor,
-    keyTone,
-    setKeyTone,
-    bpm,
-    setBpm,
-    editingId,
-    setEditingId,
+        }
 
-    // Funciones
-    getSongs,
-    saveSong,
-    editSong,
-    toggleFavorite,
-    confirmDelete
-};
+    };
+
+
+    // ========================================================
+    // CONFIRMAR ELIMINACIÓN
+    // ========================================================
+
+    const confirmDelete = (id) => {
+
+        Swal.fire({
+
+            title: "¿Eliminar canción?",
+
+            text: "Podrás deshacer la acción.",
+
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonColor: "#d33",
+
+            cancelButtonColor: "#3085d6",
+
+            confirmButtonText: "Sí, eliminar",
+
+            cancelButtonText: "Cancelar"
+
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                deleteSong(id);
+
+            }
+
+        });
+
+    };
+
+
+    // ========================================================
+    // RETURN
+    // ========================================================
+
+    return {
+
+        // ----------------------------------------------------
+        // Estados
+        // ----------------------------------------------------
+
+        songs,
+        setSongs,
+
+        search,
+        setSearch,
+
+        name,
+        setName,
+
+        author,
+        setAuthor,
+
+        keyTone,
+        setKeyTone,
+
+        bpm,
+        setBpm,
+
+        editingId,
+        setEditingId,
+
+
+        // ----------------------------------------------------
+        // Funciones
+        // ----------------------------------------------------
+
+        getSongs,
+        saveSong,
+        editSong,
+        toggleFavorite,
+        confirmDelete
+
+    };
+
 }
