@@ -1,18 +1,21 @@
-// =========================
+// ========================================================
 // IMPORTS
-// =========================
-import { useState } from "react";
+// ========================================================
+
+import { useCallback, useState } from "react";
 import Swal from "sweetalert2";
 import API from "../services/api";
 
-// =========================
+
+// ========================================================
 // HOOK
-// =========================
+// ========================================================
+
 export function usePlaylists() {
 
-    // =========================
+    // ========================================================
     // STATES
-    // =========================
+    // ========================================================
 
     const [playlists, setPlaylists] = useState([]);
 
@@ -24,41 +27,58 @@ export function usePlaylists() {
 
     const [selectedSong, setSelectedSong] = useState("");
 
-    // =========================
-    // LIMPIAR FORMULARIO
-    // =========================
 
-    const clearPlaylistForm = () => {
+    // ========================================================
+    // LIMPIAR FORMULARIO
+    // ========================================================
+
+    const clearPlaylistForm = useCallback(() => {
 
         setPlaylistName("");
 
         setServiceDate("");
 
-    };
+    }, []);
 
-    // =========================
+
+    // ========================================================
     // OBTENER CULTOS
-    // =========================
+    // ========================================================
+    //
+    // IMPORTANTE:
+    //
+    // useCallback mantiene estable la referencia de
+    // getPlaylists entre renders.
+    //
+    // Esto es especialmente importante porque App.jsx
+    // utiliza getPlaylists dentro de las dependencias
+    // de su useEffect principal.
+    //
+    // ========================================================
 
-    const getPlaylists = async () => {
+    const getPlaylists = useCallback(async () => {
 
         try {
 
-            const response = await API.get("/playlists");
+            const response =
+                await API.get("/playlists");
 
-            let data = response.data;
+            let data =
+                response.data;
 
-            // ---------------------------------
+
+            // ------------------------------------------------
             // El backend puede devolver:
             // 1. Un arreglo directamente
             // 2. Un JSON convertido en string
-            // ---------------------------------
+            // ------------------------------------------------
 
             if (typeof data === "string") {
 
                 try {
 
-                    data = JSON.parse(data);
+                    data =
+                        JSON.parse(data);
 
                 } catch (parseError) {
 
@@ -80,15 +100,16 @@ export function usePlaylists() {
 
                     });
 
-                    return;
+                    return [];
 
                 }
 
             }
 
-            // ---------------------------------
+
+            // ------------------------------------------------
             // Verificar que realmente sea array
-            // ---------------------------------
+            // ------------------------------------------------
 
             if (!Array.isArray(data)) {
 
@@ -110,17 +131,22 @@ export function usePlaylists() {
 
                 });
 
-                return;
+                return [];
 
             }
 
-            // ---------------------------------
+
+            // ------------------------------------------------
             // Guardar cultos
-            // ---------------------------------
+            // ------------------------------------------------
 
             setPlaylists(data);
 
-        } catch (error) {
+            return data;
+
+        }
+
+        catch (error) {
 
             console.error(
                 "Error al obtener cultos:",
@@ -141,15 +167,18 @@ export function usePlaylists() {
 
             });
 
+            return [];
+
         }
 
-    };
+    }, []);
 
-    // =========================
+
+    // ========================================================
     // CREAR CULTO
-    // =========================
+    // ========================================================
 
-    const createPlaylist = async () => {
+    const createPlaylist = useCallback(async () => {
 
         if (!playlistName.trim()) {
 
@@ -168,6 +197,7 @@ export function usePlaylists() {
 
         }
 
+
         try {
 
             await API.post(
@@ -176,13 +206,15 @@ export function usePlaylists() {
 
                 {
 
-                    name: playlistName.trim(),
+                    name:
+                        playlistName.trim(),
 
                     serviceDate
 
                 }
 
             );
+
 
             Swal.fire({
 
@@ -196,11 +228,14 @@ export function usePlaylists() {
 
             });
 
+
             clearPlaylistForm();
 
             await getPlaylists();
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(
                 "Error al crear culto:",
@@ -221,13 +256,19 @@ export function usePlaylists() {
 
         }
 
-    };
+    }, [
+        playlistName,
+        serviceDate,
+        clearPlaylistForm,
+        getPlaylists
+    ]);
 
-    // =========================
+
+    // ========================================================
     // ACTUALIZAR CULTO
-    // =========================
+    // ========================================================
 
-    const updatePlaylist = async (data) => {
+    const updatePlaylist = useCallback(async (data) => {
 
         if (!selectedPlaylist) {
 
@@ -243,6 +284,7 @@ export function usePlaylists() {
 
         }
 
+
         try {
 
             await API.put(
@@ -252,6 +294,7 @@ export function usePlaylists() {
                 data
 
             );
+
 
             Swal.fire({
 
@@ -265,9 +308,12 @@ export function usePlaylists() {
 
             });
 
+
             await getPlaylists();
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(
                 "Error al actualizar culto:",
@@ -288,13 +334,17 @@ export function usePlaylists() {
 
         }
 
-    };
+    }, [
+        selectedPlaylist,
+        getPlaylists
+    ]);
 
-    // =========================
+
+    // ========================================================
     // ELIMINAR CULTO
-    // =========================
+    // ========================================================
 
-    const deletePlaylist = async () => {
+    const deletePlaylist = useCallback(async () => {
 
         if (!selectedPlaylist) {
 
@@ -310,28 +360,37 @@ export function usePlaylists() {
 
         }
 
-        const result = await Swal.fire({
 
-            title: "¿Eliminar culto?",
+        const result =
+            await Swal.fire({
 
-            text:
-                "Esta acción no se puede deshacer.",
+                title:
+                    "¿Eliminar culto?",
 
-            icon: "warning",
+                text:
+                    "Esta acción no se puede deshacer.",
 
-            showCancelButton: true,
+                icon:
+                    "warning",
 
-            confirmButtonText: "Sí, eliminar",
+                showCancelButton:
+                    true,
 
-            cancelButtonText: "Cancelar"
+                confirmButtonText:
+                    "Sí, eliminar",
 
-        });
+                cancelButtonText:
+                    "Cancelar"
+
+            });
+
 
         if (!result.isConfirmed) {
 
             return;
 
         }
+
 
         try {
 
@@ -341,23 +400,31 @@ export function usePlaylists() {
 
             );
 
+
             Swal.fire({
 
-                icon: "success",
+                icon:
+                    "success",
 
-                title: "Culto eliminado",
+                title:
+                    "Culto eliminado",
 
-                timer: 1200,
+                timer:
+                    1200,
 
-                showConfirmButton: false
+                showConfirmButton:
+                    false
 
             });
+
 
             setSelectedPlaylist("");
 
             await getPlaylists();
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(
                 "Error al eliminar culto:",
@@ -366,9 +433,11 @@ export function usePlaylists() {
 
             Swal.fire({
 
-                icon: "error",
+                icon:
+                    "error",
 
-                title: "Error",
+                title:
+                    "Error",
 
                 text:
                     error.response?.data?.message ||
@@ -378,21 +447,27 @@ export function usePlaylists() {
 
         }
 
-    };
+    }, [
+        selectedPlaylist,
+        getPlaylists
+    ]);
 
-    // =========================
+
+    // ========================================================
     // EDITAR CULTO
-    // =========================
+    // ========================================================
 
-    const startEditPlaylist = async () => {
+    const startEditPlaylist = useCallback(async () => {
 
         if (!selectedPlaylist) {
 
             Swal.fire({
 
-                icon: "warning",
+                icon:
+                    "warning",
 
-                title: "Selecciona un culto"
+                title:
+                    "Selecciona un culto"
 
             });
 
@@ -400,20 +475,26 @@ export function usePlaylists() {
 
         }
 
-        const selected = playlists.find(
 
-            playlist =>
-                playlist.id === Number(selectedPlaylist)
+        const selected =
+            playlists.find(
 
-        );
+                playlist =>
+                    playlist.id ===
+                    Number(selectedPlaylist)
+
+            );
+
 
         if (!selected) {
 
             Swal.fire({
 
-                icon: "warning",
+                icon:
+                    "warning",
 
-                title: "Culto no encontrado",
+                title:
+                    "Culto no encontrado",
 
                 text:
                     "No fue posible encontrar el culto seleccionado."
@@ -424,69 +505,85 @@ export function usePlaylists() {
 
         }
 
-        const result = await Swal.fire({
 
-            title: "Editar culto",
+        const result =
+            await Swal.fire({
 
-            html: `
+                title:
+                    "Editar culto",
 
-                <input
-                    id="swal-name"
-                    class="swal2-input"
-                    placeholder="Nombre"
-                    value="${selected.name ?? ""}"
-                >
+                html: `
 
-                <input
-                    id="swal-date"
-                    type="date"
-                    class="swal2-input"
-                    value="${selected.serviceDate ?? ""}"
-                >
+                    <input
+                        id="swal-name"
+                        class="swal2-input"
+                        placeholder="Nombre"
+                        value="${selected.name ?? ""}"
+                    >
 
-            `,
+                    <input
+                        id="swal-date"
+                        type="date"
+                        class="swal2-input"
+                        value="${selected.serviceDate ?? ""}"
+                    >
 
-            showCancelButton: true,
+                `,
 
-            confirmButtonText: "Guardar",
+                showCancelButton:
+                    true,
 
-            cancelButtonText: "Cancelar",
+                confirmButtonText:
+                    "Guardar",
 
-            focusConfirm: false,
+                cancelButtonText:
+                    "Cancelar",
 
-            preConfirm: () => {
+                focusConfirm:
+                    false,
 
-                const name =
-                    document.getElementById(
-                        "swal-name"
-                    ).value.trim();
+                preConfirm: () => {
 
-                const serviceDate =
-                    document.getElementById(
-                        "swal-date"
-                    ).value;
+                    const name =
+                        document
+                            .getElementById(
+                                "swal-name"
+                            )
+                            .value
+                            .trim();
 
-                if (!name) {
 
-                    Swal.showValidationMessage(
-                        "El nombre del culto es obligatorio."
-                    );
+                    const serviceDate =
+                        document
+                            .getElementById(
+                                "swal-date"
+                            )
+                            .value;
 
-                    return false;
+
+                    if (!name) {
+
+                        Swal.showValidationMessage(
+                            "El nombre del culto es obligatorio."
+                        );
+
+                        return false;
+
+                    }
+
+
+                    return {
+
+                        name,
+
+                        serviceDate
+
+                    };
 
                 }
 
-                return {
+            });
 
-                    name,
-
-                    serviceDate
-
-                };
-
-            }
-
-        });
 
         if (!result.isConfirmed) {
 
@@ -494,17 +591,27 @@ export function usePlaylists() {
 
         }
 
-        await updatePlaylist(result.value);
 
-    };
+        await updatePlaylist(
+            result.value
+        );
 
-    // =========================
+    }, [
+        selectedPlaylist,
+        playlists,
+        updatePlaylist
+    ]);
+
+
+    // ========================================================
     // RETURN
-    // =========================
+    // ========================================================
 
     return {
 
+        // ----------------------------------------------------
         // Estados
+        // ----------------------------------------------------
 
         playlists,
 
@@ -526,7 +633,10 @@ export function usePlaylists() {
 
         setSelectedSong,
 
+
+        // ----------------------------------------------------
         // Funciones
+        // ----------------------------------------------------
 
         getPlaylists,
 
