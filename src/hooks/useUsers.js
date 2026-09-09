@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import {
     getRoles,
@@ -19,7 +19,13 @@ export function useUsers() {
     const [password, setPassword] = useState("");
     const [roleName, setRoleName] = useState("USER");
 
-    const loadData = async () => {
+    /**
+     * Carga usuarios y roles.
+     *
+     * useCallback evita que la referencia de la función
+     * cambie en cada render del componente.
+     */
+    const loadData = useCallback(async () => {
         try {
             setLoading(true);
             setError("");
@@ -29,139 +35,205 @@ export function useUsers() {
                 getRoles()
             ]);
 
-            setUsers(usersData || []);
-            setRoles(rolesData || []);
+            setUsers(Array.isArray(usersData) ? usersData : []);
+            setRoles(Array.isArray(rolesData) ? rolesData : []);
 
+            // Si el rol seleccionado ya no existe,
+            // seleccionamos automáticamente el primero disponible.
             if (
-                rolesData &&
+                Array.isArray(rolesData) &&
                 rolesData.length > 0 &&
                 !rolesData.some((role) => role.name === roleName)
             ) {
                 setRoleName(rolesData[0].name);
             }
         } catch (requestError) {
+            console.error("Error al cargar usuarios y roles:", requestError);
+
             setError(
+                requestError.response?.data?.message ||
                 requestError.message ||
-                    "No fue posible cargar usuarios y roles."
+                "No fue posible cargar usuarios y roles."
             );
         } finally {
             setLoading(false);
         }
-    };
+    }, [roleName]);
 
-    const saveUser = async (event) => {
-        event.preventDefault();
+    /**
+     * Crea un nuevo usuario.
+     */
+    const saveUser = useCallback(
+        async (event) => {
+            event.preventDefault();
 
-        if (!username.trim() || !password.trim() || !roleName) {
-            setError("Completa todos los campos.");
-            return false;
-        }
+            if (
+                !username.trim() ||
+                !password.trim() ||
+                !roleName
+            ) {
+                setError("Completa todos los campos.");
+                return false;
+            }
 
-        try {
-            setLoading(true);
-            setError("");
+            try {
+                setLoading(true);
+                setError("");
 
-            await createUser({
-                username: username.trim(),
-                password: password,
-                role: {
-                    name: roleName
-                }
-            });
+                await createUser({
+                    username: username.trim(),
+                    password,
+                    role: {
+                        name: roleName
+                    }
+                });
 
-            setUsername("");
-            setPassword("");
-            setRoleName("USER");
+                setUsername("");
+                setPassword("");
+                setRoleName("USER");
 
-            await loadData();
+                await loadData();
 
-            return true;
-        } catch (requestError) {
-            setError(
-                requestError.message ||
+                return true;
+            } catch (requestError) {
+                console.error("Error al crear usuario:", requestError);
+
+                setError(
+                    requestError.response?.data?.message ||
+                    requestError.message ||
                     "No fue posible crear el usuario."
-            );
+                );
 
-            return false;
-        } finally {
-            setLoading(false);
-        }
-    };
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        },
+        [username, password, roleName, loadData]
+    );
 
-    const toggleUserEnabled = async (user) => {
-        try {
-            setLoading(true);
-            setError("");
+    /**
+     * Activa o desactiva un usuario.
+     */
+    const toggleUserEnabled = useCallback(
+        async (user) => {
+            try {
+                setLoading(true);
+                setError("");
 
-            await setUserEnabled(user.id, !user.enabled);
-            await loadData();
-        } catch (requestError) {
-            setError(
-                requestError.message ||
+                await setUserEnabled(
+                    user.id,
+                    !user.enabled
+                );
+
+                await loadData();
+            } catch (requestError) {
+                console.error(
+                    "Error al actualizar estado del usuario:",
+                    requestError
+                );
+
+                setError(
+                    requestError.response?.data?.message ||
+                    requestError.message ||
                     "No fue posible actualizar el usuario."
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
+                );
+            } finally {
+                setLoading(false);
+            }
+        },
+        [loadData]
+    );
 
-    const updatePassword = async (user, newPassword) => {
-        if (!newPassword.trim()) {
-            setError("La contraseña no puede estar vacía.");
-            return false;
-        }
+    /**
+     * Cambia la contraseña de un usuario.
+     */
+    const updatePassword = useCallback(
+        async (user, newPassword) => {
+            if (!newPassword?.trim()) {
+                setError("La contraseña no puede estar vacía.");
+                return false;
+            }
 
-        try {
-            setLoading(true);
-            setError("");
+            try {
+                setLoading(true);
+                setError("");
 
-            await changeUserPassword(user.id, newPassword);
+                await changeUserPassword(
+                    user.id,
+                    newPassword
+                );
 
-            return true;
-        } catch (requestError) {
-            setError(
-                requestError.message ||
+                return true;
+            } catch (requestError) {
+                console.error(
+                    "Error al cambiar contraseña:",
+                    requestError
+                );
+
+                setError(
+                    requestError.response?.data?.message ||
+                    requestError.message ||
                     "No fue posible cambiar la contraseña."
-            );
+                );
 
-            return false;
-        } finally {
-            setLoading(false);
-        }
-    };
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        },
+        []
+    );
 
-    const removeUser = async (user) => {
-        try {
-            setLoading(true);
-            setError("");
+    /**
+     * Elimina un usuario.
+     */
+    const removeUser = useCallback(
+        async (user) => {
+            try {
+                setLoading(true);
+                setError("");
 
-            await deleteUser(user.id);
-            await loadData();
+                await deleteUser(user.id);
 
-            return true;
-        } catch (requestError) {
-            setError(
-                requestError.message ||
+                await loadData();
+
+                return true;
+            } catch (requestError) {
+                console.error(
+                    "Error al eliminar usuario:",
+                    requestError
+                );
+
+                setError(
+                    requestError.response?.data?.message ||
+                    requestError.message ||
                     "No fue posible eliminar el usuario."
-            );
+                );
 
-            return false;
-        } finally {
-            setLoading(false);
-        }
-    };
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        },
+        [loadData]
+    );
 
     return {
         users,
         roles,
         loading,
         error,
+
         username,
         setUsername,
+
         password,
         setPassword,
+
         roleName,
         setRoleName,
+
         loadData,
         saveUser,
         toggleUserEnabled,
