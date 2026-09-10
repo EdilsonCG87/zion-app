@@ -66,9 +66,9 @@ const LoginPage = lazy(
 
 function App() {
 
-// ========================================================
-// AUTENTICACIÓN
-// ========================================================
+    // ========================================================
+    // AUTENTICACIÓN
+    // ========================================================
 
     const {
         user,
@@ -77,9 +77,9 @@ function App() {
     } = useAuth();
 
 
-// ========================================================
-// NAVEGACIÓN
-// ========================================================
+    // ========================================================
+    // NAVEGACIÓN
+    // ========================================================
 
     const [activeTab, setActiveTab] = useState(
         "dashboard"
@@ -90,9 +90,9 @@ function App() {
     );
 
 
-// ========================================================
-// HOOK CANCIONES
-// ========================================================
+    // ========================================================
+    // HOOK CANCIONES
+    // ========================================================
 
     const songsHook = useSongs();
 
@@ -102,9 +102,9 @@ function App() {
     } = songsHook;
 
 
-// ========================================================
-// HOOK CULTOS
-// ========================================================
+    // ========================================================
+    // HOOK CULTOS
+    // ========================================================
 
     const playlistsHook = usePlaylists();
 
@@ -125,9 +125,9 @@ function App() {
     } = playlistsHook;
 
 
-// ========================================================
-// HOOK CANCIONES DEL CULTO
-// ========================================================
+    // ========================================================
+    // HOOK CANCIONES DEL CULTO
+    // ========================================================
 
     const playlistSongsHook = usePlaylistSongs();
 
@@ -140,9 +140,9 @@ function App() {
     } = playlistSongsHook;
 
 
-// ========================================================
-// HOOK REPORTES
-// ========================================================
+    // ========================================================
+    // HOOK REPORTES
+    // ========================================================
 
     const {
         selectedHistorySong,
@@ -153,9 +153,9 @@ function App() {
     } = useReports();
 
 
-// ========================================================
-// HOOK ESTADÍSTICAS
-// ========================================================
+    // ========================================================
+    // HOOK ESTADÍSTICAS
+    // ========================================================
 
     const {
         topSongs,
@@ -165,9 +165,9 @@ function App() {
     } = useStatistics();
 
 
-// ========================================================
-// PRÓXIMO CULTO
-// ========================================================
+    // ========================================================
+    // PRÓXIMO CULTO
+    // ========================================================
 
     const {
         nextService,
@@ -175,9 +175,9 @@ function App() {
     } = useNextService(playlists);
 
 
-// ========================================================
-// COMPARTIR / PDF
-// ========================================================
+    // ========================================================
+    // COMPARTIR / PDF
+    // ========================================================
 
     const {
         shareWhatsApp,
@@ -190,57 +190,73 @@ function App() {
     });
 
 
-// ========================================================
-// USUARIOS
-// ========================================================
+    // ========================================================
+    // USUARIOS
+    // ========================================================
 
     const usersHook = useUsers();
 
 
-// ========================================================
-// CARGAR DATOS PROTEGIDOS
+    // ========================================================
+    // CARGAR DATOS PROTEGIDOS
     // ========================================================
     //
+    // Estas peticiones esperan a que exista una sesión
+    // autenticada.
+    //
     // IMPORTANTE:
+    // useStatistics YA NO consulta /songs.
     //
-    // Estas peticiones NO deben ejecutarse antes
-    // de que exista una sesión autenticada.
+    // Las estadísticas se calculan posteriormente utilizando
+    // el mismo arreglo "songs" cargado por useSongs.
     //
-    // Antes:
-    //
-    // useEffect(() => {
-    //     getSongs();
-    //     getPlaylists();
-    //     ...
-    // }, []);
-    //
-    // Eso provocaba los 401.
-    //
-    // Ahora esperamos a:
-    //
-    // loading === false
-    //
-    // y además:
-    //
-    // user !== null
-    //
-// ========================================================
+    // ========================================================
 
-useEffect(() => {
+    useEffect(() => {
 
-    if (loading || !user) {
-        return;
-    }
+        if (loading || !user) {
+            return;
+        }
 
-    getSongs();
-    getPlaylists();
-    getTopSongs();
-    getUnusedSongs();
-    getOverusedSongs();
-    getYearUsage(2026);
+        getSongs();
+        getPlaylists();
+        getYearUsage(2026);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [loading, user]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loading, user]);
+
+
+    // ========================================================
+    // CALCULAR ESTADÍSTICAS CON LAS CANCIONES YA CARGADAS
+    // ========================================================
+    //
+    // No se realiza ninguna petición HTTP aquí.
+    //
+    // getTopSongs()
+    // getUnusedSongs()
+    // getOverusedSongs()
+    //
+    // reciben directamente "songs".
+    //
+    // ========================================================
+
+    useEffect(() => {
+
+        if (!user || !Array.isArray(songs)) {
+            return;
+        }
+
+        getTopSongs(songs);
+        getUnusedSongs(songs);
+        getOverusedSongs(songs);
+
+    }, [
+        user,
+        songs,
+        getTopSongs,
+        getUnusedSongs,
+        getOverusedSongs
+    ]);
 
 
     // ========================================================
@@ -304,18 +320,6 @@ useEffect(() => {
 
     // ========================================================
     // SIN SESIÓN
-    // ========================================================
-    //
-    // IMPORTANTE:
-    //
-    // Aquí detenemos completamente la aplicación protegida.
-    //
-    // No se muestran canciones.
-    // No se muestran cultos.
-    // No se consultan endpoints protegidos.
-    //
-    // Se muestra LoginPage.
-    //
     // ========================================================
 
     if (!user) {
@@ -516,7 +520,9 @@ useEffect(() => {
                             removeSongFromPlaylist
                         }
 
-                        moveSong={moveSong}
+                        moveSong={
+                            moveSong
+                        }
 
                         startEditPlaylist={
                             startEditPlaylist
@@ -558,15 +564,19 @@ useEffect(() => {
 
                     <SongsPage
                         songsHook={songsHook}
+
                         getTopSongs={
                             getTopSongs
                         }
+
                         getOverusedSongs={
                             getOverusedSongs
                         }
+
                         songHistory={
                             songHistory
                         }
+
                         getSongHistory={
                             getSongHistory
                         }
