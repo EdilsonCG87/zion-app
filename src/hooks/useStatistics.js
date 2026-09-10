@@ -1,21 +1,20 @@
-// ========================================================
-// IMPORTS
-// ========================================================
+// * ========================================================
+// * IMPORTS
+// * ========================================================
 
 import { useCallback, useState } from "react";
 import Swal from "sweetalert2";
-import API from "../services/api";
 
 
-// ========================================================
-// HOOK
-// ========================================================
+// * ========================================================
+// * HOOK
+// * ========================================================
 
 export function useStatistics() {
 
-    // ========================================================
-    // STATES
-    // ========================================================
+    // * ========================================================
+    // * STATES
+    // * ========================================================
 
     const [topSongs, setTopSongs] = useState([]);
 
@@ -24,66 +23,56 @@ export function useStatistics() {
     const [overusedSongs, setOverusedSongs] = useState([]);
 
 
-    // ========================================================
-    // HELPERS
-    // ========================================================
+    // * ========================================================
+    // * HELPERS
+    // * ========================================================
 
     const showError = useCallback((message) => {
 
         console.error(message);
 
         Swal.fire({
-
             icon: "error",
-
             title: "Error",
-
             text: message
-
         });
 
     }, []);
 
 
-    // ========================================================
-    // TOP 5 CANCIONES
-    // ========================================================
+    // * ========================================================
+    // * TOP 5 CANCIONES
+    // * ========================================================
 
-    const getTopSongs = useCallback(async () => {
+    const getTopSongs = useCallback((songs = []) => {
 
         try {
 
-            const { data } =
-                await API.get("/songs");
+            const data = Array.isArray(songs) ? songs : [];
 
-
-            const sortedSongs =
-                data
-
-                    .filter(
-                        song =>
-                            (song.timesPlayed ?? 0) > 0
-                    )
-
-                    .sort(
-                        (a, b) =>
-                            (b.timesPlayed ?? 0) -
-                            (a.timesPlayed ?? 0)
-                    )
-
-                    .slice(0, 5);
-
+            const sortedSongs = [...data]
+                .filter(
+                    (song) =>
+                        (song.timesPlayed ?? 0) > 0
+                )
+                .sort(
+                    (a, b) =>
+                        (b.timesPlayed ?? 0) -
+                        (a.timesPlayed ?? 0)
+                )
+                .slice(0, 5);
 
             setTopSongs(sortedSongs);
 
-        }
+        } catch (error) {
 
-        catch (error) {
-
-            console.error(error);
+            console.error(
+                "Error al generar el Top de canciones:",
+                error
+            );
 
             showError(
-                "No fue posible cargar el Top de canciones."
+                "No fue posible generar el Top de canciones."
             );
 
         }
@@ -91,37 +80,32 @@ export function useStatistics() {
     }, [showError]);
 
 
-    // ========================================================
-    // CANCIONES MENOS USADAS
-    // ========================================================
+    // * ========================================================
+    // * CANCIONES MENOS USADAS
+    // * ========================================================
 
-    const getUnusedSongs = useCallback(async () => {
+    const getUnusedSongs = useCallback((songs = []) => {
 
         try {
 
-            const { data } =
-                await API.get("/songs");
+            const data = Array.isArray(songs) ? songs : [];
 
+            const sortedSongs = [...data]
+                .sort(
+                    (a, b) =>
+                        (a.timesPlayed ?? 0) -
+                        (b.timesPlayed ?? 0)
+                )
+                .slice(0, 10);
 
-            const songs =
-                [...data]
+            setUnusedSongs(sortedSongs);
 
-                    .sort(
-                        (a, b) =>
-                            (a.timesPlayed ?? 0) -
-                            (b.timesPlayed ?? 0)
-                    )
+        } catch (error) {
 
-                    .slice(0, 10);
-
-
-            setUnusedSongs(songs);
-
-        }
-
-        catch (error) {
-
-            console.error(error);
+            console.error(
+                "Error al generar las canciones menos usadas:",
+                error
+            );
 
             showError(
                 "No fue posible cargar las canciones menos usadas."
@@ -132,42 +116,36 @@ export function useStatistics() {
     }, [showError]);
 
 
-    // ========================================================
-    // CANCIONES MÁS USADAS
-    // ========================================================
+    // * ========================================================
+    // * CANCIONES MÁS USADAS
+    // * ========================================================
 
-    const getOverusedSongs = useCallback(async () => {
+    const getOverusedSongs = useCallback((songs = []) => {
 
         try {
 
-            const { data } =
-                await API.get("/songs");
+            const data = Array.isArray(songs) ? songs : [];
 
+            const sortedSongs = [...data]
+                .filter(
+                    (song) =>
+                        (song.timesPlayed ?? 0) >= 5
+                )
+                .sort(
+                    (a, b) =>
+                        (b.timesPlayed ?? 0) -
+                        (a.timesPlayed ?? 0)
+                )
+                .slice(0, 10);
 
-            const songs =
-                data
+            setOverusedSongs(sortedSongs);
 
-                    .filter(
-                        song =>
-                            (song.timesPlayed ?? 0) >= 5
-                    )
+        } catch (error) {
 
-                    .sort(
-                        (a, b) =>
-                            (b.timesPlayed ?? 0) -
-                            (a.timesPlayed ?? 0)
-                    )
-
-                    .slice(0, 10);
-
-
-            setOverusedSongs(songs);
-
-        }
-
-        catch (error) {
-
-            console.error(error);
+            console.error(
+                "Error al generar las canciones más usadas:",
+                error
+            );
 
             showError(
                 "No fue posible cargar las canciones más usadas."
@@ -178,9 +156,9 @@ export function useStatistics() {
     }, [showError]);
 
 
-    // ========================================================
-    // RETURN
-    // ========================================================
+    // * ========================================================
+    // * RETURN
+    // * ========================================================
 
     return {
 
