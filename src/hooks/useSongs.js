@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import Swal from "sweetalert2";
 import API from "../services/api";
 
+
 // ========================================================
 // HOOK
 // ========================================================
@@ -18,10 +19,12 @@ export function useSongs() {
 
     const [songs, setSongs] = useState([]);
     const [search, setSearch] = useState("");
+
     const [name, setName] = useState("");
     const [author, setAuthor] = useState("");
     const [keyTone, setKeyTone] = useState("");
     const [bpm, setBpm] = useState("");
+
     const [editingId, setEditingId] = useState(null);
 
     // Estado privado del Hook
@@ -32,10 +35,7 @@ export function useSongs() {
     // HELPERS
     // ========================================================
 
-    /**
-     * Limpia completamente el formulario.
-     */
-    const clearForm = () => {
+    const clearForm = useCallback(() => {
 
         setName("");
         setAuthor("");
@@ -43,13 +43,12 @@ export function useSongs() {
         setBpm("");
         setEditingId(null);
 
-    };
+    }, []);
 
 
-    /**
-     * Muestra un mensaje de error uniforme.
-     */
-    const showError = (message) => {
+    const showError = useCallback((message) => {
+
+        console.error(message);
 
         Swal.fire({
             icon: "error",
@@ -57,13 +56,10 @@ export function useSongs() {
             text: message
         });
 
-    };
+    }, []);
 
 
-    /**
-     * Muestra un mensaje de éxito uniforme.
-     */
-    const showSuccess = (title) => {
+    const showSuccess = useCallback((title) => {
 
         Swal.fire({
             icon: "success",
@@ -72,20 +68,17 @@ export function useSongs() {
             showConfirmButton: false
         });
 
-    };
+    }, []);
 
 
     // ========================================================
     // OBTENER CANCIONES
     // ========================================================
     //
-    // IMPORTANTE:
+    // Esta función es la única responsable de consultar
+    // GET /songs desde este Hook.
     //
-    // useCallback mantiene estable la referencia de getSongs
-    // entre renders mientras no cambien sus dependencias.
-    //
-    // Esto evita que App.jsx interprete que getSongs cambió
-    // y vuelva a ejecutar su useEffect innecesariamente.
+    // useCallback mantiene estable su referencia.
     //
     // ========================================================
 
@@ -95,7 +88,9 @@ export function useSongs() {
 
             const response = await API.get("/songs");
 
-            const data = response.data || [];
+            const data = Array.isArray(response.data)
+                ? response.data
+                : [];
 
             setSongs(data);
 
@@ -117,17 +112,17 @@ export function useSongs() {
 
         }
 
-    }, []);
+    }, [showError]);
 
 
     // ========================================================
     // GUARDAR CANCIÓN
     // ========================================================
 
-    const saveSong = async () => {
+    const saveSong = useCallback(async () => {
 
         // ----------------------------------------------------
-        // Validaciones
+        // Validación
         // ----------------------------------------------------
 
         if (!name.trim()) {
@@ -139,21 +134,18 @@ export function useSongs() {
             });
 
             return;
-
         }
 
 
         // ----------------------------------------------------
-        // Objeto
+        // Datos
         // ----------------------------------------------------
 
         const songData = {
-
             name: name.trim(),
             author: author.trim(),
             keyTone: keyTone.trim(),
             bpm
-
         };
 
 
@@ -190,17 +182,22 @@ export function useSongs() {
                 showSuccess(
                     "Canción guardada"
                 );
-
             }
 
 
+            // ------------------------------------------------
+            // Limpiar formulario
+            // ------------------------------------------------
+
             clearForm();
+
+            // ------------------------------------------------
+            // Actualizar lista
+            // ------------------------------------------------
 
             await getSongs();
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Error al guardar canción:",
@@ -210,32 +207,51 @@ export function useSongs() {
             showError(
                 "No fue posible guardar la canción."
             );
-
         }
 
-    };
+    }, [
+        name,
+        author,
+        keyTone,
+        bpm,
+        editingId,
+        clearForm,
+        getSongs,
+        showSuccess,
+        showError
+    ]);
 
 
     // ========================================================
     // EDITAR CANCIÓN
     // ========================================================
 
-    const editSong = (song) => {
+    const editSong = useCallback((song) => {
 
         setName(song.name);
-        setAuthor(song.author ?? "");
-        setKeyTone(song.keyTone ?? "");
-        setBpm(song.bpm ?? "");
+
+        setAuthor(
+            song.author ?? ""
+        );
+
+        setKeyTone(
+            song.keyTone ?? ""
+        );
+
+        setBpm(
+            song.bpm ?? ""
+        );
+
         setEditingId(song.id);
 
-    };
+    }, []);
 
 
     // ========================================================
     // FAVORITA
     // ========================================================
 
-    const toggleFavorite = async (song) => {
+    const toggleFavorite = useCallback(async (song) => {
 
         try {
 
@@ -249,9 +265,7 @@ export function useSongs() {
 
             await getSongs();
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Error al actualizar favorita:",
@@ -262,22 +276,70 @@ export function useSongs() {
                 error.response?.data?.message ||
                 "No fue posible actualizar la canción."
             );
-
         }
 
-    };
+    }, [
+        getSongs,
+        showError
+    ]);
+
+
+    // ========================================================
+    // DESHACER ELIMINACIÓN
+    // ========================================================
+
+    const undoDelete = useCallback(async () => {
+
+        if (!deletedSong) {
+            return;
+        }
+
+        try {
+
+            await API.post(
+                "/songs",
+                deletedSong
+            );
+
+            await getSongs();
+
+            showSuccess(
+                "Canción restaurada"
+            );
+
+            setDeletedSong(null);
+
+        } catch (error) {
+
+            console.error(
+                "Error al restaurar canción:",
+                error
+            );
+
+            showError(
+                error.response?.data?.message ||
+                "No fue posible restaurar la canción."
+            );
+        }
+
+    }, [
+        deletedSong,
+        getSongs,
+        showSuccess,
+        showError
+    ]);
 
 
     // ========================================================
     // ELIMINAR CANCIÓN
     // ========================================================
 
-    const deleteSong = async (id) => {
+    const deleteSong = useCallback(async (id) => {
 
         try {
 
             const songToDelete = songs.find(
-                song => song.id === id
+                (song) => song.id === id
             );
 
             setDeletedSong(songToDelete);
@@ -287,7 +349,6 @@ export function useSongs() {
             );
 
             await getSongs();
-
 
             const result = await Swal.fire({
 
@@ -312,9 +373,7 @@ export function useSongs() {
 
             }
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Error al eliminar canción:",
@@ -325,62 +384,21 @@ export function useSongs() {
                 error.response?.data?.message ||
                 "No fue posible eliminar la canción."
             );
-
         }
 
-    };
-
-
-    // ========================================================
-    // DESHACER ELIMINACIÓN
-    // ========================================================
-
-    const undoDelete = async () => {
-
-        if (!deletedSong) {
-            return;
-        }
-
-
-        try {
-
-            await API.post(
-                "/songs",
-                deletedSong
-            );
-
-            await getSongs();
-
-            showSuccess(
-                "Canción restaurada"
-            );
-
-            setDeletedSong(null);
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "Error al restaurar canción:",
-                error
-            );
-
-            showError(
-                error.response?.data?.message ||
-                "No fue posible restaurar la canción."
-            );
-
-        }
-
-    };
+    }, [
+        songs,
+        getSongs,
+        undoDelete,
+        showError
+    ]);
 
 
     // ========================================================
     // CONFIRMAR ELIMINACIÓN
     // ========================================================
 
-    const confirmDelete = (id) => {
+    const confirmDelete = useCallback((id) => {
 
         Swal.fire({
 
@@ -410,7 +428,9 @@ export function useSongs() {
 
         });
 
-    };
+    }, [
+        deleteSong
+    ]);
 
 
     // ========================================================
@@ -444,17 +464,19 @@ export function useSongs() {
         editingId,
         setEditingId,
 
-
         // ----------------------------------------------------
         // Funciones
         // ----------------------------------------------------
 
         getSongs,
+
         saveSong,
+
         editSong,
+
         toggleFavorite,
+
         confirmDelete
 
     };
-
 }
