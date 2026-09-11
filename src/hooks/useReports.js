@@ -1,24 +1,33 @@
-// =========================
+// ========================================================
 // IMPORTS
-// =========================
-import { useRef, useState } from "react";
+// ========================================================
+
+import {
+    useCallback,
+    useRef,
+    useState
+} from "react";
+
 import API from "../services/api";
 import Swal from "sweetalert2";
 
-// =========================
+
+// ========================================================
 // HOOK
-// =========================
+// ========================================================
+
 export function useReports() {
 
-    // =========================
+    // ========================================================
     // STATES
-    // =========================
+    // ========================================================
 
     const historyRequestId = useRef(0);
 
     const [songHistory, setSongHistory] = useState([]);
 
-    const [selectedHistorySong, setSelectedHistorySong] = useState("");
+    const [selectedHistorySong, setSelectedHistorySong] =
+        useState("");
 
     const [yearUsage, setYearUsage] = useState([]);
 
@@ -38,163 +47,331 @@ export function useReports() {
 
     const [monthlyStats, setMonthlyStats] = useState([]);
 
-// =========================
-// HISTORIAL DE UNA CANCIÓN
-// =========================
 
-const getSongHistory = async (songId) => {
+    // ========================================================
+    // HISTORIAL DE UNA CANCIÓN
+    // ========================================================
+    //
+    // Se utiliza un identificador de solicitud para impedir
+    // que una respuesta antigua sobrescriba el historial de
+    // una canción seleccionada posteriormente.
+    //
+    // ========================================================
 
-    // Limpiar inmediatamente
-    // el historial anterior
-    setSongHistory([]);
+    const getSongHistory = useCallback(async (songId) => {
 
-    if (!songId) {
-        return;
-    }
+        // ----------------------------------------------------
+        // Generar identificador de esta solicitud
+        // ----------------------------------------------------
 
-    try {
+        const requestId =
+            ++historyRequestId.current;
 
-        const { data } = await API.get(
-            `/song-usage/${songId}`
-        );
 
-        setSongHistory(
-            Array.isArray(data)
-                ? data
-                : []
-        );
-
-    } catch (error) {
-
-        console.error(error);
+        // ----------------------------------------------------
+        // Limpiar inmediatamente el historial anterior
+        // ----------------------------------------------------
 
         setSongHistory([]);
 
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "No fue posible cargar el historial."
-        });
-    }
-};
 
-    // =========================
-    // REPORTE ANUAL
-    // =========================
+        // ----------------------------------------------------
+        // Si no existe canción seleccionada
+        // ----------------------------------------------------
 
-    const getYearUsage = async (year) => {
+        if (!songId) {
+            return;
+        }
+
 
         try {
+
+            // ------------------------------------------------
+            // Consultar historial
+            // ------------------------------------------------
+
+            const { data } = await API.get(
+                `/song-usage/${songId}`
+            );
+
+
+            // ------------------------------------------------
+            // Verificar que esta siga siendo la solicitud
+            // vigente.
+            // ------------------------------------------------
+
+            if (
+                requestId !== historyRequestId.current
+            ) {
+                return;
+            }
+
+
+            // ------------------------------------------------
+            // Guardar historial
+            // ------------------------------------------------
+
+            setSongHistory(
+                Array.isArray(data)
+                    ? data
+                    : []
+            );
+
+        } catch (error) {
+
+            // ------------------------------------------------
+            // Si ya existe una solicitud posterior,
+            // no modificar el estado con este error.
+            // ------------------------------------------------
+
+            if (
+                requestId !== historyRequestId.current
+            ) {
+                return;
+            }
+
+
+            console.error(
+                "Error al obtener historial:",
+                error
+            );
+
+            setSongHistory([]);
+
+            Swal.fire({
+
+                icon: "error",
+
+                title: "Error",
+
+                text:
+                    "No fue posible cargar el historial."
+
+            });
+        }
+
+    }, []);
+
+
+    // ========================================================
+    // REPORTE ANUAL
+    // ========================================================
+
+    const getYearUsage = useCallback(async (year) => {
+
+        try {
+
+            // ------------------------------------------------
+            // Consultar utilización del año
+            // ------------------------------------------------
 
             const { data } = await API.get(
                 `/song-usage/by-year/${year}`
             );
 
-            setYearUsage(data);
 
-            // =========================
+            const usage =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
+
+            setYearUsage(usage);
+
+
+            // =================================================
             // ESTADÍSTICAS POR MES
-            // =========================
+            // =================================================
 
             const months = [
 
-                "Ene", "Feb", "Mar", "Abr",
-                "May", "Jun", "Jul", "Ago",
-                "Sep", "Oct", "Nov", "Dic"
+                "Ene",
+                "Feb",
+                "Mar",
+                "Abr",
+                "May",
+                "Jun",
+                "Jul",
+                "Ago",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dic"
 
             ];
 
-            const monthlyData = Array(12).fill(0);
 
-            data.forEach(item => {
+            const monthlyData =
+                Array(12).fill(0);
 
-                const date = new Date(item.serviceDate);
 
-                monthlyData[date.getMonth()]++;
+            usage.forEach((item) => {
+
+                if (!item.serviceDate) {
+                    return;
+                }
+
+
+                // ------------------------------------------------
+                // serviceDate esperado:
+                // YYYY-MM-DD
+                //
+                // Se evita new Date() para impedir desplazamientos
+                // por zona horaria.
+                // ------------------------------------------------
+
+                const parts =
+                    String(item.serviceDate).split("-");
+
+
+                if (parts.length !== 3) {
+                    return;
+                }
+
+
+                const month =
+                    Number(parts[1]);
+
+
+                if (
+                    Number.isInteger(month) &&
+                    month >= 1 &&
+                    month <= 12
+                ) {
+
+                    monthlyData[month - 1]++;
+
+                }
 
             });
+
 
             setMonthlyStats(
 
-                months.map((month, index) => ({
+                months.map(
+                    (month, index) => ({
 
-                    month,
+                        month,
 
-                    count: monthlyData[index]
+                        count:
+                            monthlyData[index]
 
-                }))
+                    })
+                )
 
             );
 
-            // =========================
+
+            // =================================================
             // CANCIONES ÚNICAS
-            // =========================
+            // =================================================
 
-            const uniqueSongs = new Set(
+            const uniqueSongs =
+                new Set(
 
-                data.map(item => item.song?.id)
+                    usage
 
-            );
+                        .map(
+                            (item) =>
+                                item.song?.id
+                        )
 
-            // =========================
-            // CULTO ÚNICOS
-            // =========================
+                        .filter(
+                            (id) =>
+                                id !== null &&
+                                id !== undefined
+                        )
 
-            const uniqueServices = new Set(
+                );
 
-                data.map(item => item.playlist?.id)
 
-            );
+            // =================================================
+            // CULTOS ÚNICOS
+            // =================================================
 
-            // =========================
-            // CANCIÓN MÁS USADA
-            // =========================
+            const uniqueServices =
+                new Set(
+
+                    usage
+
+                        .map(
+                            (item) =>
+                                item.playlist?.id
+                        )
+
+                        .filter(
+                            (id) =>
+                                id !== null &&
+                                id !== undefined
+                        )
+
+                );
+
+
+            // =================================================
+            // CANCIÓN MÁS UTILIZADA
+            // =================================================
 
             const songCounter = {};
 
-            data.forEach(item => {
 
-                const name = item.song?.name;
+            usage.forEach((item) => {
 
-                if (!name) return;
+                const name =
+                    item.song?.name;
+
+
+                if (!name) {
+                    return;
+                }
+
 
                 songCounter[name] =
-
                     (songCounter[name] || 0) + 1;
 
             });
+
 
             let mostUsedSong = null;
 
             let mostUsedCount = 0;
 
-            Object.entries(songCounter).forEach(
 
-                ([name, count]) => {
+            Object.entries(songCounter)
+                .forEach(
+                    ([name, count]) => {
 
-                    if (count > mostUsedCount) {
+                        if (
+                            count >
+                            mostUsedCount
+                        ) {
 
-                        mostUsedSong = name;
+                            mostUsedSong =
+                                name;
 
-                        mostUsedCount = count;
+                            mostUsedCount =
+                                count;
+
+                        }
 
                     }
+                );
 
-                }
 
-            );
-
-            // =========================
+            // =================================================
             // RESUMEN
-            // =========================
+            // =================================================
 
             setYearStats({
 
-                totalServices: uniqueServices.size,
+                totalServices:
+                    uniqueServices.size,
 
-                totalSongs: data.length,
+                totalSongs:
+                    usage.length,
 
-                uniqueSongs: uniqueSongs.size,
+                uniqueSongs:
+                    uniqueSongs.size,
 
                 mostUsedSong,
 
@@ -204,7 +381,35 @@ const getSongHistory = async (songId) => {
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Error al generar reporte:",
+                error
+            );
+
+
+            // ------------------------------------------------
+            // Limpiar información para evitar mostrar datos
+            // antiguos si la consulta falla.
+            // ------------------------------------------------
+
+            setYearUsage([]);
+
+            setMonthlyStats([]);
+
+            setYearStats({
+
+                totalServices: 0,
+
+                totalSongs: 0,
+
+                uniqueSongs: 0,
+
+                mostUsedSong: null,
+
+                mostUsedCount: 0
+
+            });
+
 
             Swal.fire({
 
@@ -212,21 +417,24 @@ const getSongHistory = async (songId) => {
 
                 title: "Error",
 
-                text: "No fue posible generar el reporte."
+                text:
+                    "No fue posible generar el reporte."
 
             });
 
         }
 
-    };
+    }, []);
 
-    // =========================
+
+    // ========================================================
     // RETURN
-    // =========================
+    // ========================================================
 
     return {
 
         selectedHistorySong,
+
         setSelectedHistorySong,
 
         songHistory,
@@ -244,7 +452,3 @@ const getSongHistory = async (songId) => {
     };
 
 }
-
-// =========================
-// FIN DEL HOOK
-// =========================
