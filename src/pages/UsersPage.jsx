@@ -23,6 +23,8 @@ function UsersPage({ usersHook }) {
     const [newPassword, setNewPassword] = useState("");
     const [message, setMessage] = useState("");
 
+    const [showPassword, setShowPassword] = useState(false);
+
     useEffect(() => {
         loadData();
     }, []);
@@ -32,6 +34,7 @@ function UsersPage({ usersHook }) {
 
         if (created) {
             setMessage("Usuario creado correctamente.");
+            setShowPassword(false);
         }
     };
 
@@ -68,7 +71,9 @@ function UsersPage({ usersHook }) {
             <section className="users-hero">
                 <div>
                     <p className="users-eyebrow">ADMINISTRACIÓN</p>
+
                     <h2>Usuarios y permisos</h2>
+
                     <p className="users-subtitle">
                         Gestiona las cuentas que pueden acceder a ZION.
                     </p>
@@ -112,11 +117,17 @@ function UsersPage({ usersHook }) {
 
                     <div>
                         <h3>Crear usuario</h3>
-                        <p>Asigna un nombre, contraseña y nivel de acceso.</p>
+
+                        <p>
+                            Asigna un nombre, contraseña y nivel de acceso.
+                        </p>
                     </div>
                 </div>
 
-                <form className="users-form" onSubmit={handleCreateUser}>
+                <form
+                    className="users-form"
+                    onSubmit={handleCreateUser}
+                >
                     <label>
                         <span>Nombre de usuario</span>
 
@@ -124,7 +135,9 @@ function UsersPage({ usersHook }) {
                             type="text"
                             placeholder="Ejemplo: maria.garcia"
                             value={username}
-                            onChange={(event) => setUsername(event.target.value)}
+                            onChange={(event) =>
+                                setUsername(event.target.value)
+                            }
                             disabled={loading}
                         />
                     </label>
@@ -132,13 +145,40 @@ function UsersPage({ usersHook }) {
                     <label>
                         <span>Contraseña</span>
 
-                        <input
-                            type="password"
-                            placeholder="Escribe una contraseña"
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                            disabled={loading}
-                        />
+                        <div className="users-password-field">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Escribe una contraseña"
+                                value={password}
+                                onChange={(event) =>
+                                    setPassword(event.target.value)
+                                }
+                                disabled={loading}
+                            />
+
+                            <button
+                                type="button"
+                                className="users-password-toggle"
+                                onClick={() =>
+                                    setShowPassword(
+                                        (current) => !current
+                                    )
+                                }
+                                disabled={loading}
+                                aria-label={
+                                    showPassword
+                                        ? "Ocultar contraseña"
+                                        : "Mostrar contraseña"
+                                }
+                                title={
+                                    showPassword
+                                        ? "Ocultar contraseña"
+                                        : "Mostrar contraseña"
+                                }
+                            >
+                                {showPassword ? "Ocultar" : "Mostrar"}
+                            </button>
+                        </div>
                     </label>
 
                     <label>
@@ -146,14 +186,21 @@ function UsersPage({ usersHook }) {
 
                         <select
                             value={roleName}
-                            onChange={(event) => setRoleName(event.target.value)}
+                            onChange={(event) =>
+                                setRoleName(event.target.value)
+                            }
                             disabled={loading || roles.length === 0}
                         >
                             {roles.length === 0 ? (
-                                <option value="">No hay roles disponibles</option>
+                                <option value="">
+                                    No hay roles disponibles
+                                </option>
                             ) : (
                                 roles.map((role) => (
-                                    <option key={role.id} value={role.name}>
+                                    <option
+                                        key={role.id}
+                                        value={role.name}
+                                    >
                                         {role.name}
                                     </option>
                                 ))
@@ -164,9 +211,14 @@ function UsersPage({ usersHook }) {
                     <button
                         type="submit"
                         className="users-create-button"
-                        disabled={loading || roles.length === 0}
+                        disabled={
+                            loading ||
+                            roles.length === 0
+                        }
                     >
-                        {loading ? "Guardando..." : "Crear usuario"}
+                        {loading
+                            ? "Guardando..."
+                            : "Crear usuario"}
                     </button>
                 </form>
             </section>
@@ -175,25 +227,37 @@ function UsersPage({ usersHook }) {
                 <div className="users-list-heading">
                     <div>
                         <h3>Usuarios registrados</h3>
+
                         <p>
                             {users.length}{" "}
-                            {users.length === 1 ? "usuario" : "usuarios"} en
-                            el sistema
+                            {users.length === 1
+                                ? "usuario"
+                                : "usuarios"}{" "}
+                            en el sistema
                         </p>
                     </div>
 
-                    <span className="users-count">{users.length}</span>
+                    <span className="users-count">
+                        {users.length}
+                    </span>
                 </div>
 
                 {loading && (
-                    <p className="users-loading">Cargando información...</p>
+                    <p className="users-loading">
+                        Cargando información...
+                    </p>
                 )}
 
                 {!loading && users.length === 0 && (
                     <div className="users-empty">
                         <div>👥</div>
+
                         <h4>Aún no hay usuarios</h4>
-                        <p>Crea la primera cuenta utilizando el formulario.</p>
+
+                        <p>
+                            Crea la primera cuenta utilizando
+                            el formulario.
+                        </p>
                     </div>
                 )}
 
@@ -222,7 +286,9 @@ function UsersPage({ usersHook }) {
                                                         .toUpperCase()}
                                                 </span>
 
-                                                <strong>{user.username}</strong>
+                                                <strong>
+                                                    {user.username}
+                                                </strong>
                                             </div>
                                         </td>
 
@@ -310,11 +376,18 @@ function UsersPage({ usersHook }) {
                             ×
                         </button>
 
-                        <p className="users-eyebrow">SEGURIDAD</p>
+                        <p className="users-eyebrow">
+                            SEGURIDAD
+                        </p>
+
                         <h3>Cambiar contraseña</h3>
+
                         <p>
                             Nueva contraseña para{" "}
-                            <strong>{passwordUser.username}</strong>.
+                            <strong>
+                                {passwordUser.username}
+                            </strong>
+                            .
                         </p>
 
                         <label>
@@ -325,7 +398,9 @@ function UsersPage({ usersHook }) {
                                 placeholder="Escribe la nueva contraseña"
                                 value={newPassword}
                                 onChange={(event) =>
-                                    setNewPassword(event.target.value)
+                                    setNewPassword(
+                                        event.target.value
+                                    )
                                 }
                                 autoFocus
                             />
