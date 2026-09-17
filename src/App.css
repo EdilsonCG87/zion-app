@@ -8,27 +8,27 @@
    --------------------------------------------------------- */
 
 :root {
-    --zion-bg: #f4f6f9;
-    --zion-surface: #ffffff;
-    --zion-surface-soft: #f8fafc;
-    --zion-surface-dark: #0f172a;
-    --zion-navy: #111c35;
-    --zion-navy-2: #17243f;
+    --zion-bg: #0b1020;
+    --zion-surface: #141b2d;
+    --zion-surface-soft: #1a2338;
+    --zion-surface-dark: #080c18;
+    --zion-navy: #0f172a;
+    --zion-navy-2: #18233b;
     --zion-gold: #d4af37;
-    --zion-gold-light: #f2d477;
-    --zion-text: #172033;
-    --zion-muted: #6b7280;
-    --zion-border: #e5e9f0;
-    --zion-success: #16805b;
-    --zion-success-bg: #eaf8f2;
-    --zion-danger: #c0392b;
-    --zion-danger-bg: #fff0ee;
-    --zion-info: #2563eb;
-    --zion-info-bg: #eef4ff;
-    --zion-warning: #a66b00;
-    --zion-warning-bg: #fff8e6;
-    --zion-shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.06);
-    --zion-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    --zion-gold-light: #f4d982;
+    --zion-text: #eef2f7;
+    --zion-muted: #a9b3c4;
+    --zion-border: #29344a;
+    --zion-success: #39b985;
+    --zion-success-bg: #12352a;
+    --zion-danger: #ef7770;
+    --zion-danger-bg: #3a1b1d;
+    --zion-info: #6ea8ff;
+    --zion-info-bg: #152a49;
+    --zion-warning: #e7b84b;
+    --zion-warning-bg: #3a2e16;
+    --zion-shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.28);
+    --zion-shadow: 0 12px 34px rgba(0, 0, 0, 0.34);
     --zion-radius-sm: 8px;
     --zion-radius: 14px;
     --zion-radius-lg: 20px;
@@ -1796,5 +1796,383 @@ button:disabled {
 
     .bottom-nav span {
         font-size: 8px;
+    }
+}
+
+
+/* =========================================================
+   ZION PLAYLIST — PASO 15.2
+   TEMA OSCURO ELEGANTE / INSTITUCIONAL
+   ---------------------------------------------------------
+   Esta capa conserva las clases existentes del Paso 15 y
+   ajusta únicamente la presentación visual para modo oscuro.
+   ========================================================= */
+
+body {
+    background: var(--zion-bg);
+    color: var(--zion-text);
+}
+
+.app-container,
+main,
+section {
+    color: var(--zion-text);
+}
+
+input,
+select,
+textarea {
+    background: #10182a;
+    color: var(--zion-text);
+    border-color: var(--zion-border);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #77839a;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--zion-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.14);
+    outline: none;
+}
+
+option {
+    background: #10182a;
+    color: var(--zion-text);
+}
+
+a {
+    color: var(--zion-gold-light);
+}
+
+.app-header,
+.header,
+header {
+    background: linear-gradient(135deg, #0d1425, #111b31);
+    border-color: var(--zion-border);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+}
+
+.card,
+.dashboard-card,
+.stats-card,
+.song-card,
+.playlist-card,
+.users-create-card,
+.users-list-card,
+.users-password-modal,
+.notification-card,
+.history-card,
+.report-card,
+.agenda-card,
+.song-detail-card,
+.active-playlist-card {
+    background: var(--zion-surface);
+    border-color: var(--zion-border);
+    color: var(--zion-text);
+    box-shadow: var(--zion-shadow-sm);
+}
+
+.card:hover,
+.playlist-card:hover,
+.song-card:hover,
+.dashboard-card:hover,
+.stats-card:hover {
+    border-color: rgba(212, 175, 55, 0.32);
+    box-shadow: var(--zion-shadow);
+}
+
+.users-form,
+.search-bar,
+.song-form,
+.playlist-form,
+.filters,
+.form-container {
+    color: var(--zion-text);
+}
+
+.users-table-wrapper,
+.table-wrapper,
+.song-table-wrapper {
+    background: #10182a;
+    border-color: var(--zion-border);
+}
+
+table {
+    color: var(--zion-text);
+}
+
+thead,
+.users-table thead,
+.song-table thead {
+    background: #0d1526;
+}
+
+tbody tr,
+.users-table tbody tr,
+.song-table tbody tr {
+    border-color: var(--zion-border);
+}
+
+tbody tr:hover,
+.users-table tbody tr:hover,
+.song-table tbody tr:hover {
+    background: #19243a;
+}
+
+th {
+    color: #c7d0df;
+}
+
+td {
+    color: #e4e9f1;
+}
+
+.users-person strong,
+.song-name,
+.playlist-title,
+.card-title,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--zion-text);
+}
+
+.users-subtitle,
+.users-card-heading p,
+.users-list-heading p,
+.subtitle,
+.muted,
+.empty-state p,
+.song-meta,
+.playlist-meta,
+.dashboard-subtitle {
+    color: var(--zion-muted);
+}
+
+button {
+    transition: transform var(--zion-transition), box-shadow var(--zion-transition), background var(--zion-transition), border-color var(--zion-transition);
+}
+
+button:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+.users-create-button,
+.primary-button,
+.btn-primary,
+.action-btn.primary,
+button.primary {
+    background: linear-gradient(135deg, #d4af37, #b99224);
+    color: #101318;
+    box-shadow: 0 5px 16px rgba(212, 175, 55, 0.18);
+}
+
+.users-create-button:not(:disabled):hover,
+.primary-button:not(:disabled):hover,
+.btn-primary:not(:disabled):hover,
+.action-btn.primary:not(:disabled):hover {
+    background: linear-gradient(135deg, #e2c45b, #c6a52f);
+}
+
+.users-refresh-button,
+.users-action-button,
+.users-cancel-button,
+.secondary-button,
+.btn-secondary,
+.action-btn.secondary {
+    background: #1b263c;
+    color: #e5eaf2;
+    border: 1px solid var(--zion-border);
+}
+
+.users-refresh-button:hover,
+.users-action-button:hover,
+.users-cancel-button:hover,
+.secondary-button:hover,
+.btn-secondary:hover,
+.action-btn.secondary:hover {
+    border-color: rgba(212, 175, 55, 0.45);
+    background: #222f49;
+}
+
+.users-delete-button,
+.danger-button,
+.btn-danger {
+    background: #3a1b1d;
+    color: #ffaaa5;
+    border: 1px solid #613034;
+}
+
+.users-delete-button:hover,
+.danger-button:hover,
+.btn-danger:hover {
+    background: #4a2023;
+}
+
+.users-password-toggle {
+    background: #1b263c;
+    color: var(--zion-gold-light);
+    border-color: var(--zion-border);
+}
+
+.users-modal-overlay,
+.modal-overlay {
+    background: rgba(2, 5, 12, 0.78);
+    backdrop-filter: blur(5px);
+}
+
+.users-alert-success,
+.alert-success {
+    background: var(--zion-success-bg);
+    color: #8be0bd;
+    border-color: #205e48;
+}
+
+.users-alert-error,
+.alert-error {
+    background: var(--zion-danger-bg);
+    color: #ffaaa5;
+    border-color: #673438;
+}
+
+.alert-warning,
+.notification-warning {
+    background: var(--zion-warning-bg);
+    color: #f0cf76;
+    border-color: #6b5626;
+}
+
+.alert-info,
+.notification-info {
+    background: var(--zion-info-bg);
+    color: #a9cbff;
+    border-color: #294c7d;
+}
+
+.users-role-badge,
+.badge,
+.tag {
+    background: #202b42;
+    color: var(--zion-gold-light);
+    border-color: #36445e;
+}
+
+.users-status-active,
+.status-active,
+.status-completed,
+.status-done {
+    background: var(--zion-success-bg);
+    color: #83dcb7;
+}
+
+.users-status-inactive,
+.status-inactive,
+.status-pending {
+    background: #342b18;
+    color: #e6c76c;
+}
+
+.calendar,
+.calendar-grid,
+.agenda-calendar,
+.agenda-grid {
+    background: #10182a;
+    border-color: var(--zion-border);
+}
+
+.calendar-header,
+.agenda-header,
+.calendar-weekdays,
+.agenda-weekdays {
+    background: #0d1526;
+    color: #c7d0df;
+}
+
+.calendar-day,
+.agenda-day {
+    background: #121b2e;
+    border-color: var(--zion-border);
+    color: #dfe5ee;
+}
+
+.calendar-day:hover,
+.agenda-day:hover {
+    background: #1b2840;
+}
+
+.calendar-day.today,
+.agenda-day.today,
+.current-day {
+    border-color: var(--zion-gold);
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.22);
+}
+
+.bottom-nav,
+.mobile-bottom-nav {
+    background: rgba(13, 20, 37, 0.96);
+    border-color: var(--zion-border);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.nav-item,
+.bottom-nav button,
+.mobile-bottom-nav button {
+    color: #9da9bb;
+}
+
+.nav-item.active,
+.bottom-nav button.active,
+.mobile-bottom-nav button.active {
+    color: var(--zion-gold-light);
+}
+
+hr {
+    border-color: var(--zion-border);
+}
+
+::selection {
+    background: rgba(212, 175, 55, 0.30);
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    body {
+        background: #090e1b;
+    }
+
+    .app-container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .card,
+    .dashboard-card,
+    .stats-card,
+    .playlist-card,
+    .users-create-card,
+    .users-list-card {
+        box-shadow: 0 7px 22px rgba(0, 0, 0, 0.26);
+    }
+}
+
+@media (max-width: 480px) {
+    .app-container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+        min-height: 42px;
     }
 }
