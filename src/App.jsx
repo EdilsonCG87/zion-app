@@ -1,27 +1,7 @@
-// ========================================================
-// IMPORTS
-// ========================================================
-
-import {
-    lazy,
-    Suspense,
-    useEffect,
-    useState
-} from "react";
-
+import { lazy, Suspense, useEffect, useState } from "react";
 import "./App.css";
 import logo from "./assets/logo.png";
-
-// ============================================================
-// AUTH
-// ============================================================
-
 import { useAuth } from "./context/AuthContext";
-
-// ============================================================
-// HOOKS
-// ============================================================
-
 import { useSongs } from "./hooks/useSongs";
 import { usePlaylists } from "./hooks/usePlaylists";
 import { usePlaylistSongs } from "./hooks/usePlaylistSongs";
@@ -31,80 +11,21 @@ import { useNextService } from "./hooks/useNextService";
 import { useSharePlaylist } from "./hooks/useSharePlaylist";
 import { useUsers } from "./hooks/useUsers";
 
-// ============================================================
-// PAGES
-// ============================================================
-
-const DashboardPage = lazy(
-    () => import("./pages/DashboardPage")
-);
-
-const PlaylistPage = lazy(
-    () => import("./pages/PlaylistPage")
-);
-
-const SongsPage = lazy(
-    () => import("./pages/SongsPage")
-);
-
-const AgendaPage = lazy(
-    () => import("./pages/AgendaPage")
-);
-
-const UsersPage = lazy(
-    () => import("./pages/UsersPage")
-);
-
-const LoginPage = lazy(
-    () => import("./pages/LoginPage")
-);
-
-
-// ============================================================
-// APP
-// ============================================================
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const PlaylistPage = lazy(() => import("./pages/PlaylistPage"));
+const SongsPage = lazy(() => import("./pages/SongsPage"));
+const AgendaPage = lazy(() => import("./pages/AgendaPage"));
+const UsersPage = lazy(() => import("./pages/UsersPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
 
 function App() {
+    const { user, loading, isAdmin, logout } = useAuth();
 
-    // ========================================================
-    // AUTENTICACIÓN
-    // ========================================================
-
-    const {
-        user,
-        loading,
-        isAdmin
-    } = useAuth();
-
-
-    // ========================================================
-    // NAVEGACIÓN
-    // ========================================================
-
-    const [activeTab, setActiveTab] = useState(
-        "dashboard"
-    );
-
-    const [showTopSongs, setShowTopSongs] = useState(
-        false
-    );
-
-
-    // ========================================================
-    // HOOK CANCIONES
-    // ========================================================
+    const [activeTab, setActiveTab] = useState("dashboard");
+    const [showTopSongs, setShowTopSongs] = useState(false);
 
     const songsHook = useSongs();
-
-    const {
-        songs,
-        getSongs
-    } = songsHook;
-
-
-    // ========================================================
-    // HOOK CULTOS
-    // ========================================================
+    const { songs, getSongs } = songsHook;
 
     const playlistsHook = usePlaylists();
 
@@ -124,11 +45,6 @@ function App() {
         startEditPlaylist
     } = playlistsHook;
 
-
-    // ========================================================
-    // HOOK CANCIONES DEL CULTO
-    // ========================================================
-
     const playlistSongsHook = usePlaylistSongs();
 
     const {
@@ -139,11 +55,6 @@ function App() {
         moveSong
     } = playlistSongsHook;
 
-
-    // ========================================================
-    // HOOK REPORTES
-    // ========================================================
-
     const {
         selectedHistorySong,
         setSelectedHistorySong,
@@ -152,11 +63,6 @@ function App() {
         getYearUsage
     } = useReports();
 
-
-    // ========================================================
-    // HOOK ESTADÍSTICAS
-    // ========================================================
-
     const {
         topSongs,
         getTopSongs,
@@ -164,20 +70,7 @@ function App() {
         getOverusedSongs
     } = useStatistics();
 
-
-    // ========================================================
-    // PRÓXIMO CULTO
-    // ========================================================
-
-    const {
-        nextService,
-        daysRemaining
-    } = useNextService(playlists);
-
-
-    // ========================================================
-    // COMPARTIR / PDF
-    // ========================================================
+    const { nextService, daysRemaining } = useNextService(playlists);
 
     const {
         shareWhatsApp,
@@ -189,31 +82,9 @@ function App() {
         songs
     });
 
-
-    // ========================================================
-    // USUARIOS
-    // ========================================================
-
     const usersHook = useUsers();
 
-
-    // ========================================================
-    // CARGAR DATOS PROTEGIDOS
-    // ========================================================
-    //
-    // Estas peticiones esperan a que exista una sesión
-    // autenticada.
-    //
-    // IMPORTANTE:
-    // useStatistics YA NO consulta /songs.
-    //
-    // Las estadísticas se calculan posteriormente utilizando
-    // el mismo arreglo "songs" cargado por useSongs.
-    //
-    // ========================================================
-
     useEffect(() => {
-
         if (loading || !user) {
             return;
         }
@@ -222,26 +93,10 @@ function App() {
         getPlaylists();
         getYearUsage(2026);
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [loading, user]);
 
-
-    // ========================================================
-    // CALCULAR ESTADÍSTICAS CON LAS CANCIONES YA CARGADAS
-    // ========================================================
-    //
-    // No se realiza ninguna petición HTTP aquí.
-    //
-    // getTopSongs()
-    // getUnusedSongs()
-    // getOverusedSongs()
-    //
-    // reciben directamente "songs".
-    //
-    // ========================================================
-
     useEffect(() => {
-
         if (!user || !Array.isArray(songs)) {
             return;
         }
@@ -249,7 +104,6 @@ function App() {
         getTopSongs(songs);
         getUnusedSongs(songs);
         getOverusedSongs(songs);
-
     }, [
         user,
         songs,
@@ -258,31 +112,16 @@ function App() {
         getOverusedSongs
     ]);
 
-
-    // ========================================================
-    // CAMBIAR A DASHBOARD CUANDO LA SESIÓN CAMBIA
-    // ========================================================
-
     useEffect(() => {
-
         if (!user) {
             setActiveTab("dashboard");
         }
-
     }, [user]);
 
-
-    // ========================================================
-    // ESTADO DE CARGA DE AUTENTICACIÓN
-    // ========================================================
-
     if (loading) {
-
         return (
             <div className="app-container">
-
                 <div className="header">
-
                     <img
                         src={logo}
                         alt="Zion Logo"
@@ -290,15 +129,9 @@ function App() {
                     />
 
                     <div>
-
                         <h1>ZION Playlist</h1>
-
-                        <p>
-                            Gestión inteligente de alabanzas
-                        </p>
-
+                        <p>Gestión inteligente de alabanzas</p>
                     </div>
-
                 </div>
 
                 <div
@@ -312,18 +145,11 @@ function App() {
                 >
                     Comprobando sesión...
                 </div>
-
             </div>
         );
     }
 
-
-    // ========================================================
-    // SIN SESIÓN
-    // ========================================================
-
     if (!user) {
-
         return (
             <Suspense
                 fallback={
@@ -342,18 +168,8 @@ function App() {
         );
     }
 
-
-    // ========================================================
-    // APLICACIÓN AUTENTICADA
-    // ========================================================
-
     return (
-
         <div className="app-container">
-
-            {/* ==================================================
-                HEADER
-            ================================================== */}
 
             <div className="header">
 
@@ -364,251 +180,125 @@ function App() {
                 />
 
                 <div>
+                    <h1>ZION Playlist</h1>
+                    <p>Gestión inteligente de alabanzas</p>
+                </div>
 
-                    <h1>
-                        ZION Playlist
-                    </h1>
+                <div
+                    style={{
+                        marginLeft: "auto",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px"
+                    }}
+                >
+                    <span
+                        style={{
+                            fontSize: "14px",
+                            opacity: 0.85
+                        }}
+                    >
+                        {user.username}
+                    </span>
 
-                    <p>
-                        Gestión inteligente de alabanzas
-                    </p>
-
+                    <button
+                        type="button"
+                        onClick={logout}
+                        style={{
+                            border: "none",
+                            borderRadius: "8px",
+                            padding: "9px 14px",
+                            cursor: "pointer",
+                            fontWeight: "600"
+                        }}
+                    >
+                        Cerrar sesión
+                    </button>
                 </div>
 
             </div>
 
-
-            {/* ==================================================
-                PRÓXIMO CULTO
-            ================================================== */}
-
             {nextService && (
-
                 <div className="next-service-alert">
-
-                    🔔 Próximo culto:
-
-                    <strong>
-                        {" "}
-                        {nextService.name}
-                    </strong>
-
+                    🔔 Próximo culto:{" "}
+                    <strong>{nextService.name}</strong>
                     {" - "}
-
                     {nextService.serviceDate}
-
                     {" ("}
-
                     {daysRemaining}
-
                     {" días)"}
-
                 </div>
-
             )}
-
-
-            {/* ==================================================
-                CONTENIDO PRINCIPAL
-            ================================================== */}
 
             <Suspense fallback={null}>
 
-                {/* ==================================================
-                    DASHBOARD
-                ================================================== */}
-
                 {activeTab === "dashboard" && (
-
                     <DashboardPage
                         songs={songs}
                         playlists={playlists}
                         topSongs={topSongs}
                         showTopSongs={showTopSongs}
-                        setShowTopSongs={
-                            setShowTopSongs
-                        }
+                        setShowTopSongs={setShowTopSongs}
                     />
-
                 )}
-
-
-                {/* ==================================================
-                    AGENDA
-                ================================================== */}
 
                 {activeTab === "agenda" && (
-
                     <AgendaPage
                         playlists={playlists}
-                        playlistSongs={
-                            playlistSongs
-                        }
+                        playlistSongs={playlistSongs}
                         songs={songs}
-                        getPlaylistSongs={
-                            getPlaylistSongs
-                        }
+                        getPlaylistSongs={getPlaylistSongs}
                     />
-
                 )}
-
-
-                {/* ==================================================
-                    CULTOS / PLAYLIST
-                ================================================== */}
 
                 {activeTab === "playlist" && (
-
                     <PlaylistPage
                         playlists={playlists}
-
-                        selectedPlaylist={
-                            selectedPlaylist
-                        }
-
-                        setSelectedPlaylist={
-                            setSelectedPlaylist
-                        }
-
-                        getPlaylistSongs={
-                            getPlaylistSongs
-                        }
-
-                        playlistSongs={
-                            playlistSongs
-                        }
-
-                        deletePlaylist={
-                            deletePlaylist
-                        }
-
-                        playlistName={
-                            playlistName
-                        }
-
-                        setPlaylistName={
-                            setPlaylistName
-                        }
-
-                        serviceDate={
-                            serviceDate
-                        }
-
-                        setServiceDate={
-                            setServiceDate
-                        }
-
-                        createPlaylist={
-                            createPlaylist
-                        }
-
-                        selectedSong={
-                            selectedSong
-                        }
-
-                        setSelectedSong={
-                            setSelectedSong
-                        }
-
+                        selectedPlaylist={selectedPlaylist}
+                        setSelectedPlaylist={setSelectedPlaylist}
+                        getPlaylistSongs={getPlaylistSongs}
+                        playlistSongs={playlistSongs}
+                        deletePlaylist={deletePlaylist}
+                        playlistName={playlistName}
+                        setPlaylistName={setPlaylistName}
+                        serviceDate={serviceDate}
+                        setServiceDate={setServiceDate}
+                        createPlaylist={createPlaylist}
+                        selectedSong={selectedSong}
+                        setSelectedSong={setSelectedSong}
                         songs={songs}
-
-                        addSongToPlaylist={
-                            addSongToPlaylist
-                        }
-
-                        removeSongFromPlaylist={
-                            removeSongFromPlaylist
-                        }
-
-                        moveSong={
-                            moveSong
-                        }
-
-                        startEditPlaylist={
-                            startEditPlaylist
-                        }
-
-                        exportPlaylistPDF={
-                            exportPlaylistPDF
-                        }
-
-                        shareWhatsApp={
-                            shareWhatsApp
-                        }
-
-                        selectedHistorySong={
-                            selectedHistorySong
-                        }
-
-                        setSelectedHistorySong={
-                            setSelectedHistorySong
-                        }
-
-                        songHistory={
-                            songHistory
-                        }
-
-                        getSongHistory={
-                            getSongHistory
-                        }
+                        addSongToPlaylist={addSongToPlaylist}
+                        removeSongFromPlaylist={removeSongFromPlaylist}
+                        moveSong={moveSong}
+                        startEditPlaylist={startEditPlaylist}
+                        exportPlaylistPDF={exportPlaylistPDF}
+                        shareWhatsApp={shareWhatsApp}
+                        selectedHistorySong={selectedHistorySong}
+                        setSelectedHistorySong={setSelectedHistorySong}
+                        songHistory={songHistory}
+                        getSongHistory={getSongHistory}
                     />
-
                 )}
-
-
-                {/* ==================================================
-                    CANCIONES
-                ================================================== */}
 
                 {activeTab === "songs" && (
-
                     <SongsPage
                         songsHook={songsHook}
-
-                        getTopSongs={
-                            getTopSongs
-                        }
-
-                        getOverusedSongs={
-                            getOverusedSongs
-                        }
-
-                        songHistory={
-                            songHistory
-                        }
-
-                        getSongHistory={
-                            getSongHistory
-                        }
+                        getTopSongs={getTopSongs}
+                        getOverusedSongs={getOverusedSongs}
+                        songHistory={songHistory}
+                        getSongHistory={getSongHistory}
                     />
-
                 )}
 
-
-                {/* ==================================================
-                    USUARIOS
-                ================================================== */}
-
-                {activeTab === "users" && (
-
+                {activeTab === "users" && isAdmin && (
                     <UsersPage
                         usersHook={usersHook}
                     />
-
                 )}
 
             </Suspense>
 
-
-            {/* ==================================================
-                NAVEGACIÓN INFERIOR
-            ================================================== */}
-
             <div className="bottom-nav">
-
-                {/* ------------------------------------------------
-                    INICIO
-                ------------------------------------------------ */}
 
                 <button
                     className={
@@ -616,23 +306,11 @@ function App() {
                             ? "nav-btn active"
                             : "nav-btn"
                     }
-                    onClick={() =>
-                        setActiveTab("dashboard")
-                    }
+                    onClick={() => setActiveTab("dashboard")}
                 >
-
                     🏠
-
-                    <span>
-                        Inicio
-                    </span>
-
+                    <span>Inicio</span>
                 </button>
-
-
-                {/* ------------------------------------------------
-                    CULTOS
-                ------------------------------------------------ */}
 
                 <button
                     className={
@@ -640,23 +318,11 @@ function App() {
                             ? "nav-btn active"
                             : "nav-btn"
                     }
-                    onClick={() =>
-                        setActiveTab("playlist")
-                    }
+                    onClick={() => setActiveTab("playlist")}
                 >
-
                     🎵
-
-                    <span>
-                        Cultos
-                    </span>
-
+                    <span>Cultos</span>
                 </button>
-
-
-                {/* ------------------------------------------------
-                    AGENDA
-                ------------------------------------------------ */}
 
                 <button
                     className={
@@ -664,23 +330,11 @@ function App() {
                             ? "nav-btn active"
                             : "nav-btn"
                     }
-                    onClick={() =>
-                        setActiveTab("agenda")
-                    }
+                    onClick={() => setActiveTab("agenda")}
                 >
-
                     📅
-
-                    <span>
-                        Agenda
-                    </span>
-
+                    <span>Agenda</span>
                 </button>
-
-
-                {/* ------------------------------------------------
-                    CANCIONES
-                ------------------------------------------------ */}
 
                 <button
                     className={
@@ -688,45 +342,24 @@ function App() {
                             ? "nav-btn active"
                             : "nav-btn"
                     }
-                    onClick={() =>
-                        setActiveTab("songs")
-                    }
+                    onClick={() => setActiveTab("songs")}
                 >
-
                     🎼
-
-                    <span>
-                        Canciones
-                    </span>
-
+                    <span>Canciones</span>
                 </button>
 
-
-                {/* ------------------------------------------------
-                    USUARIOS
-                ------------------------------------------------ */}
-
                 {isAdmin && (
-
                     <button
                         className={
                             activeTab === "users"
                                 ? "nav-btn active"
                                 : "nav-btn"
                         }
-                        onClick={() =>
-                            setActiveTab("users")
-                        }
+                        onClick={() => setActiveTab("users")}
                     >
-
                         👥
-
-                        <span>
-                            Usuarios
-                        </span>
-
+                        <span>Usuarios</span>
                     </button>
-
                 )}
 
             </div>
@@ -734,10 +367,5 @@ function App() {
         </div>
     );
 }
-
-
-// ============================================================
-// EXPORT
-// ============================================================
 
 export default App;
