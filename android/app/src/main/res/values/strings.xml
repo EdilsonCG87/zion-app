@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">dist</string>
+    <string name="title_activity_main">dist</string>
+    <string name="package_name">com.zioniglesia.playlist</string>
+    <string name="custom_url_scheme">com.zioniglesia.playlist</string>
+</resources>
