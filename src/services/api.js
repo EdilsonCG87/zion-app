@@ -1,19 +1,19 @@
-// =========================
-// IMPORTS
-// =========================
+//* =========================*
+//* IMPORTS
+//* =========================*
 
 import axios from "axios";
 
 
-// =========================
-// INSTANCIA AXIOS
-// =========================
+//* =========================*
+//* INSTANCIA AXIOS
+//* =========================*
 
 const API = axios.create({
 
     baseURL:
         import.meta.env.VITE_API_URL ||
-        "http://localhost:8080",
+        "http://192.168.1.3:8080",
 
     headers: {
         Accept: "application/json"
@@ -22,9 +22,9 @@ const API = axios.create({
 });
 
 
-// =========================
-// INTERCEPTOR REQUEST
-// =========================
+//* =========================*
+//* INTERCEPTOR REQUEST
+//* =========================*
 
 API.interceptors.request.use(
     (config) => {
@@ -47,9 +47,9 @@ API.interceptors.request.use(
 );
 
 
-// =========================
-// INTERCEPTOR RESPONSE
-// =========================
+//* =========================*
+//* INTERCEPTOR RESPONSE
+//* =========================*
 
 API.interceptors.response.use(
 
@@ -87,8 +87,8 @@ API.interceptors.response.use(
 );
 
 
-// =========================
-// EXPORT
-// =========================
+//* =========================*
+//* EXPORT
+//* =========================*
 
 export default API;
