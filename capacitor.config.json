@@ -1,5 +1,8 @@
 {
   "appId": "com.zioniglesia.playlist",
-  "appName": "dist",
-  "webDir": "dist"
+  "appName": "ZION Playlist",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http"
+  }
 }
