@@ -52,7 +52,6 @@ API.interceptors.request.use(
 //* =========================*
 
 API.interceptors.response.use(
-
     (response) => response,
 
     (error) => {
@@ -61,29 +60,26 @@ API.interceptors.response.use(
             error.response &&
             error.response.status === 401
         ) {
-
-            localStorage.removeItem(
-                "zion_auth_token"
-            );
-
-            localStorage.removeItem(
-                "zion_auth_user"
-            );
+            localStorage.removeItem("zion_auth_token");
+            localStorage.removeItem("zion_auth_user");
 
             window.dispatchEvent(
-                new Event(
-                    "zion:session-expired"
-                )
+                new Event("zion:session-expired")
             );
-
         }
 
-        return Promise.reject(
-            error
-        );
+        console.error("ZION API ERROR:", {
+            message: error.message,
+            code: error.code,
+            url: error.config?.url,
+            baseURL: error.config?.baseURL,
+            method: error.config?.method,
+            response: error.response?.data,
+            status: error.response?.status
+        });
 
+        return Promise.reject(error);
     }
-
 );
 
 
