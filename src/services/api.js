@@ -1,61 +1,49 @@
-//* =========================*
-//* IMPORTS
-//* =========================*
+// =========================
+// IMPORTS
+// =========================
 
 import axios from "axios";
 
-
-//* =========================*
-//* INSTANCIA AXIOS
-//* =========================*
+// =========================
+// INSTANCIA AXIOS
+// =========================
 
 const API = axios.create({
-
     baseURL:
-    import.meta.env.VITE_API_URL ||
-    "http://192.168.1.3:8080",
+        import.meta.env.VITE_API_URL ||
+        "http://192.168.1.3:8080",
 
     headers: {
         Accept: "application/json"
     }
-
 });
 
-
-//* =========================*
-//* INTERCEPTOR REQUEST
-//* =========================*
+// =========================
+// INTERCEPTOR REQUEST
+// =========================
 
 API.interceptors.request.use(
     (config) => {
-
         const token =
-            localStorage.getItem(
-                "zion_auth_token"
-            );
+            localStorage.getItem("zion_auth_token");
 
         if (token) {
-
             config.headers.Authorization =
                 `Bearer ${token}`;
-
         }
 
         return config;
-
     }
 );
 
-
-//* =========================*
-//* INTERCEPTOR RESPONSE
-//* =========================*
+// =========================
+// INTERCEPTOR RESPONSE
+// =========================
 
 API.interceptors.response.use(
     (response) => response,
 
     (error) => {
-
         if (
             error.response &&
             error.response.status === 401
@@ -68,23 +56,25 @@ API.interceptors.response.use(
             );
         }
 
-        console.error("ZION API ERROR:", {
-            message: error.message,
-            code: error.code,
-            url: error.config?.url,
-            baseURL: error.config?.baseURL,
-            method: error.config?.method,
-            response: error.response?.data,
-            status: error.response?.status
-        });
+        console.error(
+            "ZION API ERROR: " +
+            JSON.stringify({
+                message: error.message,
+                code: error.code,
+                url: error.config?.url,
+                baseURL: error.config?.baseURL,
+                method: error.config?.method,
+                response: error.response?.data,
+                status: error.response?.status
+            })
+        );
 
         return Promise.reject(error);
     }
 );
 
-
-//* =========================*
-//* EXPORT
-//* =========================*
+// =========================
+// EXPORT
+// =========================
 
 export default API;
