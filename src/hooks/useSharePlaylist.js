@@ -1,20 +1,7 @@
-// =========================
-// IMPORTS
-// =========================
-
 import Swal from "sweetalert2";
 import { Capacitor } from "@capacitor/core";
-import {
-    Filesystem,
-    Directory
-} from "@capacitor/filesystem";
-import {
-    Share
-} from "@capacitor/share";
-
-// =========================
-// HOOK
-// =========================
+import { Filesystem, Directory } from "@capacitor/filesystem";
+import { Share } from "@capacitor/share";
 
 export function useSharePlaylist({
     playlists,
@@ -22,11 +9,6 @@ export function useSharePlaylist({
     playlistSongs,
     songs
 }) {
-
-    // =========================
-    // DATOS SEGUROS
-    // =========================
-
     const safePlaylists = Array.isArray(playlists)
         ? playlists
         : [];
@@ -39,26 +21,20 @@ export function useSharePlaylist({
         ? songs
         : [];
 
-    // =========================
-    // OBTENER CULTO SELECCIONADO
-    // =========================
-
     const selected = safePlaylists.find(
         playlist =>
             playlist.id === Number(selectedPlaylist)
     );
 
-    // =========================
+    // =====================================================
     // COMPARTIR POR WHATSAPP
-    // =========================
+    // =====================================================
 
     const shareWhatsApp = () => {
-
         if (
             !selectedPlaylist ||
             safePlaylistSongs.length === 0
         ) {
-
             Swal.fire({
                 icon: "warning",
                 title: "Sin información",
@@ -77,12 +53,13 @@ export function useSharePlaylist({
 `;
 
         safePlaylistSongs.forEach((item, index) => {
-
             const song = safeSongs.find(
                 song => song.id === item.songId
             );
 
-            message += `${index + 1}. ${song?.name ?? "Canción"}\n`;
+            message += `${index + 1}. ${
+                song?.name ?? "Canción"
+            }\n`;
         });
 
         message += "\n🙏 Bendiciones";
@@ -93,17 +70,15 @@ export function useSharePlaylist({
         );
     };
 
-    // =========================
+    // =====================================================
     // EXPORTAR PDF
-    // =========================
+    // =====================================================
 
     const exportPlaylistPDF = async () => {
-
         if (
             !selectedPlaylist ||
             safePlaylistSongs.length === 0
         ) {
-
             Swal.fire({
                 icon: "warning",
                 title: "Sin canciones",
@@ -114,71 +89,355 @@ export function useSharePlaylist({
         }
 
         try {
-
-            // =========================
-            // GENERAR PDF
-            // =========================
-
             const { jsPDF } = await import("jspdf");
 
-            const pdf = new jsPDF();
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4"
+            });
 
-            pdf.setFontSize(18);
+            // =================================================
+            // CONFIGURACIÓN DE PÁGINA
+            // =================================================
 
-            pdf.text(
-                "ZION Playlist - Orden del Culto",
-                20,
-                20
+            const pageWidth =
+                pdf.internal.pageSize.getWidth();
+
+            const pageHeight =
+                pdf.internal.pageSize.getHeight();
+
+            const margin = 20;
+
+            // =================================================
+            // COLORES ZION
+            // =================================================
+
+            const azulOscuro = [24, 43, 73];
+            const azul = [43, 76, 120];
+            const grisTexto = [75, 85, 99];
+            const grisClaro = [243, 245, 248];
+            const blanco = [255, 255, 255];
+
+            // =================================================
+            // ENCABEZADO
+            // =================================================
+
+            pdf.setFillColor(
+                azulOscuro[0],
+                azulOscuro[1],
+                azulOscuro[2]
             );
 
-            pdf.setFontSize(12);
+            pdf.rect(
+                0,
+                0,
+                pageWidth,
+                42,
+                "F"
+            );
+
+            // Marca ZION
+            pdf.setTextColor(
+                blanco[0],
+                blanco[1],
+                blanco[2]
+            );
+
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(24);
 
             pdf.text(
-                `Culto: ${selected?.name ?? "Sin nombre"}`,
-                20,
-                35
+                "ZION",
+                margin,
+                18
+            );
+
+            pdf.setFontSize(10);
+            pdf.setFont("helvetica", "normal");
+
+            pdf.text(
+                "IGLESIA PRESBITERIANA",
+                margin,
+                26
+            );
+
+            pdf.setFontSize(9);
+
+            pdf.text(
+                "Orden del Culto",
+                pageWidth - margin,
+                18,
+                {
+                    align: "right"
+                }
+            );
+
+            // =================================================
+            // INFORMACIÓN DEL CULTO
+            // =================================================
+
+            let y = 58;
+
+            pdf.setTextColor(
+                azulOscuro[0],
+                azulOscuro[1],
+                azulOscuro[2]
+            );
+
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(17);
+
+            pdf.text(
+                selected?.name ?? "Culto",
+                margin,
+                y
+            );
+
+            y += 9;
+
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(11);
+
+            pdf.setTextColor(
+                grisTexto[0],
+                grisTexto[1],
+                grisTexto[2]
             );
 
             pdf.text(
                 `Fecha: ${selected?.serviceDate ?? ""}`,
-                20,
-                43
+                margin,
+                y
             );
 
-            let y = 58;
+            // =================================================
+            // LÍNEA SEPARADORA
+            // =================================================
 
-            safePlaylistSongs.forEach((item, index) => {
+            y += 9;
 
-                const song = safeSongs.find(
-                    song => song.id === item.songId
+            pdf.setDrawColor(
+                azul[0],
+                azul[1],
+                azul[2]
+            );
+
+            pdf.setLineWidth(0.6);
+
+            pdf.line(
+                margin,
+                y,
+                pageWidth - margin,
+                y
+            );
+
+            // =================================================
+            // TÍTULO DE CANCIONES
+            // =================================================
+
+            y += 13;
+
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(13);
+
+            pdf.setTextColor(
+                azulOscuro[0],
+                azulOscuro[1],
+                azulOscuro[2]
+            );
+
+            pdf.text(
+                "Canciones",
+                margin,
+                y
+            );
+
+            y += 8;
+
+            // =================================================
+            // LISTA DE CANCIONES
+            // =================================================
+
+            safePlaylistSongs.forEach(
+                (item, index) => {
+                    const song = safeSongs.find(
+                        song =>
+                            song.id === item.songId
+                    );
+
+                    const songName =
+                        song?.name ?? "Canción";
+
+                    // Salto de página
+                    if (y > pageHeight - 30) {
+                        pdf.addPage();
+
+                        y = 25;
+
+                        // Encabezado pequeño
+                        pdf.setFont(
+                            "helvetica",
+                            "bold"
+                        );
+
+                        pdf.setFontSize(11);
+
+                        pdf.setTextColor(
+                            azulOscuro[0],
+                            azulOscuro[1],
+                            azulOscuro[2]
+                        );
+
+                        pdf.text(
+                            "ZION — Orden del Culto",
+                            margin,
+                            y
+                        );
+
+                        y += 10;
+                    }
+
+                    // Fondo de la fila
+                    pdf.setFillColor(
+                        grisClaro[0],
+                        grisClaro[1],
+                        grisClaro[2]
+                    );
+
+                    pdf.roundedRect(
+                        margin,
+                        y - 6,
+                        pageWidth - margin * 2,
+                        11,
+                        2,
+                        2,
+                        "F"
+                    );
+
+                    // Número
+                    pdf.setFillColor(
+                        azul[0],
+                        azul[1],
+                        azul[2]
+                    );
+
+                    pdf.circle(
+                        margin + 6,
+                        y - 0.5,
+                        3.5,
+                        "F"
+                    );
+
+                    pdf.setTextColor(
+                        blanco[0],
+                        blanco[1],
+                        blanco[2]
+                    );
+
+                    pdf.setFont(
+                        "helvetica",
+                        "bold"
+                    );
+
+                    pdf.setFontSize(8);
+
+                    pdf.text(
+                        String(index + 1),
+                        margin + 6,
+                        y + 2,
+                        {
+                            align: "center"
+                        }
+                    );
+
+                    // Nombre canción
+                    pdf.setTextColor(
+                        azulOscuro[0],
+                        azulOscuro[1],
+                        azulOscuro[2]
+                    );
+
+                    pdf.setFont(
+                        "helvetica",
+                        "normal"
+                    );
+
+                    pdf.setFontSize(10.5);
+
+                    pdf.text(
+                        songName,
+                        margin + 13,
+                        y + 1
+                    );
+
+                    y += 15;
+                }
+            );
+
+            // =================================================
+            // PIE DE PÁGINA
+            // =================================================
+
+            const totalPages =
+                pdf.internal.getNumberOfPages();
+
+            for (
+                let page = 1;
+                page <= totalPages;
+                page++
+            ) {
+                pdf.setPage(page);
+
+                pdf.setDrawColor(
+                    210,
+                    214,
+                    220
+                );
+
+                pdf.setLineWidth(0.3);
+
+                pdf.line(
+                    margin,
+                    pageHeight - 18,
+                    pageWidth - margin,
+                    pageHeight - 18
+                );
+
+                pdf.setFont(
+                    "helvetica",
+                    "normal"
+                );
+
+                pdf.setFontSize(8);
+
+                pdf.setTextColor(
+                    110,
+                    118,
+                    128
                 );
 
                 pdf.text(
-                    `${index + 1}. ${song?.name ?? "Canción"}`,
-                    20,
-                    y
+                    "ZION Iglesia Presbiteriana",
+                    margin,
+                    pageHeight - 11
                 );
 
-                y += 10;
+                pdf.text(
+                    `Página ${page} de ${totalPages}`,
+                    pageWidth - margin,
+                    pageHeight - 11,
+                    {
+                        align: "right"
+                    }
+                );
+            }
 
-                // =========================
-                // NUEVA PÁGINA
-                // =========================
-
-                if (y > 270) {
-
-                    pdf.addPage();
-
-                    y = 20;
-                }
-            });
-
-            // =========================
-            // ANDROID / CAPACITOR
-            // =========================
+            // =================================================
+            // ANDROID
+            // =================================================
 
             if (Capacitor.isNativePlatform()) {
-
                 const dataUri =
                     pdf.output("datauristring");
 
@@ -188,12 +447,11 @@ export function useSharePlaylist({
                 const fileName =
                     `orden-culto-zion-${Date.now()}.pdf`;
 
-                const savedFile =
-                    await Filesystem.writeFile({
-                        path: fileName,
-                        data: base64Data,
-                        directory: Directory.Cache
-                    });
+                await Filesystem.writeFile({
+                    path: fileName,
+                    data: base64Data,
+                    directory: Directory.Cache
+                });
 
                 const fileUri =
                     await Filesystem.getUri({
@@ -202,45 +460,41 @@ export function useSharePlaylist({
                     });
 
                 await Share.share({
-                    title: "Orden del Culto - ZION Playlist",
-                    text: "Orden del culto generada desde ZION Playlist.",
+                    title:
+                        "Orden del Culto - ZION Playlist",
+                    text:
+                        "Orden del culto generada desde ZION Playlist.",
                     url: fileUri.uri,
-                    dialogTitle: "Compartir o abrir PDF"
+                    dialogTitle:
+                        "Compartir o abrir PDF"
                 });
 
                 console.log(
                     "ZION PDF ANDROID:",
-                    savedFile,
-                    fileUri
+                    fileUri.uri
                 );
-
             } else {
-
-                // =========================
+                // =================================================
                 // NAVEGADOR / PC
-                // =========================
+                // =================================================
 
                 pdf.save(
                     "orden-culto-zion.pdf"
                 );
             }
 
-            // =========================
-            // MENSAJE
-            // =========================
-
             Swal.fire({
                 icon: "success",
-                title: "PDF exportado",
-                text: Capacitor.isNativePlatform()
-                    ? "El PDF está listo para abrir o compartir."
-                    : "El PDF fue descargado correctamente.",
-                timer: 1800,
+                title: "PDF generado",
+                text:
+                    Capacitor.isNativePlatform()
+                        ? "El PDF está listo para guardar, compartir o imprimir."
+                        : "El PDF se ha descargado correctamente.",
+                timer: 1600,
                 showConfirmButton: false
             });
 
         } catch (error) {
-
             console.error(
                 "ZION PDF ERROR:",
                 error
@@ -248,20 +502,15 @@ export function useSharePlaylist({
 
             Swal.fire({
                 icon: "error",
-                title: "Error al exportar PDF",
-                text: "No fue posible generar o abrir el PDF."
+                title: "Error al generar PDF",
+                text:
+                    "No fue posible generar el archivo PDF."
             });
         }
     };
 
-    // =========================
-    // RETURN
-    // =========================
-
     return {
-
         shareWhatsApp,
         exportPlaylistPDF
-
     };
 }
