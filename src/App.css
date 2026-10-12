@@ -1482,25 +1482,35 @@ button:disabled {
 /* ---------------------------------------------------------
 17. CLASES LEGACY DE USUARIOS — CONSERVADAS SIN ESTILO
 ESPECÍFICO PARA NO INTERFERIR CON LA NUEVA UI.
-   --------------------------------------------------------- */
-
-.users-page,
-.users-page-header,
-.user-form,
-.user-actions,
-.primary-btn,
-.secondary-btn,
-.small-btn,
-.danger-btn,
-.role-badge,
-.status-badge,
-.users-message,
-.password-overlay,
-.password-dialog {
-    /* Compatibilidad con versiones anteriores. */
-}
+--------------------------------------------------------
+ */
 
 /* ---------------------------------------------------------
+17. CLASES LEGACY DE USUARIOS — CONSERVADAS SIN ESTILO
+ESPECÍFICO PARA NO INTERFERIR CON LA NUEVA UI.
+--------------------------------------------------------
+
+Estas clases se conservan como referencia para versiones
+anteriores. Los estilos deben definirse únicamente si son
+necesarios para la interfaz actual.
+
+Selectores legacy:
+.users-page
+.users-page-header
+.user-form
+.user-actions
+.primary-btn
+.secondary-btn
+.small-btn
+.danger-btn
+.role-badge
+.status-badge
+.users-message
+.password-overlay
+.password-dialog
+*/ 
+
+/*---------------------------------------------------------
 18. ANIMACIONES
    --------------------------------------------------------- */
 
@@ -1517,7 +1527,7 @@ ESPECÍFICO PARA NO INTERFERIR CON LA NUEVA UI.
 }
 
 /* ---------------------------------------------------------
-   19. RESPONSIVE — TABLET
+19. RESPONSIVE — TABLET
    --------------------------------------------------------- */
 
 @media (max-width: 900px) {
