@@ -1480,8 +1480,8 @@ button:disabled {
 }
 
 /* ---------------------------------------------------------
-   17. CLASES LEGACY DE USUARIOS — CONSERVADAS SIN ESTILO
-       ESPECÍFICO PARA NO INTERFERIR CON LA NUEVA UI.
+17. CLASES LEGACY DE USUARIOS — CONSERVADAS SIN ESTILO
+ESPECÍFICO PARA NO INTERFERIR CON LA NUEVA UI.
    --------------------------------------------------------- */
 
 .users-page,
@@ -1501,7 +1501,7 @@ button:disabled {
 }
 
 /* ---------------------------------------------------------
-   18. ANIMACIONES
+18. ANIMACIONES
    --------------------------------------------------------- */
 
 @keyframes zionFadeIn {
