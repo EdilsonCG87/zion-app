@@ -2473,3 +2473,68 @@ hr {
         padding: 10px;
     }
 }
+
+
+/* ==========================================================
+   ZION — CANCIONES MÁS USADAS: BOTÓN ACCESIBLE
+   ========================================================== */
+
+.top-songs-card .top-songs-title {
+    margin: 0 0 16px;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.top-songs-card .top-songs-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 13px 15px;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 16px;
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.top-songs-card .top-songs-toggle:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: #ffd54f;
+}
+
+.top-songs-card .top-songs-toggle:focus-visible {
+    outline: 2px solid #ffd54f;
+    outline-offset: 3px;
+}
+
+.top-songs-card .top-songs-indicator {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    min-height: 34px;
+    padding: 4px 8px;
+    color: #172642;
+    background: #ffd54f;
+    border: 1px solid #ffe58a;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 900;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 480px) {
+    .top-songs-card .top-songs-toggle {
+        padding: 12px;
+        font-size: 14px;
+    }
+}
