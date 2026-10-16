@@ -17,20 +17,24 @@ function TopSongs({
 
         <div className="top-songs-card">
 
-            <h3
-                className="top-songs-title"
-                onClick={() =>
-                    setShowTopSongs(!showTopSongs)
-                }
-            >
+            
+            <h3 className="top-songs-title">
+                <button
+                    type="button"
+                    className="top-songs-toggle"
+                    onClick={() =>
+                        setShowTopSongs(!showTopSongs)
+                    }
+                    aria-expanded={showTopSongs}
+                >
+                    <span>⭐ Canciones más usadas</span>
 
-                ⭐ Canciones más usadas
-
-                <span>
-                    {showTopSongs ? "▼" : "►"}
-                </span>
-
+                    <span className="top-songs-indicator" aria-hidden="true">
+                        {showTopSongs ? "▼" : "►"}
+                    </span>
+                </button>
             </h3>
+
 
 
             {showTopSongs && (
