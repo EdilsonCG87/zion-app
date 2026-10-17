@@ -149,7 +149,7 @@ button:disabled {
     gap: 7px;
     margin: 18px 0;
     padding: 13px 16px;
-    color: #6f5100;
+    color: #f7f7f8;
     background: var(--zion-warning-bg);
     border: 1px solid #f1d58a;
     border-radius: var(--zion-radius);
@@ -158,7 +158,7 @@ button:disabled {
 }
 
 .next-service-alert strong {
-    color: #4f3b00;
+    color: #f7f7f8;
 }
 
 /* ---------------------------------------------------------
@@ -742,7 +742,7 @@ button:disabled {
     min-height: 38px;
     padding: 7px 10px;
     color: var(--zion-text);
-    background: #fff;
+    background: #417dec;
     border: 1px solid var(--zion-border);
     border-radius: 8px;
 }
@@ -2449,22 +2449,31 @@ hr {
     border-radius: 10px;
 }
 
+
 .top-songs-card .top-song-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
     color: #ffffff;
     font-size: 13px;
     line-height: 1.5;
 }
 
 .top-songs-card .top-song-header span:first-child {
+    flex: 1;
+    min-width: 0;
     white-space: normal;
     overflow-wrap: anywhere;
 }
 
 .top-songs-card .top-song-header span:last-child {
     flex-shrink: 0;
+    white-space: nowrap;
     color: #ffd95a;
     font-weight: 800;
 }
+
 
 .top-songs-card .top-song-bar {
     background: rgba(255, 255, 255, 0.16);
