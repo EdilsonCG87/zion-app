@@ -667,25 +667,36 @@ function CalendarAgenda({
             </div>
 
 
-            {/* =========================
-                LEYENDA
-            ========================= */}
+            
+{/* =========================
+    LEYENDA
+   ========================= */}
 
-            <div className="calendar-legend">
+<div className="calendar-legend">
 
-                <span className="service-dot">
-                    🔵 Programado
-                </span>
+    <span className="calendar-legend-item">
+        <span className="service-dot" aria-hidden="true">
+            🔵
+        </span>
+        Programado
+    </span>
 
-                <span className="service-dot">
-                    🟢 Realizado
-                </span>
+    <span className="calendar-legend-item">
+        <span className="service-dot" aria-hidden="true">
+            🟢
+        </span>
+        Realizado
+    </span>
 
-                <span className="service-dot">
-                    🟡 Hoy
-                </span>
+    <span className="calendar-legend-item">
+        <span className="service-dot" aria-hidden="true">
+            🟡
+        </span>
+        Hoy
+    </span>
 
-            </div>
+</div>
+
 
 
             {/* =========================
