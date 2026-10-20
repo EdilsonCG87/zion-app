@@ -22,18 +22,18 @@ function SongsPage({
     getTopSongs,
     getOverusedSongs,
 
-    // =========================
-    // REPORTES
-    // =========================
+// =========================
+// REPORTES
+// =========================
 
     songHistory,
     getSongHistory
 
 }) {
 
-    // =========================
-    // HOOK
-    // =========================
+// =========================
+// HOOK
+// =========================
 
     const {
 
@@ -68,9 +68,9 @@ function SongsPage({
 
     } = songsHook;
 
-    // =========================
-    // STATES
-    // =========================
+// =========================
+// STATES
+// =========================
 
     const [showSongsList, setShowSongsList] =
         useState(false);
@@ -84,39 +84,39 @@ function SongsPage({
 
 const handleSelectSong = async (song) => {
 
-    // =========================
-    // CARGAR CANCIONES ACTUALIZADAS
-    // =========================
+// =========================
+// CARGAR CANCIONES ACTUALIZADAS
+// =========================
 
     const updatedSongs = await getSongs();
 
-    // =========================
-    // BUSCAR LA CANCIÓN ACTUALIZADA
-    // =========================
+// =========================
+// BUSCAR LA CANCIÓN ACTUALIZADA
+// =========================
 
     const freshSong =
         updatedSongs.find(
             item => item.id === song.id
         ) || song;
 
-    // =========================
-    // ACTUALIZAR CANCIÓN
-    // =========================
+// =========================
+// ACTUALIZAR CANCIÓN
+// =========================
 
     setSelectedSong(freshSong);
 
-    // =========================
-    // CARGAR HISTORIAL
-    // =========================
+// =========================
+// CARGAR HISTORIAL
+// =========================
 
     await getSongHistory(
         freshSong.id
     );
 };
 
-    // =========================
-    // CERRAR DETALLE
-    // =========================
+// =========================
+// CERRAR DETALLE
+// =========================
 
     const handleCloseDetail = () => {
 
@@ -124,17 +124,17 @@ const handleSelectSong = async (song) => {
 
     };
 
-    // =========================
-    // HTML
-    // =========================
+// =========================
+// HTML
+// =========================
 
     return (
 
         <div className="tab-content">
 
-            {/* =========================
-                BIBLIOTECA
-            ========================= */}
+{/* =========================
+BIBLIOTECA
+========================= */}
 
             <div className="playlist-card">
 
@@ -161,9 +161,9 @@ const handleSelectSong = async (song) => {
 
             </div>
 
-            {/* =========================
-                FORMULARIO
-            ========================= */}
+{/* =========================
+    FORMULARIO
+========================= */}
 
             <SongForm
 
@@ -185,9 +185,9 @@ const handleSelectSong = async (song) => {
 
             />
 
-            {/* =========================
-                IMPORTAR EXCEL
-            ========================= */}
+{/* =========================
+    IMPORTAR EXCEL
+========================= */}
 
             <ImportExcel
 
@@ -203,9 +203,9 @@ const handleSelectSong = async (song) => {
 
             />
 
-            {/* =========================
-                BUSCAR
-            ========================= */}
+{/* =========================
+    BUSCAR
+========================= */}
 
             <SearchBar
 
@@ -227,9 +227,9 @@ const handleSelectSong = async (song) => {
 
             />
 
-            {/* =========================
-                TABLA
-            ========================= */}
+{/* =========================
+    TABLA
+========================= */}
 
             {showSongsList && (
 
@@ -251,9 +251,9 @@ const handleSelectSong = async (song) => {
 
             )}
 
-            {/* =========================
-                DETALLE
-            ========================= */}
+{/* =========================
+    DETALLE
+========================= */}
 
             {selectedSong && (
 
