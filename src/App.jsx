@@ -22,6 +22,7 @@ function App() {
     const { user, loading, isAdmin, logout } = useAuth();
 
     const [activeTab, setActiveTab] = useState("dashboard");
+    const [showTopSongs, setShowTopSongs] = useState(false);
     const [showUnusedSongs, setShowUnusedSongs] = useState(false);
     
 
