@@ -96,7 +96,7 @@ export function useStatistics() {
                         (a.timesPlayed ?? 0) -
                         (b.timesPlayed ?? 0)
                 )
-                .slice(0, 10);
+                .slice(0, 5);
 
             setUnusedSongs(sortedSongs);
 

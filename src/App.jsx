@@ -22,7 +22,8 @@ function App() {
     const { user, loading, isAdmin, logout } = useAuth();
 
     const [activeTab, setActiveTab] = useState("dashboard");
-    const [showTopSongs, setShowTopSongs] = useState(false);
+    const [showUnusedSongs, setShowUnusedSongs] = useState(false);
+    
 
     const songsHook = useSongs();
     const { songs, getSongs } = songsHook;
@@ -64,11 +65,12 @@ function App() {
     } = useReports();
 
     const {
-        topSongs,
-        getTopSongs,
-        getUnusedSongs,
-        getOverusedSongs
-    } = useStatistics();
+    topSongs,
+    unusedSongs,
+    getTopSongs,
+    getUnusedSongs,
+    getOverusedSongs
+} = useStatistics();
 
     const { nextService, daysRemaining } = useNextService(playlists);
 
@@ -233,14 +235,17 @@ function App() {
             <Suspense fallback={null}>
 
                 {activeTab === "dashboard" && (
-                    <DashboardPage
-                        songs={songs}
-                        playlists={playlists}
-                        topSongs={topSongs}
-                        showTopSongs={showTopSongs}
-                        setShowTopSongs={setShowTopSongs}
-                    />
-                )}
+    <DashboardPage
+        songs={songs}
+        playlists={playlists}
+        topSongs={topSongs}
+        unusedSongs={unusedSongs}
+        showTopSongs={showTopSongs}
+        setShowTopSongs={setShowTopSongs}
+        showUnusedSongs={showUnusedSongs}
+        setShowUnusedSongs={setShowUnusedSongs}
+    />
+)}
 
                 {activeTab === "agenda" && (
                     <AgendaPage

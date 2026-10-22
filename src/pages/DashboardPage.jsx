@@ -1,3 +1,4 @@
+
 import Dashboard from "../components/dashboard/Dashboard";
 import TopSongs from "../components/dashboard/TopSongs";
 
@@ -5,8 +6,11 @@ function DashboardPage({
     songs,
     playlists,
     topSongs,
+    unusedSongs,
     showTopSongs,
-    setShowTopSongs
+    setShowTopSongs,
+    showUnusedSongs,
+    setShowUnusedSongs
 }) {
     return (
         <div className="tab-content">
@@ -21,7 +25,16 @@ function DashboardPage({
                 showTopSongs={showTopSongs}
                 setShowTopSongs={setShowTopSongs}
             />
+
+            <TopSongs
+                topSongs={unusedSongs}
+                showTopSongs={showUnusedSongs}
+                setShowTopSongs={setShowUnusedSongs}
+                title="🎵 Canciones menos utilizadas"
+                emptyMessage="No hay canciones registradas"
+            />
         </div>
     );
 }
+
 export default DashboardPage;
