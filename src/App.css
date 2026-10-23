@@ -2765,3 +2765,120 @@ Ajuste visual para computador y Android
         font-size: 8px;
     }
 }
+
+/* ==========================================================
+   ZION — BIBLIOTECA DE CANCIONES: AJUSTE MÓVIL
+   Conserva las columnas y acciones, evitando desbordamiento horizontal.
+   ========================================================== */
+@media (max-width: 680px) {
+    .songs-table-container {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: hidden;
+    }
+
+    .songs-table {
+        width: 100%;
+        min-width: 0;
+        table-layout: fixed;
+    }
+
+    .songs-table th,
+    .songs-table td {
+        min-width: 0;
+        padding: 9px 6px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .songs-table th {
+        font-size: 10px;
+        letter-spacing: 0.02em;
+    }
+
+    .songs-table td {
+        font-size: 12px;
+    }
+
+    .songs-table td .song-actions {
+        justify-content: flex-start;
+        gap: 4px;
+    }
+
+    .songs-table .edit-btn,
+    .songs-table .delete-btn,
+    .songs-table .favorite-btn {
+        min-width: 0;
+        min-height: 32px;
+        padding: 6px;
+        font-size: 11px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+}
+/* ==========================================================
+   ZION — USUARIOS: CONTRASTE Y CONTENCIÓN EN MÓVIL
+   ========================================================== */
+.users-admin,
+.users-hero,
+.users-create-card,
+.users-list-card,
+.users-form,
+.users-card-heading,
+.users-list-heading {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.users-admin {
+    width: 100%;
+}
+
+.users-card-heading h3,
+.users-list-heading h3,
+.users-person strong {
+    color: var(--zion-text);
+}
+
+.users-form label span {
+    color: #c7d0df;
+}
+
+.users-form input,
+.users-form select {
+    min-width: 0;
+    max-width: 100%;
+    color: #172033;
+    box-sizing: border-box;
+}
+
+@media (max-width: 680px) {
+    .users-hero,
+    .users-create-card,
+    .users-list-card {
+        width: 100%;
+        padding: 14px;
+    }
+
+    .users-hero > *,
+    .users-card-heading > *,
+    .users-list-heading > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .users-card-heading h3,
+    .users-list-heading h3 {
+        overflow-wrap: anywhere;
+    }
+
+    .users-table-wrapper {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
