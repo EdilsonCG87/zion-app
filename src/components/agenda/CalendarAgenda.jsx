@@ -630,32 +630,20 @@ function CalendarAgenda({
                                 {/* INDICADOR DE CULTO */}
 
                                 {service && (
-
-                                    <span
-                                        className="service-dot"
-                                    >
-
-                                        {
-                                            getServiceStatus(
-                                                service.serviceDate
-                                            ) ===
-                                            "done"
-
-                                                ? "🟢"
-
-                                                : getServiceStatus(
-                                                    service.serviceDate
-                                                ) ===
-                                                "today"
-
-                                                    ? "🟡"
-
-                                                    : "🔵"
-                                        }
-
-                                    </span>
-
-                                )}
+    <span
+        className={`service-dot ${
+            getServiceStatus(service.serviceDate)
+        }`}
+        aria-label={`Culto ${
+            getServiceStatus(service.serviceDate) === "done"
+                ? "realizado"
+                : getServiceStatus(service.serviceDate) === "today"
+                    ? "hoy"
+                    : "programado"
+        }`}
+        title={service.serviceDate}
+    />
+)}
 
                             </div>
 

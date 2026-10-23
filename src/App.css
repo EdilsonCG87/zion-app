@@ -817,13 +817,41 @@ button:disabled {
 }
 
 .service-dot {
-    display: inline-flex;
-    width: 9px;
-    height: 9px;
+    display: inline-block;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
     margin: 2px;
+    padding: 0;
     background: var(--zion-gold);
+    border: 0;
     border-radius: 50%;
     vertical-align: middle;
+}
+
+/* Indicadores del calendario: siempre dentro de su celda */
+.calendar-day .service-dot {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    width: 9px;
+    height: 9px;
+    min-width: 9px;
+    margin: 0;
+}
+
+.calendar-day .service-dot.done {
+    background: #80b83f;
+}
+
+.calendar-day .service-dot.future {
+    background: #1685e8;
+}
+
+.calendar-day .service-dot.today {
+    background: #ffc928;
 }
 
 .calendar-legend {
@@ -836,8 +864,20 @@ button:disabled {
     font-size: 12px;
 }
 
+/* En la leyenda se conservan los símbolos y su tamaño legible */
 .calendar-legend .service-dot {
-    margin-right: 5px;
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    margin: 0 5px 0 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    font-size: 14px;
 }
 
 .selected-service-card {
@@ -1687,9 +1727,12 @@ Selectores legacy:
         font-size: 9px;
     }
 
-    .service-dot {
-        width: 7px;
-        height: 7px;
+    .calendar-day .service-dot {
+        width: 8px;
+        height: 8px;
+        min-width: 8px;
+        right: 4px;
+        bottom: 4px;
     }
 
     .song-detail-info {
@@ -2601,4 +2644,124 @@ Ajuste visual para computador y Android
 
 .top-songs-card > .top-songs-title > .top-songs-toggle > .top-songs-indicator {
     flex: 0 0 auto;
+}
+
+/* ---------------------------------------------------------
+   AJUSTES RESPONSIVOS ADICIONALES — CANCIONES, USUARIOS Y MENÚ
+   --------------------------------------------------------- */
+@media (max-width: 680px) {
+    /* Evita que los formularios excedan el ancho disponible */
+    .form-container,
+    .users-form {
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: minmax(0, 1fr);
+        box-sizing: border-box;
+    }
+
+    .form-container > *,
+    .users-form > *,
+    .form-container input,
+    .form-container select,
+    .users-form input,
+    .users-form select,
+    .users-form button {
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-container .save-btn,
+    .form-container .btn-create,
+    .users-form .users-create-button {
+        width: 100%;
+    }
+
+    /* El selector de archivos se adapta a la tarjeta */
+    .import-card {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .import-card h3 {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .import-card input {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+        font-size: 13px;
+    }
+
+    /* Mantiene las cinco opciones del menú dentro del ancho del celular */
+    .bottom-nav,
+    .mobile-bottom-nav {
+        left: 9px;
+        right: 9px;
+        width: auto;
+        max-width: none;
+        min-width: 0;
+        box-sizing: border-box;
+        transform: none;
+        display: flex;
+        gap: 2px;
+        padding: 4px;
+    }
+
+    .bottom-nav button,
+    .mobile-bottom-nav button,
+    .bottom-nav .nav-btn,
+    .mobile-bottom-nav .nav-btn {
+        flex: 1 1 0;
+        width: 0;
+        min-width: 0;
+        max-width: 100%;
+        padding: 5px 1px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .bottom-nav button > *,
+    .mobile-bottom-nav button > * {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .bottom-nav span,
+    .mobile-bottom-nav span {
+        max-width: 100%;
+        font-size: clamp(8px, 2.3vw, 10px);
+        line-height: 1.15;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 380px) {
+    .bottom-nav,
+    .mobile-bottom-nav {
+        left: 5px;
+        right: 5px;
+        gap: 0;
+        padding: 3px;
+    }
+
+    .bottom-nav button,
+    .mobile-bottom-nav button,
+    .bottom-nav .nav-btn,
+    .mobile-bottom-nav .nav-btn {
+        padding: 4px 0;
+    }
+
+    .bottom-nav span,
+    .mobile-bottom-nav span {
+        font-size: 8px;
+    }
 }
