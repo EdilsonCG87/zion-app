@@ -2,7 +2,6 @@ import React from "react";
 
 function CalendarAgenda({
     playlists,
-    playlistSongs,
     songs,
     getPlaylistSongs
 }) {
@@ -577,6 +576,9 @@ function CalendarAgenda({
                             day
                                 ? hasService(day)
                                 : null;
+                        const serviceStatus = service
+                            ? getServiceStatus(service.serviceDate)
+                            : null;
 
 
                         return (
@@ -631,18 +633,21 @@ function CalendarAgenda({
 
                                 {service && (
     <span
-        className={`service-dot ${
-            getServiceStatus(service.serviceDate)
-        }`}
-        aria-label={`Culto ${
-            getServiceStatus(service.serviceDate) === "done"
-                ? "realizado"
-                : getServiceStatus(service.serviceDate) === "today"
-                    ? "hoy"
-                    : "programado"
+        className={`calendar-status-mark ${serviceStatus}`}
+        aria-label={`Culto ${serviceStatus === "done"
+            ? "realizado"
+            : serviceStatus === "today"
+                ? "hoy"
+                : "programado"
         }`}
         title={service.serviceDate}
-    />
+    >
+        {serviceStatus === "done"
+            ? "🟢"
+            : serviceStatus === "today"
+                ? "🟡"
+                : "🔵"}
+    </span>
 )}
 
                             </div>
