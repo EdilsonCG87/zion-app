@@ -2564,3 +2564,41 @@ Ajuste visual para computador y Android
         font-size: 14px;
     }
 }
+
+
+/* ==========================================================
+   ZION — AJUSTE PUNTUAL: BOTÓN DENTRO DE CADA TARJETA DE ESTADÍSTICAS
+   Mantiene el mismo diseño en "Canciones más usadas" y
+   "Canciones menos utilizadas", también en pantallas móviles.
+   ========================================================== */
+.top-songs-card {
+    min-width: 0;
+}
+
+.top-songs-card > .top-songs-title {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.top-songs-card > .top-songs-title > .top-songs-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.top-songs-card > .top-songs-title > .top-songs-toggle > span:first-child {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
+}
+
+.top-songs-card > .top-songs-title > .top-songs-toggle > .top-songs-indicator {
+    flex: 0 0 auto;
+}
