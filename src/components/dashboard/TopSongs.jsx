@@ -1,9 +1,12 @@
 
+import { FaStar } from "react-icons/fa";
+
 function TopSongs({
     topSongs = [],
     showTopSongs,
     setShowTopSongs,
-    title = "⭐ Canciones más usadas",
+    title = "Canciones más usadas",
+    icon = "star",
     emptyMessage = "No hay estadísticas"
 }) {
     const maxTimesPlayed =
@@ -20,7 +23,12 @@ function TopSongs({
                     onClick={() => setShowTopSongs(!showTopSongs)}
                     aria-expanded={showTopSongs}
                 >
-                    <span>{title}</span>
+                    <span className="top-songs-heading">
+                        <span className="top-songs-heading-icon" aria-hidden="true">
+                            {icon === "star" ? <FaStar /> : icon}
+                        </span>
+                        {title}
+                    </span>
                     <span className="top-songs-indicator" aria-hidden="true">
                         {showTopSongs ? "▼" : "►"}
                     </span>

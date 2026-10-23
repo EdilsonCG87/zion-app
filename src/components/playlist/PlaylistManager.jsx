@@ -1,3 +1,5 @@
+import { FaCross, FaListCheck } from "react-icons/fa6";
+
 function PlaylistManager({
 
     playlists,
@@ -28,7 +30,8 @@ function PlaylistManager({
     <div className="playlist-card">
 
       <h2 className="playlist-title">
-        🎼 Orden del Culto
+        <FaListCheck className="playlist-section-icon" aria-hidden="true" />
+        Orden del Culto
       </h2>
 
       {/* CREAR CULTO */}
@@ -46,17 +49,20 @@ function PlaylistManager({
 
         <input
           type="date"
+          aria-label="Fecha del culto"
           value={serviceDate}
           onChange={(e) =>
             setServiceDate(e.target.value)
           }
+          onClick={(e) => e.currentTarget.showPicker?.()}
         />
 
         <button
           className="action-btn btn-create"
           onClick={createPlaylist}
         >
-          ➕ Crear Culto
+          <FaCross className="playlist-create-icon" aria-hidden="true" />
+          Crear Culto
         </button>
 
       </div>

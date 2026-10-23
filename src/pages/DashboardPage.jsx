@@ -30,7 +30,8 @@ function DashboardPage({
                 topSongs={unusedSongs}
                 showTopSongs={showUnusedSongs}
                 setShowTopSongs={setShowUnusedSongs}
-                title="🎵 Canciones menos utilizadas"
+                title="Canciones menos utilizadas"
+                icon="🎵"
                 emptyMessage="No hay canciones registradas"
             />
         </div>

@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import AuthContext from "./AuthContextValue";
 import { getCurrentUser, login as loginRequest } from "../services/authService";
 
-const AuthContext = createContext(null);
 const TOKEN_KEY = "zion_auth_token";
 const USER_KEY = "zion_auth_user";
 
@@ -56,14 +56,4 @@ export function AuthProvider({ children }) {
     }), [user, loading]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-    const context = useContext(AuthContext);
-
-    if (!context) {
-        throw new Error("useAuth debe usarse dentro de AuthProvider");
-    }
-
-    return context;
 }

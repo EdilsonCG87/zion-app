@@ -10,6 +10,7 @@ import { useStatistics } from "./hooks/useStatistics";
 import { useNextService } from "./hooks/useNextService";
 import { useSharePlaylist } from "./hooks/useSharePlaylist";
 import { useUsers } from "./hooks/useUsers";
+import { FaMusic, FaUsers } from "react-icons/fa";
 
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const PlaylistPage = lazy(() => import("./pages/PlaylistPage"));
@@ -299,7 +300,7 @@ function App() {
                     }
                     onClick={() => setActiveTab("playlist")}
                 >
-                    🎵
+                    <FaMusic className="nav-icon-blue" aria-hidden="true" />
                     <span>Cultos</span>
                 </button>
 
@@ -336,7 +337,7 @@ function App() {
                         }
                         onClick={() => setActiveTab("users")}
                     >
-                        👥
+                        <FaUsers className="nav-icon-blue" aria-hidden="true" />
                         <span>Usuarios</span>
                     </button>
                 )}

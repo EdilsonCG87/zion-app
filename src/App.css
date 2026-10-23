@@ -208,6 +208,29 @@ button:disabled {
     border-radius: 99px;
 }
 
+.playlist-title .playlist-section-icon {
+    margin-right: 8px;
+    color: #4d8fe8;
+    vertical-align: -0.12em;
+}
+
+.playlist-card .btn-create .playlist-create-icon {
+    width: 1em;
+    height: 1em;
+    margin: 0;
+    color: #a66a3f;
+    fill: currentColor;
+    vertical-align: -0.15em;
+}
+
+.playlist-card .btn-create {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 14px;
+}
+
 /* ---------------------------------------------------------
    5. BÚSQUEDA
    --------------------------------------------------------- */
@@ -288,6 +311,17 @@ button:disabled {
 .playlist-row select:focus {
     border-color: var(--zion-gold);
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.13);
+}
+
+.playlist-row input[type="date"] {
+    color-scheme: dark;
+    cursor: pointer;
+}
+
+.playlist-row input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    cursor: pointer;
+    filter: invert(0.8) sepia(0.55) saturate(1.8) hue-rotate(5deg);
 }
 
 .save-btn,
@@ -1081,6 +1115,19 @@ button:disabled {
     margin-top: 3px;
     font-size: 11px;
     font-weight: 700;
+}
+
+.bottom-nav .nav-icon-blue {
+    display: block;
+    width: 17px;
+    height: 17px;
+    margin: 0 auto;
+    color: #5b9cf0;
+    fill: currentColor;
+}
+
+.bottom-nav .nav-btn.active .nav-icon-blue {
+    color: #285da8;
 }
 
 /* ---------------------------------------------------------
@@ -2426,6 +2473,13 @@ Ajuste visual para computador y Android
     border: 1px solid rgba(255, 213, 79, 0.45);
     border-radius: 14px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+    transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.top-songs-card:hover {
+    background: linear-gradient(145deg, #203657, #2d4a72);
+    border-color: rgba(255, 213, 79, 0.8);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 213, 79, 0.2);
 }
 
 .top-songs-card .top-songs-title {
@@ -2567,8 +2621,9 @@ Ajuste visual para computador y Android
 }
 
 .top-songs-card .top-songs-toggle:hover {
-    background: rgba(255, 255, 255, 0.14);
+    background: linear-gradient(110deg, rgba(255, 213, 79, 0.2), rgba(255, 255, 255, 0.13));
     border-color: #ffd54f;
+    box-shadow: 0 0 18px rgba(255, 213, 79, 0.3);
 }
 
 .top-songs-card .top-songs-toggle:focus-visible {
@@ -2629,9 +2684,45 @@ Ajuste visual para computador y Android
 }
 
 .top-songs-card > .top-songs-title > .top-songs-toggle > span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     min-width: 0;
     flex: 1 1 auto;
     overflow-wrap: anywhere;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: inherit;
+    font-weight: inherit;
+    justify-content: flex-start;
+    min-height: 0;
+    padding: 0;
+}
+
+.top-songs-card .top-songs-title span.top-songs-heading-icon {
+    display: inline-block;
+    flex: 0 0 auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    color: #5141ad;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 1.35em;
+    line-height: 1;
+}
+
+.top-songs-card .top-songs-title span.top-songs-heading-icon svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+    color: #5141ad;
+    fill: currentColor;
 }
 
 .top-songs-card > .top-songs-title > .top-songs-toggle > .top-songs-indicator {

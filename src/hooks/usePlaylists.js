@@ -6,6 +6,47 @@ import { useCallback, useState } from "react";
 import Swal from "sweetalert2";
 import API from "../services/api";
 
+const getPlaylistDate = (playlist) => {
+    const value = String(playlist.serviceDate ?? "").trim();
+    const timestamp = value ? Date.parse(value) : Number.NaN;
+
+    return Number.isFinite(timestamp) ? timestamp : null;
+};
+
+const getPlaylistNumber = (playlist) => {
+    const match = String(playlist.name ?? "").match(/\d+/);
+
+    return match ? Number(match[0]) : null;
+};
+
+const sortPlaylists = (items) =>
+    items
+        .map((playlist, originalIndex) => ({ playlist, originalIndex }))
+        .sort((first, second) => {
+            const firstDate = getPlaylistDate(first.playlist);
+            const secondDate = getPlaylistDate(second.playlist);
+
+            if (firstDate !== null && secondDate !== null && firstDate !== secondDate) {
+                return secondDate - firstDate;
+            }
+
+            if (firstDate !== null && secondDate === null) return -1;
+            if (firstDate === null && secondDate !== null) return 1;
+
+            const firstNumber = getPlaylistNumber(first.playlist);
+            const secondNumber = getPlaylistNumber(second.playlist);
+
+            if (firstNumber !== null && secondNumber !== null && firstNumber !== secondNumber) {
+                return secondNumber - firstNumber;
+            }
+
+            if (firstNumber !== null && secondNumber === null) return -1;
+            if (firstNumber === null && secondNumber !== null) return 1;
+
+            return first.originalIndex - second.originalIndex;
+        })
+        .map(({ playlist }) => playlist);
+
 
 // ========================================================
 // HOOK
@@ -140,9 +181,11 @@ export function usePlaylists() {
             // Guardar cultos
             // ------------------------------------------------
 
-            setPlaylists(data);
+            const sortedPlaylists = sortPlaylists(data);
 
-            return data;
+            setPlaylists(sortedPlaylists);
+
+            return sortedPlaylists;
 
         }
 

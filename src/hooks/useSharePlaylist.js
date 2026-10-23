@@ -2,6 +2,7 @@ import Swal from "sweetalert2";
 import { Capacitor } from "@capacitor/core";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Share } from "@capacitor/share";
+import logoUrl from "../assets/logo.png";
 
 export function useSharePlaylist({
     playlists,
@@ -91,6 +92,26 @@ export function useSharePlaylist({
         try {
             const { jsPDF } = await import("jspdf");
 
+            let logoData = null;
+
+            try {
+                const logoResponse = await fetch(logoUrl);
+
+                if (!logoResponse.ok) {
+                    throw new Error("No se pudo cargar el logo de Zion.");
+                }
+
+                const logoBlob = await logoResponse.blob();
+                logoData = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = () => reject(reader.error);
+                    reader.readAsDataURL(logoBlob);
+                });
+            } catch (logoError) {
+                console.warn("Se generará el PDF sin el logo:", logoError);
+            }
+
             const pdf = new jsPDF({
                 orientation: "portrait",
                 unit: "mm",
@@ -119,59 +140,42 @@ export function useSharePlaylist({
             const grisClaro = [243, 245, 248];
             const blanco = [255, 255, 255];
 
+            const drawPageBackground = () => {
+                pdf.setFillColor(247, 248, 251);
+                pdf.rect(0, 0, pageWidth, pageHeight, "F");
+            };
+
+            const drawHeader = () => {
+                pdf.setFillColor(...azulOscuro);
+                pdf.rect(0, 0, pageWidth, 42, "F");
+
+                if (logoData) {
+                    pdf.addImage(logoData, "PNG", margin, 7, 27, 27);
+                }
+
+                const brandLeft = margin + 33;
+
+                pdf.setTextColor(...blanco);
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(22);
+                pdf.text("ZION", brandLeft, 19);
+
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(9);
+                pdf.text("IGLESIA PRESBITERIANA", brandLeft, 27);
+
+                pdf.setFontSize(9);
+                pdf.text("Orden del Culto", pageWidth - margin, 19, {
+                    align: "right"
+                });
+            };
+
             // =================================================
             // ENCABEZADO
             // =================================================
 
-            pdf.setFillColor(
-                azulOscuro[0],
-                azulOscuro[1],
-                azulOscuro[2]
-            );
-
-            pdf.rect(
-                0,
-                0,
-                pageWidth,
-                42,
-                "F"
-            );
-
-            // Marca ZION
-            pdf.setTextColor(
-                blanco[0],
-                blanco[1],
-                blanco[2]
-            );
-
-            pdf.setFont("helvetica", "bold");
-            pdf.setFontSize(24);
-
-            pdf.text(
-                "ZION",
-                margin,
-                18
-            );
-
-            pdf.setFontSize(10);
-            pdf.setFont("helvetica", "normal");
-
-            pdf.text(
-                "IGLESIA PRESBITERIANA",
-                margin,
-                26
-            );
-
-            pdf.setFontSize(9);
-
-            pdf.text(
-                "Orden del Culto",
-                pageWidth - margin,
-                18,
-                {
-                    align: "right"
-                }
-            );
+            drawPageBackground();
+            drawHeader();
 
             // =================================================
             // INFORMACIÓN DEL CULTO
@@ -272,30 +276,9 @@ export function useSharePlaylist({
                     // Salto de página
                     if (y > pageHeight - 30) {
                         pdf.addPage();
-
-                        y = 25;
-
-                        // Encabezado pequeño
-                        pdf.setFont(
-                            "helvetica",
-                            "bold"
-                        );
-
-                        pdf.setFontSize(11);
-
-                        pdf.setTextColor(
-                            azulOscuro[0],
-                            azulOscuro[1],
-                            azulOscuro[2]
-                        );
-
-                        pdf.text(
-                            "ZION — Orden del Culto",
-                            margin,
-                            y
-                        );
-
-                        y += 10;
+                        drawPageBackground();
+                        drawHeader();
+                        y = 58;
                     }
 
                     // Fondo de la fila
