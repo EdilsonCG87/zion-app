@@ -444,7 +444,6 @@ export function useSongs() {
         // ----------------------------------------------------
 
         songs,
-        setSongs,
 
         search,
         setSearch,
@@ -462,7 +461,6 @@ export function useSongs() {
         setBpm,
 
         editingId,
-        setEditingId,
 
         // ----------------------------------------------------
         // Funciones

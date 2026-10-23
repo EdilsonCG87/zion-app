@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import "./App.css";
 import logo from "./assets/logo.png";
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "./hooks/useAuth";
 import { useSongs } from "./hooks/useSongs";
 import { usePlaylists } from "./hooks/usePlaylists";
 import { usePlaylistSongs } from "./hooks/usePlaylistSongs";
@@ -65,13 +65,7 @@ function App() {
         getYearUsage
     } = useReports();
 
-    const {
-    topSongs,
-    unusedSongs,
-    getTopSongs,
-    getUnusedSongs,
-    getOverusedSongs
-} = useStatistics();
+    const { topSongs, unusedSongs } = useStatistics(songs);
 
     const { nextService, daysRemaining } = useNextService(playlists);
 
@@ -95,25 +89,7 @@ function App() {
         getSongs();
         getPlaylists();
         getYearUsage(2026);
-
-        /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [loading, user]);
-
-    useEffect(() => {
-        if (!user || !Array.isArray(songs)) {
-            return;
-        }
-
-        getTopSongs(songs);
-        getUnusedSongs(songs);
-        getOverusedSongs(songs);
-    }, [
-        user,
-        songs,
-        getTopSongs,
-        getUnusedSongs,
-        getOverusedSongs
-    ]);
+    }, [loading, user, getSongs, getPlaylists, getYearUsage]);
 
     useEffect(() => {
         if (!user) {
@@ -251,7 +227,6 @@ function App() {
                 {activeTab === "agenda" && (
                     <AgendaPage
                         playlists={playlists}
-                        playlistSongs={playlistSongs}
                         songs={songs}
                         getPlaylistSongs={getPlaylistSongs}
                     />
@@ -289,8 +264,6 @@ function App() {
                 {activeTab === "songs" && (
                     <SongsPage
                         songsHook={songsHook}
-                        getTopSongs={getTopSongs}
-                        getOverusedSongs={getOverusedSongs}
                         songHistory={songHistory}
                         getSongHistory={getSongHistory}
                     />

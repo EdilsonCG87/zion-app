@@ -19,9 +19,6 @@ function SongsPage({
 
     songsHook,
 
-    getTopSongs,
-    getOverusedSongs,
-
 // =========================
 // REPORTES
 // =========================
@@ -194,10 +191,6 @@ BIBLIOTECA
                 onImported={() => {
 
                     getSongs();
-
-                    getTopSongs();
-
-                    getOverusedSongs();
 
                 }}
 
