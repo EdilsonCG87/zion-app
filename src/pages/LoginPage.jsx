@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import logo from "../assets/logo.png";
 import { useAuth } from "../hooks/useAuth";
 import "./LoginPage.css";
@@ -7,6 +8,7 @@ function LoginPage() {
     const { login } = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
@@ -48,13 +50,25 @@ function LoginPage() {
                     </label>
                     <label>
                         Contraseña
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                            autoComplete="current-password"
-                            required
-                        />
+                        <div className="login-password-field">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                value={password}
+                                onChange={(event) => setPassword(event.target.value)}
+                                autoComplete="current-password"
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="login-password-toggle"
+                                onClick={() => setShowPassword((visible) => !visible)}
+                                aria-label={showPassword ? "Ocultar clave" : "Mostrar clave"}
+                                aria-pressed={showPassword}
+                                title={showPassword ? "Ocultar clave" : "Mostrar clave"}
+                            >
+                                {showPassword ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
+                            </button>
+                        </div>
                     </label>
                     {error && <p className="login-error" role="alert">{error}</p>}
                     <button type="submit" disabled={submitting}>
